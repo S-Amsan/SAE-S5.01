@@ -1,0 +1,35 @@
+# Node modules
+node_modules/
+
+# Expo CLI generated files
+.expo/
+.expo-shared/
+
+# Expo environment typings
+expo-env.d.ts
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Metro bundler cache
+metro-cache/
+
+# Watchman cache
+.watchmanconfig
+
+# Build outputs
+android/build/
+ios/build/
+web-build/
+dist/
+
+# Temporary files
+*.tmp
+*.temp
