@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react';
-import { View, Image, Text, StyleSheet } from 'react-native';
+import {Image, Text, StyleSheet } from 'react-native';
 import Animated, {
     useSharedValue,
     useAnimatedStyle,
     withTiming,
-    withDelay,
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 
