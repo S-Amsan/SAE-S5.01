@@ -40,7 +40,7 @@ export default function SignUp(){
     const [selectedCountry, setSelectedCountry] = useState(countries[0]);
     const [modalVisible, setModalVisible] = useState(false);
 
-    const handleSignUp = () => { 
+    const handleSignUp = () => {
         console.log('Inscription:', {
             pseudo,
             email,
