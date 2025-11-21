@@ -286,8 +286,8 @@ const style = StyleSheet.create({
         padding: 40,
         borderRadius: 45,
         backgroundColor: 'white',
-        width: width * 0.35,
-        minHeight: 660,
+        width: width * 0.25,
+        minHeight: 600,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
@@ -381,7 +381,7 @@ const style = StyleSheet.create({
     eyeIcon: {
         padding: 18,
     },
-    // Styles pour le modal
+
     modalContainer: {
         flex: 1,
         justifyContent: 'center',
