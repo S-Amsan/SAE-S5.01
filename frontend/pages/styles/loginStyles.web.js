@@ -16,7 +16,7 @@ export default StyleSheet.create({
     logo: {
         width: 240,
         height: 240,
-        marginBottom: 20
+        marginBottom: 10
     },
 
     FormContainer: {

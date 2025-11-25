@@ -2,22 +2,21 @@ import React, { useState } from 'react';
 import {
     Image,
     Text,
-    StyleSheet,
     View,
     TouchableOpacity,
     ScrollView,
-    Dimensions,
-    Animated
+    Animated,
+    useWindowDimensions
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from "expo-router";
 import { Ionicons } from '@expo/vector-icons';
-
-const { width, height } = Dimensions.get('window');
+import style from "./styles/homeStyles";
 
 export default function Home(){
     const navigation = useNavigation();
     const [buttonScale] = useState(new Animated.Value(1));
+    const { width, height } = useWindowDimensions();
 
     const handleLogin = () => {
         navigation.navigate('Login');
@@ -48,24 +47,47 @@ export default function Home(){
         setTimeout(callback, 150);
     };
 
+    // Styles conditionnels basés sur la largeur d'écran
+    const getResponsiveStyles = () => {
+        const isMobile = width < 768;
+        const isSmallMobile = width < 480;
+
+        return {
+            logo: {
+                width: isSmallMobile ? 60 : isMobile ? 180 : 200,
+                height: isSmallMobile ? 60 : isMobile ? 180 : 200,
+            },
+            title: {
+                fontSize: isSmallMobile ? 28 : isMobile ? 36 : 42,
+            },
+            actionCard: {
+                width: isSmallMobile ? '95%' : isMobile ? '80%' : '50%',
+                paddingVertical: isSmallMobile ? 25 : isMobile ? 30 : 35,
+                paddingHorizontal: isSmallMobile ? 15 : isMobile ? 20 : 25,
+            }
+        };
+    };
+
+    const responsiveStyles = getResponsiveStyles();
+
     return(
         <LinearGradient
             colors={['#00DB83', '#0CD8A9']}
             style={style.gradient}
         >
             <ScrollView
-                contentContainerStyle={style.scrollContainer}
+                contentContainerStyle={[style.scrollContainer, { minHeight: height }]}
                 showsVerticalScrollIndicator={false}
             >
                 <View style={style.container}>
-                        <Image
-                            source={require('../assets/logo.png')}
-                            style={style.logo}
-                            resizeMode="contain"
-                        />
+                    <Image
+                        source={require('../assets/logo.png')}
+                        style={[style.logo, responsiveStyles.logo]}
+                        resizeMode="contain"
+                    />
                     {/* Texte principal */}
                     <View style={style.textContainer}>
-                        <Text style={style.title}>
+                        <Text style={[style.title, responsiveStyles.title]}>
                             Ecoception
                         </Text>
                         <Text style={style.slogan}>
@@ -77,8 +99,8 @@ export default function Home(){
                     </View>
 
                     {/* Carte d'actions */}
-                    <View style={style.actionCard}>
-                        <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
+                    <View style={[style.actionCard, responsiveStyles.actionCard]}>
+                        <Animated.View style={{ transform: [{ scale: buttonScale }], width: '100%' }}>
                             <TouchableOpacity
                                 style={style.primaryButton}
                                 onPress={() => animatePress(handleSignup)}
@@ -144,161 +166,3 @@ export default function Home(){
         </LinearGradient>
     );
 };
-
-const style = StyleSheet.create({
-    gradient: {
-        flex: 1,
-    },
-    scrollContainer: {
-        flexGrow: 1,
-        justifyContent: 'center',
-        paddingVertical: 20,
-    },
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: height - 40,
-    },
-    logo: {
-        width: 200,
-        height: 200,
-    },
-    textContainer: {
-        alignItems: 'center',
-        marginBottom: 30,
-        paddingHorizontal: 20,
-    },
-    title: {
-        textAlign: 'center',
-        fontSize: 42,
-        fontWeight: "bold",
-        color: 'white',
-        marginBottom: 15,
-        textShadowColor: 'rgba(0, 0, 0, 0.1)',
-        textShadowOffset: { width: 0, height: 2 },
-        textShadowRadius: 4,
-    },
-    slogan: {
-        fontStyle: 'italic',
-        fontSize: 16,
-        color: 'white',
-        textAlign: 'center',
-        marginBottom: 8,
-        lineHeight: 22,
-        opacity: 0.9,
-    },
-    actionCard: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'white',
-        width: width,
-        paddingVertical: 35,
-        paddingHorizontal: 25,
-        borderRadius: 35,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.15,
-        shadowRadius: 20,
-        elevation: 10,
-    },
-    primaryButton: {
-        borderRadius: 25,
-        marginBottom: 15,
-        overflow: 'hidden',
-        shadowColor: '#00DB83',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 6,
-    },
-    gradientButton: {
-        paddingVertical: 18,
-        paddingHorizontal: 30,
-        borderRadius: 25,
-        minWidth: 280,
-    },
-    buttonContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    primaryButtonText: {
-        color: 'white',
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginLeft: 10,
-    },
-    secondaryButton: {
-        borderWidth: 2,
-        borderColor: '#00DB83',
-        borderRadius: 25,
-        paddingVertical: 16,
-        paddingHorizontal: 30,
-        minWidth: 280,
-        marginBottom: 20,
-        backgroundColor: 'white',
-    },
-    secondaryButtonContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    secondaryButtonText: {
-        fontSize: 16,
-        color: '#00DB83',
-        fontWeight: 'bold',
-        marginLeft: 8,
-    },
-    separator: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginVertical: 15,
-        width: '100%',
-    },
-    separatorLine: {
-        flex: 1,
-        height: 1,
-        backgroundColor: '#E9ECEF',
-    },
-    separatorText: {
-        color: '#666',
-        fontSize: 12,
-        fontWeight: '600',
-        marginHorizontal: 10,
-        fontStyle: 'italic',
-    },
-    policyButton: {
-        marginBottom: 15,
-        padding: 10,
-    },
-    policyContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    policyText: {
-        color: '#1D3937',
-        fontStyle: 'italic',
-        fontSize: 12,
-        textAlign: 'center',
-        marginLeft: 6,
-        textDecorationLine: 'underline',
-    },
-    ecoBadge: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: 'rgba(0, 219, 131, 0.1)',
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 15,
-        borderWidth: 1,
-        borderColor: 'rgba(0, 219, 131, 0.2)',
-    },
-    ecoBadgeText: {
-        color: '#00DB83',
-        fontSize: 11,
-        fontWeight: '600',
-        marginLeft: 5,
-    },
-});

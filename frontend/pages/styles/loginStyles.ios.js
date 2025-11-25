@@ -1,21 +1,32 @@
-import {StyleSheet, Dimensions, Platform} from "react-native";
-
-const { width, height } = Dimensions.get("window");
+import { StyleSheet, Platform } from "react-native";
+import {
+    width,
+    height,
+    scale,
+    verticalScale,
+    moderateScale,
+    isTablet,
+} from "../../utils/dimensions";
 
 export default StyleSheet.create({
+    gradient: {
+        flex: 1,
+    },
     container: {
-        marginTop: width * 0.1,
-        alignItems: "center",
-        minHeight: height,
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingTop: verticalScale(70),
     },
     logo: {
-        width: 220,
-        height: 220,
-        marginBottom: 10,
+        width: isTablet ? scale(180) : scale(160),
+        height: isTablet ? scale(180) : scale(160),
+        marginBottom: verticalScale(10),
+        marginTop: verticalScale(40),
     },
     FormContainer: {
         flex:1,
-        padding: 40,
+        padding: 35,
         borderRadius: 45,
         backgroundColor: "white",
         width: width,
@@ -36,7 +47,7 @@ export default StyleSheet.create({
         fontSize: 14,
         color: "#666",
         textAlign: "center",
-        marginBottom: 40,
+        marginBottom: 20,
         fontStyle: "italic",
     },
     inputGroup: {
@@ -59,6 +70,7 @@ export default StyleSheet.create({
         fontSize: 16,
         color: "#333",
         width: "100%",
+        height:50,
     },
     passwordContainer: {
         flexDirection: "row",
@@ -68,6 +80,7 @@ export default StyleSheet.create({
         borderColor: "#E9ECEF",
         borderRadius: 15,
         overflow: "hidden",
+        height:50,
     },
     passwordInput: {
         flex: 1,
@@ -76,7 +89,7 @@ export default StyleSheet.create({
         color: "#333",
     },
     eyeIcon: {
-        padding: 18,
+        padding: 10,
     },
     forgotPasswordContainer: {
         alignItems: "flex-end",
@@ -91,7 +104,7 @@ export default StyleSheet.create({
     primaryButton: {
         borderRadius: 25,
         width: "100%",
-        marginBottom: 10,
+        marginBottom: 5,
         overflow: "hidden",
     },
     gradientButton: {
@@ -107,7 +120,7 @@ export default StyleSheet.create({
     separator: {
         flexDirection: "row",
         alignItems: "center",
-        marginVertical: 20,
+        marginVertical: 10,
     },
     separatorLine: {
         flex: 1,
@@ -127,6 +140,7 @@ export default StyleSheet.create({
         padding: 16,
         alignItems: "center",
         marginBottom: 25,
+        marginTop: 5,
     },
     secondaryButtonText: {
         color: "#00DB83",
