@@ -5,18 +5,17 @@ import {
     View,
     TouchableOpacity,
     ScrollView,
-    Animated,
-    useWindowDimensions
+    Animated
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from "expo-router";
 import { Ionicons } from '@expo/vector-icons';
 import style from "./styles/homeStyles";
 
+
 export default function Home(){
     const navigation = useNavigation();
     const [buttonScale] = useState(new Animated.Value(1));
-    const { width, height } = useWindowDimensions();
 
     const handleLogin = () => {
         navigation.navigate('Login');
@@ -47,47 +46,20 @@ export default function Home(){
         setTimeout(callback, 150);
     };
 
-    // Styles conditionnels basés sur la largeur d'écran
-    const getResponsiveStyles = () => {
-        const isMobile = width < 768;
-        const isSmallMobile = width < 480;
-
-        return {
-            logo: {
-                width: isSmallMobile ? 60 : isMobile ? 180 : 200,
-                height: isSmallMobile ? 60 : isMobile ? 180 : 200,
-            },
-            title: {
-                fontSize: isSmallMobile ? 28 : isMobile ? 36 : 42,
-            },
-            actionCard: {
-                width: isSmallMobile ? '95%' : isMobile ? '80%' : '50%',
-                paddingVertical: isSmallMobile ? 25 : isMobile ? 30 : 35,
-                paddingHorizontal: isSmallMobile ? 15 : isMobile ? 20 : 25,
-            }
-        };
-    };
-
-    const responsiveStyles = getResponsiveStyles();
-
     return(
         <LinearGradient
             colors={['#00DB83', '#0CD8A9']}
             style={style.gradient}
         >
-            <ScrollView
-                contentContainerStyle={[style.scrollContainer, { minHeight: height }]}
-                showsVerticalScrollIndicator={false}
-            >
                 <View style={style.container}>
-                    <Image
-                        source={require('../assets/logo.png')}
-                        style={[style.logo, responsiveStyles.logo]}
-                        resizeMode="contain"
-                    />
+                        <Image
+                            source={require('../assets/logo.png')}
+                            style={style.logo}
+                            resizeMode="contain"
+                        />
                     {/* Texte principal */}
                     <View style={style.textContainer}>
-                        <Text style={[style.title, responsiveStyles.title]}>
+                        <Text style={style.title}>
                             Ecoception
                         </Text>
                         <Text style={style.slogan}>
@@ -99,7 +71,7 @@ export default function Home(){
                     </View>
 
                     {/* Carte d'actions */}
-                    <View style={[style.actionCard, responsiveStyles.actionCard]}>
+                    <View style={style.actionCard}>
                         <Animated.View style={{ transform: [{ scale: buttonScale }], width: '100%' }}>
                             <TouchableOpacity
                                 style={style.primaryButton}
@@ -128,7 +100,7 @@ export default function Home(){
                             onPress={handleLogin}
                             activeOpacity={0.8}
                         >
-                            <View style={style.secondaryButtonContent}>
+                            <View style={style.secondaryButtonInner}>
                                 <Text style={style.secondaryButtonText}>
                                     Connexion
                                 </Text>
@@ -162,7 +134,6 @@ export default function Home(){
                         </View>
                     </View>
                 </View>
-            </ScrollView>
         </LinearGradient>
     );
 };
