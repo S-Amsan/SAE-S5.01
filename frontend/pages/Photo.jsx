@@ -8,7 +8,7 @@ export default function Photo() {
     const router = useRouter();
 
     const handleSkip = () => {
-        router.push("appPrincipal/index");
+        router.push("appPrincipal/accueil");
     };
 
     return (
