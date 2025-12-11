@@ -23,7 +23,7 @@ public class AuthService {
         User user = new User();
         user.setPseudo(request.getPseudo());
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
+        // user.setPassword(request.getPassword());
         user.setPhone(request.getPhone());
         user.setActif(true);
 
@@ -37,9 +37,9 @@ public class AuthService {
                 new RuntimeException("Email ou mot de passe incorrect")
             );
 
-        if (!user.getPassword().equals(request.getPassword())) {
-            throw new RuntimeException("Email ou mot de passe incorrect");
-        }
+        // if (!user.getPassword().equals(request.getPassword())) {
+        //     throw new RuntimeException("Email ou mot de passe incorrect");
+        // }
 
         UserResponse response = new UserResponse();
         response.setId(user.getId());

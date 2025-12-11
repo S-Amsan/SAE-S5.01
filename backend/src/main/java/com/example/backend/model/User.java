@@ -22,9 +22,6 @@ public class User {
     @Column(unique = true, nullable = false, length = 255)
     private String email;
 
-    @Column(nullable = false, length = 255)
-    private String password;
-
     @Column(unique = true, nullable = true, length = 20)
     private String phone;
 
@@ -44,10 +41,9 @@ public class User {
 
     public User() {}
 
-    public User(String pseudo, String email, String password) {
+    public User(String pseudo, String email) {
         this.pseudo = pseudo;
         this.email = email;
-        this.password = password;
     }
 
     public void setPhone(String phone) {
