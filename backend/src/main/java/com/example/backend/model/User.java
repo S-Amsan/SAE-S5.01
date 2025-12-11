@@ -1,11 +1,10 @@
 package com.example.backend.model;
 
 import jakarta.persistence.*;
+import java.time.Instant;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -13,20 +12,20 @@ import java.time.LocalDateTime;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column
     private Long id;
 
-    @Column(name = "pseudo", unique = true, nullable = false, length = 50)
+    @Column(unique = true, nullable = false, length = 50)
     private String pseudo;
 
-    @Column(name = "email", unique = true, nullable = false, length = 255)
+    @Column(unique = true, nullable = false, length = 255)
     private String email;
 
-    @Column(name = "pswd", nullable = false, length = 255)
+    @Column(nullable = false, length = 255)
     private String password;
 
-    @Column(name = "num_tel", unique = true, nullable = false, length = 20)
+    @Column(unique = true, nullable = true, length = 20)
     private String phone;
 
     @Column(name = "photo_profile")
@@ -34,12 +33,24 @@ public class User {
 
     @CreationTimestamp
     @Column(name = "date_creation", updatable = false)
-    private LocalDateTime dateCreation;
+    private Instant dateCreation;
 
     @UpdateTimestamp
     @Column(name = "date_modification")
-    private LocalDateTime dateModification;
+    private Instant dateModification;
 
-    @Column(name = "actif")
+    @Column
     private boolean actif = true;
+
+    public User() {}
+
+    public User(String pseudo, String email, String password) {
+        this.pseudo = pseudo;
+        this.email = email;
+        this.password = password;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 }
