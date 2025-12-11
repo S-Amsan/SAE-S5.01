@@ -1,29 +1,33 @@
-import {Pressable, ScrollView, Text, View, StyleSheet } from "react-native";
-import SectionProduits from "../../../components/boutique/sectionProduits";
+import React from "react";
+import { Platform, ScrollView, View, StyleSheet } from "react-native";
 import Header from "../../../components/Header";
-import {useRouter} from "expo-router";
+import Navbar from "../../../components/Navbar";
 import BlocInfos from "../../../components/boutique/blocInfos";
+import SectionProduits from "../../../components/boutique/sectionProduits";
 
-export default function Index() {
-
-    const router = useRouter();
-
+export default function Boutique() {
     return (
-        <ScrollView>
-            <Header title={"Boutique"}/>
+        <View style={{ flex: 1, flexDirection: "row", backgroundColor: "#f5f5f5" }}>
+            {Platform.OS === "web" && (
+                <View style={{ width: "20%" }}>
+                    <Navbar />
+                </View>
+            )}
 
-            <BlocInfos/>
-            <SectionProduits/>
+            <View style={{ flex: 1 }}>
+                <Header title={"Boutique"} />
 
-
-        </ScrollView>
-
+                <ScrollView contentContainerStyle={styles.conteneur}>
+                    <BlocInfos />
+                    <SectionProduits />
+                </ScrollView>
+            </View>
+        </View>
     );
-
 }
 
 const styles = StyleSheet.create({
     conteneur: {
-        padding: 16
-    }
+        padding: 16,
+    },
 });
