@@ -59,7 +59,7 @@ const Navbar = () => {
                                     key={tab.id}
                                     style={style.tabs}
                                     activeOpacity={0.7}
-                                    onPress={() => router.push(`./appPrincipal/${tab.id}`)}
+                                    onPress={() => router.push(`/appPrincipal/${tab.id}`)}
                                 >
                                     <Image
                                         source={IconComponent}
