@@ -41,6 +41,8 @@ public class User {
 
     private Integer age;
 
+    private String name;
+
     public User() {}
 
     public User(String pseudo, String email) {

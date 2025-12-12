@@ -22,7 +22,7 @@ export default function Accueil() {
         <View style={{ flex: 1, flexDirection: "row", backgroundColor: "#f5f5f5" }}>
             {
                 Platform.OS === 'web' ?
-                    <View style={{ width: "17%" }}>
+                    <View style={{ width: "15%" }}>
                         <Navbar/>
                     </View>
                     :

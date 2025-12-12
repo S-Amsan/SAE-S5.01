@@ -1,27 +1,27 @@
-import {Image, View, Text, TextInput, TouchableOpacity,} from "react-native";
-import React, {useEffect, useState} from "react";
-import {LinearGradient} from "expo-linear-gradient";
-import style from "./styles/parrainageStyles"
-import * as navigation from "expo-router/build/global-state/routing";
-import {useNavigation} from "expo-router";
+import { Image, View, Text, TextInput, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from "react";
+import { LinearGradient } from "expo-linear-gradient";
+import style from "./styles/parrainageStyles";
+import { useNavigation } from "expo-router";
 import Toast from "react-native-toast-message";
-import {loadRegisterData, saveRegisterData} from "../services/RegisterStorage";
+import { loadRegisterData, updateRegisterData } from "../services/RegisterStorage";
 
-export default function Parrainage(){
-
+export default function Parrainage() {
     const navigation = useNavigation();
     const [parrainCode, setParrainCode] = useState("");
 
     useEffect(() => {
         async function load() {
             const saved = await loadRegisterData();
-            if (saved?.parrainCode) setParrainCode(saved.parrainCode);
+            if (saved?.parrainCode) {
+                setParrainCode(saved.parrainCode);
+            }
         }
         load();
     }, []);
 
     const handleNext = async () => {
-        await saveRegisterData({ parrainCode });
+        await updateRegisterData({ parrainCode });
 
         Toast.show({
             type: "success",
@@ -36,43 +36,37 @@ export default function Parrainage(){
         navigation.navigate("age");
     };
 
-    return(
-        <LinearGradient
-            colors={['#00DB83', '#0CD8A9']}
-            style={style.gradient}
-        >
+    return (
+        <LinearGradient colors={["#00DB83", "#0CD8A9"]} style={style.gradient}>
             <View style={style.container}>
                 <Image
-                    source={require('../assets/logo.png')}
+                    source={require("../assets/logo.png")}
                     style={style.logo}
                     resizeMode="contain"
                 />
-                <Text style={style.title}>
-                    Avez-vous un code de parrainage ?
-                </Text>
 
-                <Text style={style.sub}>
-                   Demandez à un ami sinon!
-                </Text>
+                <Text style={style.title}>Avez-vous un code de parrainage ?</Text>
+
+                <Text style={style.sub}>Demandez à un ami sinon !</Text>
 
                 <View style={style.inputBox}>
                     <TextInput
                         style={style.input}
-                        placeholder="code de parrainage"
+                        placeholder="Code de parrainage"
                         placeholderTextColor="#999"
+                        value={parrainCode}
+                        onChangeText={setParrainCode}
                     />
+
                     <TouchableOpacity onPress={handleSkip}>
                         <Text style={style.skipText}>Passer {">"}</Text>
                     </TouchableOpacity>
-
                 </View>
 
-                <TouchableOpacity style={style.submit}>
+                <TouchableOpacity style={style.submit} onPress={handleNext}>
                     <Text style={style.buttonText}>Valider mon code</Text>
                 </TouchableOpacity>
             </View>
         </LinearGradient>
     );
-
-
-};
+}

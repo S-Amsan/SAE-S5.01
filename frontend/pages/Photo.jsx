@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image, ActivityIndicator } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Image, ActivityIndicator, Platform } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
 import Toast from "react-native-toast-message";
+import { router } from "expo-router";
 
-import { loadRegisterData, saveRegisterData, clearRegisterData } from "../services/RegisterStorage";
+import {
+    loadRegisterData,
+    clearRegisterData,
+    updateRegisterData, saveUser
+} from "../services/RegisterStorage";
+
 import styles from "./styles/photoStyles";
 
 export default function Photo() {
@@ -15,15 +21,22 @@ export default function Photo() {
     const [name, setName] = useState("");
     const [loading, setLoading] = useState(false);
 
+    // =====================================================
+    // CHARGEMENT INITIAL DES DONNÉES
+    // =====================================================
     useEffect(() => {
         async function load() {
             const saved = await loadRegisterData();
-            if (saved?.photo) setPhotoUri(saved.photo);
+
+            if (saved?.photo?.uri) setPhotoUri(saved.photo.uri);
             if (saved?.name) setName(saved.name);
         }
         load();
     }, []);
 
+    // =====================================================
+    // PICK IMAGE
+    // =====================================================
     const pickImage = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -31,42 +44,39 @@ export default function Photo() {
         });
 
         if (!result.canceled) {
-            setPhotoUri(result.assets[0].uri);
-            await saveRegisterData({ photo: result.assets[0].uri });
+            const uri = result.assets[0].uri;
+
+            let blob = null;
+            if (Platform.OS === "web") {
+                blob = await fetch(uri).then(r => r.blob());
+            }
+
+            await updateRegisterData({ photo: { uri, blob } });
+
+            setPhotoUri(uri);
             Toast.show({ type: "success", text1: "Photo sélectionnée" });
         }
     };
 
+    // =====================================================
+    // FIN D’INSCRIPTION
+    // =====================================================
     const handleFinishSignup = async () => {
         if (!photoUri) {
-            return Toast.show({
-                type: "error",
-                text1: "Photo requise",
-                text2: "Veuillez choisir une photo."
-            });
+            return Toast.show({ type: "error", text1: "Photo requise", text2: "Veuillez choisir une photo." });
         }
 
         if (name.trim().length === 0) {
-            return Toast.show({
-                type: "error",
-                text1: "Nom manquant",
-                text2: "Veuillez entrer un nom."
-            });
+            return Toast.show({ type: "error", text1: "Nom manquant", text2: "Veuillez entrer un nom." });
         }
 
         const data = await loadRegisterData();
 
         if (!data) {
-            return Toast.show({
-                type: "error",
-                text1: "Erreur",
-                text2: "Données d'inscription introuvables."
-            });
+            return Toast.show({ type: "error", text1: "Erreur", text2: "Données d'inscription introuvables." });
         }
 
-
-        await saveRegisterData({ name: name.trim() });
-
+        await updateRegisterData({ name: name.trim() });
 
         const formData = new FormData();
 
@@ -78,12 +88,25 @@ export default function Photo() {
         formData.append("parrainCode", data.parrainCode ?? "");
         formData.append("name", name.trim());
 
+        // ============================
+        // PHOTO - WEB vs MOBILE
+        // ============================
+        let fileToSend;
 
-        formData.append("photo", {
-            uri: photoUri,
-            type: "image/jpeg",
-            name: "profile.jpg"
-        });
+        if (Platform.OS === "web") {
+            const blob = await fetch(photoUri).then((r) => r.blob());
+            fileToSend = blob;
+        } else {
+            fileToSend = {
+                uri: photoUri,
+                type: "image/jpeg",
+                name: "profile.jpg"
+            };
+        }
+
+        formData.append("photo", fileToSend, "profile.jpg");
+
+        // ============================
 
         setLoading(true);
 
@@ -93,38 +116,30 @@ export default function Photo() {
                 body: formData
             });
 
+            const user = await response.json();
+            await saveUser(user);
+
 
             if (!response.ok) {
                 const errorText = await response.text();
-                Toast.show({
-                    type: "error",
-                    text1: "Erreur d'inscription",
-                    text2: errorText
-                });
+                Toast.show({ type: "error", text1: "Erreur d'inscription", text2: errorText });
                 return;
             }
 
             await clearRegisterData();
 
-            Toast.show({
-                type: "success",
-                text1: "Compte créé",
-                text2: "Bienvenue !"
-            });
+            Toast.show({ type: "success", text1: "Compte créé", text2: "Bienvenue !" });
 
-            navigation.navigate("/appPrincipal/accueil");
+            router.replace("/appPrincipal/accueil");
 
         } catch (err) {
             console.log("Erreur réseau:", err);
-            Toast.show({
-                type: "error",
-                text1: "Erreur réseau",
-                text2: "Impossible de contacter le serveur."
-            });
+            Toast.show({ type: "error", text1: "Erreur réseau", text2: "Impossible de contacter le serveur." });
         }
 
         setLoading(false);
     };
+
 
     return (
         <LinearGradient colors={["#00DB83", "#0CD8A9"]} style={styles.gradient}>

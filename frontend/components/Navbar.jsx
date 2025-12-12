@@ -1,7 +1,17 @@
-import {View, Text, TouchableOpacity, Image, ScrollView, Platform, Pressable} from 'react-native';
-import React from "react";
+import {
+    View,
+    Text,
+    TouchableOpacity,
+    Image,
+    ScrollView,
+    Platform,
+    Pressable
+} from "react-native";
+import React, { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter, usePathname } from "expo-router";
+
+import { loadUser } from "../services/RegisterStorage";
 
 import IconAccueil from "../assets/icones/Navbar/Acceuil.png";
 import IconMission from "../assets/icones/Navbar/Mission.png";
@@ -19,11 +29,43 @@ import IconParamOn from "../assets/icones/Navbar/ParametresOn.png";
 import IconQrCodeOn from "../assets/icones/Navbar/QrCodeOn.png";
 import IconTrophyOn from "../assets/icones/Navbar/SocialOn.png";
 
+import ProfilCard from "./ProfilCard";
 import style from "./styles/StyleNavbar";
 
-const Navbar = () => {
+const BASE_URL = "http://localhost:8080/uploads/";
+
+
+// ------------------------------
+// Correct UserCard
+// ------------------------------
+function UserCard({ user }) {
+    return (
+        <ProfilCard
+            photo={BASE_URL + user.photoProfile}
+            name={user.name}
+            username={user.pseudo}
+        />
+    );
+}
+
+
+// ------------------------------
+// NAVBAR PRINCIPALE
+// ------------------------------
+export default function Navbar() {
     const router = useRouter();
     const pathname = usePathname();
+
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        async function fetchUser() {
+            const u = await loadUser();
+            console.log("Utilisateur chargé Navbar :", u);
+            setUser(u);
+        }
+        fetchUser();
+    }, []);
 
     const tabs = [
         { id: "accueil", label: "Accueil", Icon: IconAccueil, IconActive: IconAccueilOn },
@@ -35,6 +77,8 @@ const Navbar = () => {
         { id: "parametres", label: "Paramètres", Icon: IconParam, IconActive: IconParamOn },
     ];
 
+
+    // ---------------- WEB ----------------
     if (Platform.OS === "web") {
         return (
             <LinearGradient colors={["#1DDE9A", "#1FDDA0"]} style={style.container}>
@@ -65,12 +109,13 @@ const Navbar = () => {
                                         source={IconComponent}
                                         style={[style.Icon, !isActive && { opacity: 0.45 }]}
                                     />
+
                                     <Text
                                         style={[
                                             style.IconText,
                                             isActive
                                                 ? { color: "#FFFFFF", fontWeight: "600" }
-                                                : { color: "#107956", fontWeight: "400" },
+                                                : { color: "#107956", fontWeight: "400" }
                                         ]}
                                     >
                                         {tab.label}
@@ -80,33 +125,35 @@ const Navbar = () => {
                         })}
                     </View>
 
+                    {/* Carte utilisateur */}
+                    {user && <UserCard user={user} />}
+
                 </ScrollView>
             </LinearGradient>
         );
-    }else{
-        return (
-            <View style={style.container}>
-                {tabs.slice(0,4).map((tab) => {
-                    const isActive = pathname === `/appPrincipal/${tab.id}`;
-                    const IconComponent = isActive ? tab.IconActive : tab.Icon;
-                    return (
-                        <Pressable
-                            key={tab.id}
-                            style={[!isActive && {opacity : 0.45},{alignItems: "center", justifyContent: "center"}]}
-                            onPress={() => !isActive && router.push(`/appPrincipal/${tab.id}`)}
-                        >
-                            <Image
-                                source={IconComponent}
-                                style={{ width: 25, height: 25 }}
-                            />
-                            <Text style={[{fontSize : 11}, isActive && {color : "#FFFFFF"}]}>{tab.label}</Text>
-                        </Pressable>
-                    )
-                })}
-            </View>
-        );
     }
 
-};
 
-export default Navbar;
+    // ---------------- MOBILE ----------------
+    return (
+        <View style={style.containerMobile}>
+            {tabs.slice(0, 4).map((tab) => {
+                const isActive = pathname === `/appPrincipal/${tab.id}`;
+                const IconComponent = isActive ? tab.IconActive : tab.Icon;
+
+                return (
+                    <Pressable
+                        key={tab.id}
+                        style={[{ alignItems: "center" }, !isActive && { opacity: 0.45 }]}
+                        onPress={() => !isActive && router.push(`/appPrincipal/${tab.id}`)}
+                    >
+                        <Image source={IconComponent} style={{ width: 25, height: 25 }} />
+                        <Text style={[{ fontSize: 11 }, isActive && { color: "#FFFFFF" }]}>
+                            {tab.label}
+                        </Text>
+                    </Pressable>
+                );
+            })}
+        </View>
+    );
+}

@@ -48,7 +48,7 @@ export default function Login(){
             alert("Impossible de contacter le serveur");
         }
          */
-        router.replace('/appPrincipal/accueil');
+        router.replace('appPrincipal/accueil');
     };
 
 

@@ -12,7 +12,7 @@ export default function Social(){
         <View style={styles.container}>
             {
                 Platform.OS === 'web' ?
-                    <View style={{ width: "17%" }}>
+                    <View style={{ width: "15%" }}>
                         <Navbar/>
                     </View>
                     :

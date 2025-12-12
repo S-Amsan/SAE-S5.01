@@ -143,6 +143,7 @@ public class AuthService {
         user.setPhone(phone);
         user.setAge(age);
         user.setActif(true);
+        user.setName(name);
 
         user = userRepository.save(user);
 
