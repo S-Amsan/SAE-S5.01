@@ -18,4 +18,8 @@ public class SignUpRequest {
 
     @NotBlank
     private String phone;
+
+    @Min(13)
+    @Max(120)
+    private Integer age;
 }

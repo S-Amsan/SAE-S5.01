@@ -1,13 +1,41 @@
 import {Image, View, Text, TextInput, TouchableOpacity,} from "react-native";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {LinearGradient} from "expo-linear-gradient";
 import style from "./styles/parrainageStyles"
 import * as navigation from "expo-router/build/global-state/routing";
+import {useNavigation} from "expo-router";
+import Toast from "react-native-toast-message";
+import {loadRegisterData, saveRegisterData} from "../services/RegisterStorage";
 
 export default function Parrainage(){
-    const handleAge=()=>{
-        navigation.navigate('age');
-    }
+
+    const navigation = useNavigation();
+    const [parrainCode, setParrainCode] = useState("");
+
+    useEffect(() => {
+        async function load() {
+            const saved = await loadRegisterData();
+            if (saved?.parrainCode) setParrainCode(saved.parrainCode);
+        }
+        load();
+    }, []);
+
+    const handleNext = async () => {
+        await saveRegisterData({ parrainCode });
+
+        Toast.show({
+            type: "success",
+            text1: "Code enregistré",
+            text2: "Passons à l'étape suivante."
+        });
+
+        navigation.navigate("age");
+    };
+
+    const handleSkip = () => {
+        navigation.navigate("age");
+    };
+
     return(
         <LinearGradient
             colors={['#00DB83', '#0CD8A9']}
@@ -33,9 +61,8 @@ export default function Parrainage(){
                         placeholder="code de parrainage"
                         placeholderTextColor="#999"
                     />
-                    <TouchableOpacity style={style.nextStep}
-                    onPress={handleAge}>
-                        <Text style={style.text}>Passer {">"}</Text>
+                    <TouchableOpacity onPress={handleSkip}>
+                        <Text style={style.skipText}>Passer {">"}</Text>
                     </TouchableOpacity>
 
                 </View>

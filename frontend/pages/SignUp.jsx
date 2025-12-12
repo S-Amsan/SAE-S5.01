@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     Image,
     Text,
@@ -13,6 +13,10 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from "expo-router";
 import { Ionicons } from '@expo/vector-icons';
+import {saveRegisterData, loadRegisterData, clearRegisterData} from "../services/RegisterStorage";
+import Toast from "react-native-toast-message";
+
+
 import style from "./styles/signUpStyles";
 
 const countries = [
@@ -34,43 +38,149 @@ export default function SignUp(){
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [phone, setPhone] = useState('');
+    const [age, setAge] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [selectedCountry, setSelectedCountry] = useState(countries[0]);
     const [modalVisible, setModalVisible] = useState(false);
 
-    const handleSignUp = async () => {
-        /*const payload = {
+
+    useEffect(() => {
+        async function loadDraft() {
+            const saved = await loadRegisterData();
+            if (saved) {
+                setPseudo(saved.pseudo ?? '');
+                setEmail(saved.email ?? '');
+                setPassword(saved.password ?? '');
+                setPhone(saved.phone ?? '');
+                setAge(saved.age ?? "");
+            }
+        }
+        loadDraft();
+    }, []);
+
+    // Sauvegarde auto
+    useEffect(() => {
+        const data = {
             pseudo,
             email,
             password,
-            phone: selectedCountry.dialCode + phone
+            phone,
+            age,
+            selectedCountry
         };
 
-        console.log("Payload:", payload);
+        saveRegisterData(data);
+    }, [pseudo, email, password, phone, age, selectedCountry]);
 
-        try {
-            const response = await fetch("http://localhost:8080/api/auth/signup", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(payload),
+
+    const handleSignUp = async () => {
+
+        const cleanPseudo = pseudo.trim();
+        const cleanEmail = email.trim();
+        const cleanPassword = password.trim();
+        const cleanPhone = phone.trim();
+
+        // ============================
+        //  VÉRIFICATIONS LOCALES
+        // ============================
+        if (cleanPseudo.length === 0) {
+            return Toast.show({
+                type: "error",
+                text1: "Pseudo manquant",
+                text2: "Veuillez entrer un pseudo."
             });
+        }
 
-            if (!response.ok) {
-                const err = await response.text();
-                console.log("Erreur:", err);
-                return;
+        if (!cleanEmail.includes("@") || !cleanEmail.includes(".")) {
+            return Toast.show({
+                type: "error",
+                text1: "E-mail invalide",
+                text2: "Veuillez entrer une adresse e-mail valide."
+            });
+        }
+
+        if (cleanPassword.length < 8) {
+            return Toast.show({
+                type: "error",
+                text1: "Mot de passe trop court",
+                text2: "Il doit contenir au moins 8 caractères."
+            });
+        }
+
+        if (cleanPhone.length === 0) {
+            return Toast.show({
+                type: "error",
+                text1: "Numéro manquant",
+                text2: "Veuillez entrer un numéro de téléphone."
+            });
+        }
+
+        // ============================
+        //  VÉRIFICATION BACKEND
+        // ============================
+        try {
+            const encodedPseudo = encodeURIComponent(cleanPseudo);
+            const encodedEmail = encodeURIComponent(cleanEmail);
+            const encodedPhone = encodeURIComponent(selectedCountry.dialCode + cleanPhone);
+
+            const response = await fetch(
+                `http://localhost:8080/api/auth/check?pseudo=${encodedPseudo}&email=${encodedEmail}&phone=${encodedPhone}`
+            );
+
+            const result = await response.json();
+
+            if (result.pseudoTaken) {
+                return Toast.show({
+                    type: "error",
+                    text1: "Pseudo déjà utilisé",
+                    text2: "Veuillez en choisir un autre."
+                });
             }
 
-            navigation.navigate('Login');
-        } catch (err) {
-            console.error("Erreur réseau:", err);
-        }
-         */
-        navigation.navigate('parrainage');
-    };
+            if (result.emailTaken) {
+                return Toast.show({
+                    type: "error",
+                    text1: "E-mail déjà utilisé",
+                    text2: "Un autre compte utilise déjà cet e-mail."
+                });
+            }
 
+            if (result.phoneTaken) {
+                return Toast.show({
+                    type: "error",
+                    text1: "Numéro déjà utilisé",
+                    text2: "Un compte utilise déjà ce numéro."
+                });
+            }
+
+        } catch (err) {
+            console.error(err);
+            return Toast.show({
+                type: "error",
+                text1: "Erreur réseau",
+                text2: "Impossible de vérifier les informations."
+            });
+        }
+
+        // ============================
+        //  SAUVEGARDE & NAVIGATION
+        // ============================
+        await saveRegisterData({
+            pseudo: cleanPseudo,
+            email: cleanEmail,
+            password: cleanPassword,
+            phone: selectedCountry.dialCode + cleanPhone,
+            age, // Maintenant disponible !
+        });
+
+        Toast.show({
+            type: "success",
+            text1: "Informations validées",
+            text2: "Passe à l'étape suivante."
+        });
+
+        navigation.navigate("parrainage");
+    };
 
     const handleLogin = () => {
         navigation.navigate('Login');
@@ -193,7 +303,7 @@ export default function SignUp(){
                                     value={getDisplayPhone()}
                                     onChangeText={handlePhoneChange}
                                     keyboardType="numeric"
-                                    maxLength={getMaxLength()} // ✅ Correction ici
+                                    maxLength={getMaxLength()}
                                 />
                             </View>
                             <Text style={style.phoneHint}>

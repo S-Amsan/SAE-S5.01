@@ -3,6 +3,7 @@ import Navbar from "../../components/Navbar";
 import {Platform} from "react-native";
 import {Stack} from "expo-router";
 
+
 export default function Layout() {
 
     return (

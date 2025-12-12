@@ -70,5 +70,11 @@ export default StyleSheet.create({
         textAlign:'center',
         color:'#0AD8A2',
         fontSize:20
-}
+    },
+
+    skipText: {
+        color: "#fff",
+        fontSize: 16,
+        marginTop: 10,
+    },
 });

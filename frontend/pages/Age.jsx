@@ -1,13 +1,49 @@
 import {Image, View, Text, TextInput, TouchableOpacity,} from "react-native";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {LinearGradient} from "expo-linear-gradient";
 import style from "./styles/parrainageStyles"
-import * as navigation from "expo-router/build/global-state/routing";
+import {loadRegisterData, saveRegisterData} from "../services/RegisterStorage";
+import {useNavigation} from "expo-router";
+import Toast from "react-native-toast-message";
 
 export default function Age(){
-    const handleAge=()=>{
-        navigation.navigate('photo');
+    const navigation = useNavigation();
+    const [age, setAge] = useState("");
+
+    useEffect(() => {
+        async function load() {
+            const saved = await loadRegisterData();
+            if (saved?.age) setAge(String(saved.age));
+        }
+        load();
+    }, []);
+
+    const handleSkip = () => {
+        navigation.navigate("photo");
     }
+
+    const handleNext = async () => {
+        const cleanAge = Number(age);
+
+        if (!cleanAge || cleanAge < 13 || cleanAge > 120) {
+            return Toast.show({
+                type: "error",
+                text1: "Âge invalide",
+                text2: "Veuillez entrer un âge entre 13 et 120 ans."
+            });
+        }
+
+        await saveRegisterData({ age: cleanAge });
+
+        Toast.show({
+            type: "success",
+            text1: "Âge enregistré",
+        });
+
+        navigation.navigate("photo");
+    };
+
+
     return(
         <LinearGradient
             colors={['#00DB83', '#0CD8A9']}
@@ -31,16 +67,17 @@ export default function Age(){
                     <TextInput
                         style={style.input}
                         placeholder="Entrez votre âge"
-                        placeholderTextColor="#999"
+                        keyboardType="numeric"
+                        onChangeText={setAge}
                     />
-                    <TouchableOpacity style={style.nextStep}
-                                      onPress={handleAge}>
-                        <Text style={style.text}>Passer {">"}</Text>
+
+                    <TouchableOpacity onPress={handleSkip}>
+                        <Text style={style.skipText}>Passer {">"}</Text>
                     </TouchableOpacity>
 
                 </View>
 
-                <TouchableOpacity style={style.submit}>
+                <TouchableOpacity style={style.submit} onPress={handleNext}>
                     <Text style={style.buttonText}>Valider</Text>
                 </TouchableOpacity>
             </View>

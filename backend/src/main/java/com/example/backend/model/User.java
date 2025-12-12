@@ -39,6 +39,8 @@ public class User {
     @Column
     private boolean actif = true;
 
+    private Integer age;
+
     public User() {}
 
     public User(String pseudo, String email) {
