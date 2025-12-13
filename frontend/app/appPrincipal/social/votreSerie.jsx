@@ -5,10 +5,10 @@ import Navbar from "../../../components/Navbar";
 import Header from "../../../components/Header";
 
 export default function VotreSerie(){
-    const [onglets, setOnglets] = React.useState([
+    const onglets = [
         {id: "profil",label : "Votre profil", page : "votreProfil"},
         {id: "flamme",label : "Votre Série", page : "votreSerie"},
-    ]);
+    ];
 
     return(
 

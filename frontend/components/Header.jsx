@@ -179,8 +179,8 @@ export default function Header({
                                             <TouchableOpacity
                                                 key={onglet.id}
                                                 style={styles.ongletContainer}
-                                                onPress={() => !isActive && router.push(`/appPrincipal/social/${onglet.page}`)
-                                                }>
+                                                onPress={() => !isActive && router.push(`/appPrincipal/social/${onglet.page}`)}
+                                            >
                                                 <Text  style={styles.ongletLabel}>{onglet.label}</Text>
                                                 {isActive && <View style={styles.ongletUnderline}/>}
                                             </TouchableOpacity>

@@ -3,12 +3,18 @@ import Header from "../../../components/Header";
 import {useRouter} from "expo-router";
 import Navbar from "../../../components/Navbar";
 import React from "react";
+import TabNavbar from "../../../components/TabNavbar";
 
 export default function Classement(){
     const router = useRouter();
 
-    return(
+    const onglets = [
+        {id: "classement",label : "Leaderboard", page : "social/classement"},
+        {id: "concours",label : "Concours", page : "social/concours"},
+        {id: "evenements",label : "Événements", page : "social/evenements"},
+    ];
 
+    return(
         <View style={{ flex: 1, flexDirection: "row", backgroundColor: "#f5f5f5" }}>
             {
                 Platform.OS === 'web' &&
@@ -20,6 +26,7 @@ export default function Classement(){
             <View style={{ flex: 1}}>
                 <Header userDetails={true}/>
                 <ScrollView>
+                    {Platform.OS === 'web' && <TabNavbar onglets={onglets} pageBack={"social"}/>}
                     <View>
                         <Text>
                             Classement
