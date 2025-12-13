@@ -12,7 +12,9 @@ import flamme from "../assets/icones/flamme.png";
 import parametres from "../assets/icones/Header/parametres.png";
 import notificationPastille from "../assets/icones/Header/notificationPastille.png";
 import notificationSansPastille from "../assets/icones/Header/notificationSansPastille.png";
-import DEFAULT_PICTURE from "../assets/icones/Header/default_picture.png";
+import DEFAULT_PICTURE from "../assets/icones/default_picture.jpg";
+
+import {formatNombreCourt} from "../utils/format";
 
 export default function Header({
     recherche,setRecherche, //Barre de recherche (web)
@@ -42,13 +44,6 @@ export default function Header({
     };
 
     // Affichage des détails :
-    const formatNombreCourt  = (n) => {
-        return n >= 1e9 ? (n / 1e9).toFixed(1).replace('.0', '') + 'B'
-            : n >= 1e6 ? (n / 1e6).toFixed(1).replace('.0', '') + 'M'
-                : n >= 1e3 ? (n / 1e3).toFixed(1).replace('.0', '') + 'k'
-                    : n.toString();
-    };
-
     const userDetailsData = [
         {type : "points", valeur : 4501124},
         {type : "trophees", valeur : 654684},

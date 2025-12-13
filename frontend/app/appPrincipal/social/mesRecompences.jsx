@@ -1,13 +1,14 @@
 import {View} from "react-native";
 import {useRouter} from "expo-router";
 import React from "react";
+import style from "./styles/styles";
 
 export default function MesRecompences(){
     const router = useRouter();
 
     return(
 
-        <View style={{ flex: 1, flexDirection: "row", backgroundColor: "#f5f5f5" }}>
+        <View style={style.container}>
 
         </View>
 
