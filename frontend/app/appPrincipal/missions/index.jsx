@@ -8,10 +8,10 @@ import {isWeb} from "../../../utils/platform";
 
 import style from "./styles/styles";
 
-export default function VotreSerie(){
+export default function Index(){
     const onglets = [
-        {id: "missions",label : "Régulières", page : "missions"},
-        {id: "gestes",label : "Une fois", page : "gestes"},
+        {id: "missions",label : "Régulières", page : "missions/listes"},
+        {id: "gestes",label : "Une fois", page : "missions/gestes"},
     ];
 
     return(

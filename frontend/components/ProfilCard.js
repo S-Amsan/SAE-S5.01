@@ -1,7 +1,16 @@
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import {
+    View,
+    Text,
+    Image,
+    StyleSheet,
+    useWindowDimensions,
+} from "react-native";
 
 export default function ProfilCard({ photo, name, username }) {
+    const { width } = useWindowDimensions();
+    const styles = getStyles(width);
+
     return (
         <View style={styles.container}>
             <Image source={{ uri: photo }} style={styles.photo} />
@@ -14,39 +23,41 @@ export default function ProfilCard({ photo, name, username }) {
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flexDirection: "row",
-        alignItems: "center",
-        padding: 15,
-        marginTop: 15,
-        marginHorizontal: 40,
-        marginVertical: -40,
-    },
+const getStyles = (width) => {
+    const isSmall = width < 1100;
 
-    photo: {
-        width: 60,
-        height: 60,
-        borderRadius: 60,
-        borderWidth: 2,
-        borderColor: "white",
-    },
+    return StyleSheet.create({
+        container: {
+            flexDirection: "row",
+            alignItems: "center",
+            padding: 16,
+            marginTop: 24,
+        },
 
-    textContainer: {
-        marginLeft: 15,
-    },
+        photo: {
+            width: isSmall ? 48 : 60,
+            height: isSmall ? 48 : 60,
+            borderRadius: 999,
+            borderWidth: 2,
+            borderColor: "#fff",
+        },
 
-    name: {
-        fontSize: 24,
-        fontWeight: "700",
-        color: "white",
-        marginBottom: 5,
-    },
+        textContainer: {
+            marginLeft: 14,
+        },
 
-    username: {
-        fontSize: 16,
-        fontWeight: "500",
-        color: "#0A5F45",
-        opacity: 0.9,
-    },
-});
+        name: {
+            fontSize: isSmall ? 18 : 22,
+            fontWeight: "700",
+            color: "#fff",
+            lineHeight: 26,
+        },
+
+        username: {
+            fontSize: isSmall ? 14 : 16,
+            fontWeight: "500",
+            color: "#0A5F45",
+            opacity: 0.9,
+        },
+    });
+};

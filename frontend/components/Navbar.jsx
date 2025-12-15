@@ -22,8 +22,10 @@ import IconQrCodeOn from "../assets/icones/Navbar/QrCodeOn.png";
 import IconTrophyOn from "../assets/icones/Navbar/SocialOn.png";
 
 import ProfilCard from "./ProfilCard";
-import style from "./styles/StyleNavbar";
+import styles from "./styles/StyleNavbar";
 import {isWeb} from "../utils/platform"
+import {getStyles} from "./styles/StyleNavbar.web";
+import {useWindowDimensions} from "react-native-web";
 
 const BASE_URL = "http://localhost:8080/uploads/";
 
@@ -46,6 +48,8 @@ function UserCard({ user }) {
 // NAVBAR PRINCIPALE
 // ------------------------------
 export default function Navbar() {
+    const { width } = useWindowDimensions();
+    const styles = getStyles(width);
     const router = useRouter();
     const pathname = usePathname();
 
@@ -62,7 +66,7 @@ export default function Navbar() {
 
     const tabs = [
         { id: "accueil", label: "Accueil", Icon: IconAccueil, IconActive: IconAccueilOn },
-        { id: "missions", label: "Missions", Icon: IconMission, IconActive: IconMissionOn },
+        { id: "missions/listes", label: "Missions", Icon: IconMission, IconActive: IconMissionOn },
         { id: "social", label: "Social", Icon: IconTrophy, IconActive: IconTrophyOn },
         { id: "boutique", label: "Boutique", Icon: IconBoutique, IconActive: IconBoutiqueOn },
         { id: "qrcode", label: "QR Code", Icon: IconQrCode, IconActive: IconQrCodeOn },
@@ -74,19 +78,19 @@ export default function Navbar() {
     // ---------------- WEB ----------------
     if (isWeb) {
         return (
-            <LinearGradient colors={["#1DDE9A", "#1FDDA0"]} style={style.container}>
+            <LinearGradient colors={["#1DDE9A", "#1FDDA0"]} style={styles.container}>
                 <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
 
-                    <View style={style.titleContainer}>
+                    <View style={styles.titleContainer}>
                         <Image
                             source={require("../assets/logo.png")}
-                            style={style.logo}
+                            style={styles.logo}
                             resizeMode="contain"
                         />
-                        <Text style={style.title}>EcoCeption</Text>
+                        <Text style={styles.title}>EcoCeption</Text>
                     </View>
 
-                    <View style={style.tabsContainer}>
+                    <View style={styles.tabsContainer}>
                         {tabs.map((tab) => {
                             const isActive = pathname.startsWith(`/appPrincipal/${tab.id}`);
                             console.log(pathname)
@@ -95,18 +99,18 @@ export default function Navbar() {
                             return (
                                 <TouchableOpacity
                                     key={tab.id}
-                                    style={style.tabs}
+                                    style={styles.tabs}
                                     activeOpacity={0.7}
                                     onPress={() => router.push(`/appPrincipal/${tab.id}`)}
                                 >
                                     <Image
                                         source={IconComponent}
-                                        style={[style.Icon, !isActive && { opacity: 0.45 }]}
+                                        style={[styles.Icon, !isActive && { opacity: 0.45 }]}
                                     />
 
                                     <Text
                                         style={[
-                                            style.IconText,
+                                            styles.IconText,
                                             isActive
                                                 ? { color: "#FFFFFF", fontWeight: "600" }
                                                 : { color: "#107956", fontWeight: "400" }
@@ -130,7 +134,7 @@ export default function Navbar() {
 
     // ---------------- MOBILE ----------------
     return (
-        <View style={style.container}>
+        <View style={styles.container}>
             {tabs.slice(0,4).map((tab) => {
                 const isActive = pathname.startsWith(`/appPrincipal/${tab.id}`);
                 const IconComponent = isActive ? tab.IconActive : tab.Icon;

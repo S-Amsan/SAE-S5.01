@@ -1,75 +1,70 @@
-import {Dimensions, StyleSheet} from "react-native";
+import { StyleSheet, Platform } from "react-native";
 
-const { width, height } = Dimensions.get('window');
+export const getStyles = (width) => {
+    const isSmall = width < 1100;
+    const isMedium = width >= 1100 && width < 1600;
 
-export default StyleSheet.create({
-    container: {
-      width: "100%",
-      height: "100%",
-    },
-    webview: {
-        position: "fixed",
-        left: 0,
-        top: 0,
-        height: '100%',
-        backgroundColor: '#00DB83',
-        flexDirection: 'column',
-        zIndex: 100,
-    },
+    return StyleSheet.create({
+        container: {
+            flex: 1,
+            width: "100%",
+        },
 
-    titleContainer: {
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        marginLeft : 20,
-        marginBottom: height * 0.05,
-        marginTop: height * 0.02,
-        alignItems:'center'
-    },
+        webview: {
+            position: "fixed",
+            left: 0,
+            top: 0,
+            width: isSmall ? 80 : isMedium ? 200 : 260,
+            height: "100vh",
+            backgroundColor: "#00DB83",
+            zIndex: 100,
+            display: Platform.OS === "web" ? "flex" : "none",
+        },
 
-    logo: {
-        width: 60,
-        height: 60,
+        titleContainer: {
+            flexDirection: "row",
+            alignItems: "center",
+            marginHorizontal: 16,
+            marginVertical: 24,
+        },
 
-    },
+        logo: {
+            width: isSmall ? 40 : 60,
+            height: isSmall ? 40 : 60,
+        },
 
-    title: {
-        color: '#FFFFFF',
-        fontSize: 32,
-        fontWeight: 600,
-        textShadowColor: 'rgba(0, 0, 0, 0.1)',
-        textShadowOffset: { width: 1, height: 1 },
-        textShadowRadius: 2,
+        title: {
+            color: "#FFFFFF",
+            fontSize: isSmall ? 16 : isMedium ? 25 : 32,
+            fontWeight: "600",
+            whiteSpace: "nowrap",
+        },
 
-    },
+        tabsContainer: {
+            flex: 1,
+            padding: 12,
+        },
 
-    tabsContainer: {
-        alignItems: 'center',
-        alignSelf: 'center',
-        height: '100%',
-        padding : 10,
-    },
+        tabs: {
+            paddingVertical: 12,
+            paddingHorizontal: 15,
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 8,
+            width: "100%",
+            borderRadius: 10,
+            cursor: "pointer",
+        },
 
-    tabs: {
-        paddingVertical: 12,
-        paddingHorizontal: 15,
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 8,
-        width: '95%',
-        borderRadius: 10,
-        transition: 'all 0.3s ease',
+        Icon: {
+            width: isSmall ? 24 : 32,
+            height: isSmall ? 24 : 32,
+        },
 
-    },
-
-    Icon:{
-        width:35,
-        height:35,
-    },
-
-    IconText: {
-        fontSize: 24,
-        fontWeight: "regular",
-        marginLeft: 25,
-
-    }
-});
+        IconText: {
+            fontSize: isSmall ? 14 : 18,
+            marginLeft: 16,
+            color: "#fff",
+        },
+    });
+};
