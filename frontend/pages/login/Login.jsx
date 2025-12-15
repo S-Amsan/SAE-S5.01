@@ -11,10 +11,12 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import {useNavigation, useRouter} from "expo-router";
 import { Ionicons } from '@expo/vector-icons';
+import { login } from "../../services/authService";
 import style from "./styles/loginStyles";
 
 export default function Login(){
     const router = useRouter();
+    const [error, setError] = useState(null);
 
     const navigation = useNavigation();
     const [email, setEmail] = useState('');
@@ -22,35 +24,13 @@ export default function Login(){
     const [showPassword, setShowPassword] = useState(false);
 
     const handleLogin = async () => {
-        /*try {
-            console.log("Connexion :", { email, password });
-
-            const response = await fetch("http://localhost:8080/api/auth/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }),
-            });
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.log("Erreur backend :", errorText);
-                alert("Email ou mot de passe incorrect");
-                return;
-            }
-
-            const data = await response.json();
-            console.log("Utilisateur connecté :", data);
-
-            alert("Connexion réussie !");
-
-        } catch (error) {
-            console.log("Erreur réseau :", error);
-            alert("Impossible de contacter le serveur");
+        try {
+            await login(email, password);
+            router.replace("/appPrincipal/accueil");
+        } catch (e) {
+            setError(e.message);
         }
-         */
-        router.replace('appPrincipal/accueil');
     };
-
 
     const handleSignUp = () => {
         navigation.navigate('SignUp');
