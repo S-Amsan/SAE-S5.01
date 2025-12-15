@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import {ScrollView, View, ActivityIndicator, Platform} from "react-native";
-import Header from "../../components/Header";
-import PostCard from "../../components/PostCard";
+import Header from "../../../components/Header";
+import PostCard from "../../../components/PostCard";
 import style from "./styles/accueilStyle"
-import Navbar from "../../components/Navbar";
-export default function Accueil() {
+import Navbar from "../../../components/Navbar";
+export default function Index() {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -18,6 +18,13 @@ export default function Accueil() {
             .catch(err => console.log(err));
     }, []);
 
+    const [recherche, setRecherche] = useState("");
+
+    const [filtres, setFiltres] = useState([
+        { id: "tri", options: ["Récent", "Ancien"], select: "Récent" },
+        { id: "lieu", options: ["France", "Autre"], select: "France" }
+    ]);
+
     return (
         <View style={{ flex: 1, flexDirection: "row", backgroundColor: "#f5f5f5" }}>
             {
@@ -29,7 +36,13 @@ export default function Accueil() {
                     <Navbar/>
             }
             <View style={{ flex: 1}}>
-                <Header />
+                <Header recherche={recherche}
+                        setRecherche={setRecherche}
+                        filtres={filtres}
+                        setFiltres={setFiltres}
+                        userDetails={true}
+                        userProfil={true}/>
+
                 <View style={{flex: 1,
                     paddingHorizontal: 15,
                     paddingTop: 10,}}>

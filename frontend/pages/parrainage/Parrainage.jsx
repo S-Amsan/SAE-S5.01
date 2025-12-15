@@ -4,7 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import style from "./styles/parrainageStyles";
 import { useNavigation } from "expo-router";
 import Toast from "react-native-toast-message";
-import { loadRegisterData, updateRegisterData } from "../services/RegisterStorage";
+import { loadRegisterData, updateRegisterData } from "../../services/RegisterStorage";
 
 export default function Parrainage() {
     const navigation = useNavigation();
@@ -40,7 +40,7 @@ export default function Parrainage() {
         <LinearGradient colors={["#00DB83", "#0CD8A9"]} style={style.gradient}>
             <View style={style.container}>
                 <Image
-                    source={require("../assets/logo.png")}
+                    source={require("../../assets/logo.png")}
                     style={style.logo}
                     resizeMode="contain"
                 />
@@ -58,7 +58,8 @@ export default function Parrainage() {
                         onChangeText={setParrainCode}
                     />
 
-                    <TouchableOpacity onPress={handleSkip}>
+
+                    <TouchableOpacity onPress={handleSkip} style={style.skip}>
                         <Text style={style.skipText}>Passer {">"}</Text>
                     </TouchableOpacity>
                 </View>

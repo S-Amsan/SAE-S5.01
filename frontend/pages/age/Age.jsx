@@ -1,8 +1,8 @@
 import { Image, View, Text, TextInput, TouchableOpacity } from "react-native";
 import React, { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import style from "./styles/parrainageStyles";
-import { loadRegisterData, updateRegisterData } from "../services/RegisterStorage";
+import style from "./styles/ageStyles";
+import { loadRegisterData, updateRegisterData } from "../../services/RegisterStorage";
 import { useNavigation } from "expo-router";
 import Toast from "react-native-toast-message";
 
@@ -52,7 +52,7 @@ export default function Age() {
         >
             <View style={style.container}>
                 <Image
-                    source={require("../assets/logo.png")}
+                    source={require("../../assets/logo.png")}
                     style={style.logo}
                     resizeMode="contain"
                 />
@@ -72,7 +72,7 @@ export default function Age() {
                         onChangeText={setAge}
                     />
 
-                    <TouchableOpacity onPress={handleSkip}>
+                    <TouchableOpacity onPress={handleSkip} style={style.skip}>
                         <Text style={style.skipText}>Passer {">"}</Text>
                     </TouchableOpacity>
                 </View>

@@ -1,6 +1,6 @@
 import {Platform, ScrollView, Text, View} from "react-native";
-import Header from "../../components/Header";
-import Navbar from "../../components/Navbar";
+import Header from "../../../components/Header";
+import Navbar from "../../../components/Navbar";
 import React from "react";
 
 export default function Missions(){

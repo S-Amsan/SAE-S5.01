@@ -1,16 +1,26 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image, ActivityIndicator, Platform } from "react-native";
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    Image,
+    ActivityIndicator,
+    Platform
+} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "expo-router";
 import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from "expo-image-manipulator";
 import Toast from "react-native-toast-message";
 import { router } from "expo-router";
 
 import {
     loadRegisterData,
     clearRegisterData,
-    updateRegisterData, saveUser
-} from "../services/RegisterStorage";
+    updateRegisterData,
+    saveUser
+} from "../../services/RegisterStorage";
 
 import styles from "./styles/photoStyles";
 
@@ -21,9 +31,16 @@ export default function Photo() {
     const [name, setName] = useState("");
     const [loading, setLoading] = useState(false);
 
-    // =====================================================
-    // CHARGEMENT INITIAL DES DONNÉES
-    // =====================================================
+    // ===============================
+    // Permissions Image Picker
+    // ===============================
+    useEffect(() => {
+        ImagePicker.requestMediaLibraryPermissionsAsync();
+    }, []);
+
+    // ===============================
+    // Load saved registration data
+    // ===============================
     useEffect(() => {
         async function load() {
             const saved = await loadRegisterData();
@@ -34,52 +51,66 @@ export default function Photo() {
         load();
     }, []);
 
-    // =====================================================
-    // PICK IMAGE
-    // =====================================================
+    // ===============================
+    // PICK IMAGE (Mobile + Web)
+    // ===============================
     const pickImage = async () => {
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
             quality: 0.7
         });
 
-        if (!result.canceled) {
-            const uri = result.assets[0].uri;
+        if (result.canceled) return;
 
-            let blob = null;
-            if (Platform.OS === "web") {
-                blob = await fetch(uri).then(r => r.blob());
-            }
+        let uri = result.assets[0].uri;
 
-            await updateRegisterData({ photo: { uri, blob } });
-
-            setPhotoUri(uri);
-            Toast.show({ type: "success", text1: "Photo sélectionnée" });
+        // Convert HEIC → JPEG (iOS only)
+        if (Platform.OS !== "web") {
+            const manipulated = await ImageManipulator.manipulateAsync(
+                uri,
+                [{ resize: { width: 1024 } }],
+                { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG }
+            );
+            uri = manipulated.uri;
         }
+
+        // Save lightweight data only
+        await updateRegisterData({ photo: { uri } });
+
+        setPhotoUri(uri);
+        Toast.show({ type: "success", text1: "Photo sélectionnée" });
     };
 
-    // =====================================================
-    // FIN D’INSCRIPTION
-    // =====================================================
+    // ===============================
+    // SUBMIT REGISTRATION
+    // ===============================
     const handleFinishSignup = async () => {
-        if (!photoUri) {
-            return Toast.show({ type: "error", text1: "Photo requise", text2: "Veuillez choisir une photo." });
-        }
+        if (!photoUri)
+            return Toast.show({
+                type: "error",
+                text1: "Photo requise",
+                text2: "Veuillez choisir une photo."
+            });
 
-        if (name.trim().length === 0) {
-            return Toast.show({ type: "error", text1: "Nom manquant", text2: "Veuillez entrer un nom." });
-        }
+        if (name.trim().length === 0)
+            return Toast.show({
+                type: "error",
+                text1: "Nom manquant",
+                text2: "Veuillez entrer un nom."
+            });
 
         const data = await loadRegisterData();
-
-        if (!data) {
-            return Toast.show({ type: "error", text1: "Erreur", text2: "Données d'inscription introuvables." });
-        }
+        if (!data)
+            return Toast.show({
+                type: "error",
+                text1: "Erreur",
+                text2: "Données d'inscription introuvables."
+            });
 
         await updateRegisterData({ name: name.trim() });
 
         const formData = new FormData();
-
         formData.append("pseudo", data.pseudo);
         formData.append("email", data.email);
         formData.append("password", data.password);
@@ -88,28 +119,21 @@ export default function Photo() {
         formData.append("parrainCode", data.parrainCode ?? "");
         formData.append("name", name.trim());
 
-        // ============================
-        // PHOTO - WEB vs MOBILE
-        // ============================
-        let fileToSend;
-
+        // ===============================
+        // Handle photo properly
+        // ===============================
         if (Platform.OS === "web") {
-            const blob = await fetch(photoUri).then((r) => r.blob());
-            fileToSend = blob;
+            const blob = await fetch(photoUri).then(r => r.blob());
+            formData.append("photo", blob, "profile.jpg");
         } else {
-            fileToSend = {
+            formData.append("photo", {
                 uri: photoUri,
                 type: "image/jpeg",
                 name: "profile.jpg"
-            };
+            });
         }
 
-        formData.append("photo", fileToSend, "profile.jpg");
-
-        // ============================
-
         setLoading(true);
-
         try {
             const response = await fetch("http://localhost:8080/api/auth/signupMultipart", {
                 method: "POST",
@@ -117,34 +141,36 @@ export default function Photo() {
             });
 
             const user = await response.json();
-            await saveUser(user);
-
+            await saveUser(user); // Save to AsyncStorage
 
             if (!response.ok) {
-                const errorText = await response.text();
-                Toast.show({ type: "error", text1: "Erreur d'inscription", text2: errorText });
+                Toast.show({
+                    type: "error",
+                    text1: "Erreur d'inscription",
+                    text2: JSON.stringify(user)
+                });
                 return;
             }
 
             await clearRegisterData();
-
             Toast.show({ type: "success", text1: "Compte créé", text2: "Bienvenue !" });
 
             router.replace("/appPrincipal/accueil");
-
         } catch (err) {
             console.log("Erreur réseau:", err);
-            Toast.show({ type: "error", text1: "Erreur réseau", text2: "Impossible de contacter le serveur." });
+            Toast.show({
+                type: "error",
+                text1: "Erreur réseau",
+                text2: "Impossible de contacter le serveur."
+            });
         }
 
         setLoading(false);
     };
 
-
     return (
         <LinearGradient colors={["#00DB83", "#0CD8A9"]} style={styles.gradient}>
             <View style={styles.container}>
-
                 <Text style={styles.title}>Personnaliser{"\n"}votre profil</Text>
 
                 <Text style={styles.label}>Photo de profil</Text>
@@ -156,7 +182,7 @@ export default function Photo() {
                                 <Image source={{ uri: photoUri }} style={styles.photoPreview} />
                             ) : (
                                 <Image
-                                    source={require("../assets/icones/photo.png")}
+                                    source={require("../../assets/icones/photo.png")}
                                     style={styles.cameraIcon}
                                 />
                             )}

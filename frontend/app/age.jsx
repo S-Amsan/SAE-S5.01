@@ -1,4 +1,4 @@
-import Age from "../pages/Age";
+import Age from "../pages/age/Age";
 
 export default function Splash() {
     return <Age/>;

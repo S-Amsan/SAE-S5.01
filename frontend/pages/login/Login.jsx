@@ -70,7 +70,7 @@ export default function Login(){
                             showsVerticalScrollIndicator={false}>
                 <View style={style.container}>
                     <Image
-                        source={require('../assets/logo.png')}
+                        source={require('../../assets/logo.png')}
                         style={style.logo}
                         resizeMode="contain"
                     />
@@ -172,7 +172,7 @@ export default function Login(){
                 </ScrollView>
                     ) : ( <View style={style.container}>
                 <Image
-                    source={require('../assets/logo.png')}
+                    source={require('../../assets/logo.png')}
                     style={style.logo}
                     resizeMode="contain"
                 />

@@ -42,7 +42,15 @@ export default StyleSheet.create({
         backgroundColor: "#fff",
         alignItems: "center",
         justifyContent: "center",
+        overflow: "hidden",
     },
+
+    photoPreview: {
+        width: "100%",
+        height: "100%",
+        resizeMode: "cover",
+    },
+
 
     cameraIcon: {
         width: 50,

@@ -6,7 +6,7 @@ import {
     verticalScale,
     moderateScale,
     isTablet,
-} from "../../utils/dimensions";
+} from "../../../utils/dimensions";
 export default StyleSheet.create({
     gradient: {
         flex: 1,
@@ -54,16 +54,20 @@ export default StyleSheet.create({
         marginLeft: 5,
     },
     textInput: {
+        outlineStyle: "none",
         backgroundColor: '#F8F9FA',
         borderWidth: 1,
         borderColor: '#E9ECEF',
         borderRadius: 15,
-        padding: 18,
+        paddingHorizontal: 18,
+        paddingVertical: 12,
         fontSize: 16,
+        lineHeight: 22,
         color: '#333',
         width: '100%',
-        height:50,
+        minHeight: 48,
     },
+
     phoneInputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -93,6 +97,7 @@ export default StyleSheet.create({
         color: '#333',
     },
     phoneInput: {
+        outlineStyle: "none",
         flex: 1,
         padding: 18,
         fontSize: 16,

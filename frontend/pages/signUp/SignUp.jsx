@@ -13,7 +13,7 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from "expo-router";
 import { Ionicons } from '@expo/vector-icons';
-import {saveRegisterData, loadRegisterData, clearRegisterData} from "../services/RegisterStorage";
+import {saveRegisterData, loadRegisterData, clearRegisterData} from "../../services/RegisterStorage";
 import Toast from "react-native-toast-message";
 
 
@@ -250,7 +250,7 @@ export default function SignUp(){
                             showsVerticalScrollIndicator={false}>
                 <View style={style.container}>
                     <Image
-                        source={require('../assets/logo.png')}
+                        source={require('../../assets/logo.png')}
                         style={style.logo}
                         resizeMode="contain"
                     />
@@ -367,7 +367,7 @@ export default function SignUp(){
             ) : ( <View style={style.container}>
 
                 <Image
-                    source={require('../assets/logo.png')}
+                    source={require('../../assets/logo.png')}
                     style={style.logo}
                     resizeMode="contain"
                 />

@@ -6,7 +6,7 @@ import {
     verticalScale,
     moderateScale,
     isTablet,
-} from "../../utils/dimensions";
+} from "../../../utils/dimensions";
 
 export default StyleSheet.create({
     gradient: {

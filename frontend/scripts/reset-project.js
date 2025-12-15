@@ -2,7 +2,7 @@
 
 /**
  * This script is used to reset the project to a blank state.
- * It deletes or moves the /appPrincipal, /components, /hooks, /scripts, and /constants directories to /appPrincipal-example based on user input and creates a new /appPrincipal directory with an accueil.jsx and _layout.tsx file.
+ * It deletes or moves the /appPrincipal, /components, /hooks, /scripts, and /constants directories to /appPrincipal-example based on user input and creates a new /appPrincipal directory with an index.jsx and _layout.tsx file.
  * You can remove the `reset-project` script from package.json and safely delete this file after running it.
  */
 
@@ -75,10 +75,10 @@ const moveDirectories = async (userInput) => {
     await fs.promises.mkdir(newAppDirPath, { recursive: true });
     console.log("\n📁 New /appPrincipal directory created.");
 
-    // Create accueil.jsx
-    const indexPath = path.join(newAppDirPath, "accueil.jsx");
+    // Create index.jsx
+    const indexPath = path.join(newAppDirPath, "index.jsx");
     await fs.promises.writeFile(indexPath, indexContent);
-    console.log("📄 appPrincipal/accueil.jsx created.");
+    console.log("📄 appPrincipal/index.jsx created.");
 
     // Create _layout.tsx
     const layoutPath = path.join(newAppDirPath, "_layout.tsx");
