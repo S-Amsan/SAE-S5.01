@@ -170,13 +170,13 @@ export default function Header({
                             {onglets && (
                                 <View style={styles.ongletsContainer}>
                                     {onglets.map(onglet => {
-                                        const isActive = pathname === `/appPrincipal/social/${onglet.page}`;
+                                        const isActive = pathname === `/appPrincipal/${onglet.page}`;
 
                                         return (
                                             <TouchableOpacity
                                                 key={onglet.id}
                                                 style={styles.ongletContainer}
-                                                onPress={() => !isActive && router.push(`/appPrincipal/social/${onglet.page}`)}
+                                                onPress={() => !isActive && router.push(`/appPrincipal/${onglet.page}`)}
                                             >
                                                 <Text  style={styles.ongletLabel}>{onglet.label}</Text>
                                                 {isActive && <View style={styles.ongletUnderline}/>}

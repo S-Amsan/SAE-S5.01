@@ -1,17 +1,17 @@
 import {View} from "react-native";
 import React from "react";
 
-import Navbar from "../../../components/Navbar";
-import Header from "../../../components/Header";
+import Navbar from "../../../../components/Navbar";
+import Header from "../../../../components/Header";
 
-import {isWeb} from "../../../utils/platform";
+import {isWeb} from "../../../../utils/platform";
 
 import style from "./styles/styles";
 
 export default function Profil(){
     const onglets = [
-        {id: "profil",label : "Votre profil", page : "votreProfil"},
-        {id: "flamme",label : "Votre Série", page : "votreSerie"},
+        {id: "profil",label : "Votre profil", page : "social/votreProfil"},
+        {id: "flamme",label : "Votre Série", page : "social/votreSerie"},
     ];
 
     return(

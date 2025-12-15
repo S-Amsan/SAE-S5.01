@@ -88,7 +88,8 @@ export default function Navbar() {
 
                     <View style={style.tabsContainer}>
                         {tabs.map((tab) => {
-                            const isActive = pathname === `/appPrincipal/${tab.id}`;
+                            const isActive = pathname.startsWith(`/appPrincipal/${tab.id}`);
+                            console.log(pathname)
                             const IconComponent = isActive ? tab.IconActive : tab.Icon;
 
                             return (
@@ -131,7 +132,7 @@ export default function Navbar() {
     return (
         <View style={style.container}>
             {tabs.slice(0,4).map((tab) => {
-                const isActive = pathname === `/appPrincipal/${tab.id}`;
+                const isActive = pathname.startsWith(`/appPrincipal/${tab.id}`);
                 const IconComponent = isActive ? tab.IconActive : tab.Icon;
                 return (
                     <Pressable

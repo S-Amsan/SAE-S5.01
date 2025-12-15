@@ -2,22 +2,22 @@ import {Image, Pressable, ScrollView, Text, View} from "react-native";
 import { useRouter } from "expo-router";
 import React from "react";
 
-import Header from "../../../components/Header";
-import Navbar from "../../../components/Navbar";
+import Header from "../../../../components/Header";
+import Navbar from "../../../../components/Navbar";
 import {Ionicons} from "@expo/vector-icons";
 
-import calendrier from "../../../assets/icones/social/calendrier.png";
-import medaille from "../../../assets/icones/social/medaille.png";
-import trophee from "../../../assets/icones/social/trophee.png";
-import cadena from "../../../assets/icones/social/cadena.png";
-import DEFAULT_PICTURE from "../../../assets/icones/default_picture.jpg";
-import tropheeIcon from "../../../assets/icones/trophee.png";
+import calendrier from "../../../../assets/icones/social/calendrier.png";
+import medaille from "../../../../assets/icones/social/medaille.png";
+import trophee from "../../../../assets/icones/social/trophee.png";
+import cadena from "../../../../assets/icones/social/cadena.png";
+import DEFAULT_PICTURE from "../../../../assets/icones/default_picture.jpg";
+import tropheeIcon from "../../../../assets/icones/trophee.png";
 
-import {formatNombreCourt,formatNombreEspace} from "../../../utils/format";
-import {tempsRestant} from "../../../utils/temps";
-import {isWeb} from "../../../utils/platform";
+import {formatNombreCourt,formatNombreEspace} from "../../../../utils/format";
+import {tempsRestant} from "../../../../utils/temps";
+import {isWeb} from "../../../../utils/platform";
 
-import {getRequiredTrophiesByRankName,RANG_MINIMUM_EVENEMENT} from "../../../constants/rank"
+import {getRequiredTrophiesByRankName,RANG_MINIMUM_EVENEMENT} from "../../../../constants/rank"
 
 import styles from "./styles/styles";
 
@@ -32,7 +32,6 @@ const VoirPlusWeb = () => {
     return null;
 }
 
-
 const VoirPlusMobile = () => {
     if (!isWeb) {
         return (
@@ -41,6 +40,7 @@ const VoirPlusMobile = () => {
     }
     return null;
 }
+
 const ProfilCarte = ({onPress, user_DATA}) => {
 
     return (
@@ -198,8 +198,6 @@ const Evenements = ({onPress, evenements_DATA, evenements_user_DATA, user_DATA})
     )
 }
 
-const PODIUM_ORDRE = [1, 0, 2];
-
 const Classement = ({onPress, user_DATA, podium_DATA}) => {
     if (!podium_DATA || podium_DATA.length < 3) return null;
 
@@ -240,11 +238,42 @@ const Classement = ({onPress, user_DATA, podium_DATA}) => {
     )
 }
 
-const podiumStyle = [
-    {place : {backgroundColor :"#fdd34e",width: "80%", height: "55%"}, text : {fontSize : 30, color : "#ffffff"}, picture : {width : 30, height : 30}},
-    {place :{backgroundColor :"#f7f7f7",width: "80%", height: "45%"}, text : {fontSize : 20, color : "#878787"}, picture : {width : 25, height : 25}},
-    {place :{backgroundColor :"#e8e8e8",width: "80%", height: "30%"}, text : {fontSize : 16, color : "#878787"}, picture : {width : 20, height : 20}},
+
+const PODIUM_ORDRE = [1, 0, 2];
+
+const PODIUM_COLORS = ["#fdd34e", "#f7f7f7", "#e8e8e8"];
+
+const PODIUM_TEXT = [
+    { fontSize: 30, color: "#ffffff" },
+    { fontSize: 20, color: "#878787" },
+    { fontSize: 16, color: "#878787" },
 ];
+
+const PODIUM_CONFIG = isWeb
+    ? {
+        widths: ["80%", "70%", "60%"],
+        heights: ["40%", "35%", "30%"],
+        pictures: [100, 90, 80],
+    }
+    : {
+        widths: ["80%", "80%", "80%"],
+        heights: ["55%", "45%", "30%"],
+        pictures: [30, 25, 20],
+    };
+
+const podiumStyle = [0, 1, 2].map((index) => ({
+    place: {
+        backgroundColor: PODIUM_COLORS[index],
+        width: PODIUM_CONFIG.widths[index],
+        height: PODIUM_CONFIG.heights[index],
+    },
+    text: PODIUM_TEXT[index],
+    picture: {
+        width: PODIUM_CONFIG.pictures[index],
+        height: PODIUM_CONFIG.pictures[index],
+    },
+}));
+
 
 const Place = ({user_DATA}) => {
     const num = user_DATA.Classement;
@@ -342,7 +371,7 @@ export default function Social(){
                 <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                     {!isWeb &&
                         <ProfilCarte
-                            onPress={() => router.push("./social/votreProfil")}
+                            onPress={() => router.push("./votreProfil")}
                             user_DATA={user_DATA}
                         />
                     }
@@ -351,13 +380,13 @@ export default function Social(){
                         <View style={styles.cartesContainer}>
 
                             <Concours
-                                onPress={() => router.push("./social/concours")}
+                                onPress={() => router.push("./concours")}
                                 concours_DATA={concours_DATA}
                                 concours_user_DATA={concours_user_DATA}
                             />
 
                             <Evenements
-                                onPress={() => router.push("./social/evenements")}
+                                onPress={() => router.push("./evenements")}
                                 evenements_DATA={evenements_DATA}
                                 evenements_user_DATA={evenements_user_DATA}
                                 user_DATA={user_DATA}
@@ -366,7 +395,7 @@ export default function Social(){
                         </View>
                         <View style={styles.classementContainer}>
                             <Classement
-                                onPress={() => router.push("./social/classement")}
+                                onPress={() => router.push("./classement")}
                                 user_DATA={user_DATA}
                                 podium_DATA={podium_DATA}
                             />

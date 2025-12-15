@@ -1,16 +1,15 @@
 import {ScrollView, Text, View} from "react-native";
-import {useRouter} from "expo-router";
 import React from "react";
 
-import Navbar from "../../../components/Navbar";
-import Header from "../../../components/Header";
-import TabNavbar from "../../../components/TabNavbar";
+import Navbar from "../../../../components/Navbar";
+import Header from "../../../../components/Header";
+import TabNavbarWeb from "../../../../components/TabNavbarWeb";
 
-import {isWeb} from "../../../utils/platform";
+import {isWeb} from "../../../../utils/platform";
 
 import style from "./styles/styles";
 
-export default function Concours(){
+export default function Evenements() {
 
     const onglets = [
         {id: "classement",label : "Leaderboard", page : "social/classement"},
@@ -28,12 +27,12 @@ export default function Concours(){
             }
 
             <View style={{ flex: 1}}>
-                {isWeb ? <Header userDetails={true}/> : <Header titre={"Concours"} boutonRetour={true}/>}
+                {isWeb ? <Header userDetails={true}/> : <Header titre={"Événements"} boutonRetour={true}/>}
                 <ScrollView>
-                    {isWeb && <TabNavbar onglets={onglets} pageBack={"social"}/>}
+                    {isWeb && <TabNavbarWeb onglets={onglets} pageBack={"social"}/>}
                     <View>
                         <Text>
-                            Concours
+                            Événements
                         </Text>
                     </View>
                 </ScrollView>

@@ -4,7 +4,7 @@ import {Ionicons} from "@expo/vector-icons";
 import {usePathname, useRouter} from "expo-router";
 
 
-export default function TabNavbar({
+export default function TabNavbarWeb({
     onglets,
     pageBack // Mettre la page (appPrincipal) vers la quelle le bouton redirige (exemple : "social" -> redirige vers /appPrincipal/social
     }){

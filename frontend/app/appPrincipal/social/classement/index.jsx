@@ -1,13 +1,13 @@
 import {ScrollView, Text, View} from "react-native";
 import React from "react";
 
-import Navbar from "../../../components/Navbar";
-import Header from "../../../components/Header";
-import TabNavbar from "../../../components/TabNavbar";
+import Navbar from "../../../../components/Navbar";
+import Header from "../../../../components/Header";
+import TabNavbarWeb from "../../../../components/TabNavbarWeb";
 
-import {isWeb} from "../../../utils/platform";
+import {isWeb} from "../../../../utils/platform";
 
-import style from "./styles/styles";
+import styles from "./styles/styles";
 
 export default function Classement(){
 
@@ -18,7 +18,7 @@ export default function Classement(){
     ];
 
     return(
-        <View style={[style.container, {backgroundColor: "#05D991"}]}>
+        <View style={[styles.container, !isWeb && {backgroundColor: "#05D991"}]}>
             {
                 isWeb &&
                 <View style={{ width: "15%" }}>
@@ -29,7 +29,7 @@ export default function Classement(){
             <View style={{ flex: 1}}>
                 {isWeb ? <Header userDetails={true}/> : <Header titre={"Classement"} boutonRetour={true} fondTransparent={true}/>}
                 <ScrollView>
-                    {isWeb && <TabNavbar onglets={onglets} pageBack={"social"}/>}
+                    {isWeb && <TabNavbarWeb onglets={onglets} pageBack={"social"}/>}
                     <View>
                         <Text>
                             Classement
