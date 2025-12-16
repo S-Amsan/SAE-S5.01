@@ -5,12 +5,12 @@ import {
     Image,
     ScrollView,
     Platform,
-    Pressable
+    Pressable, useWindowDimensions
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter, usePathname } from "expo-router";
-
+import { useNotifications } from "./NotificationContext"; // en haut du fichier
 import { loadUser } from "../services/RegisterStorage";
 
 import IconAccueil from "../assets/icones/Navbar/Acceuil.png";
@@ -55,6 +55,13 @@ function UserCard({ user }) {
 export default function Navbar() {
     const router = useRouter();
     const pathname = usePathname();
+    const { openDrawer, setNavbarWidth } = useNotifications();
+    const { width } = useWindowDimensions();
+
+    const navbarWidth = width > 1024 ? 280 : width * 0.25; // max 280px, sinon 25% de l'écran
+    const iconSize = width > 1024 ? 32 : 24; // icônes plus petites sur petit écran
+    const paddingVertical = width > 1024 ? 16 : 8;
+
 
     const [user, setUser] = useState(null);
 
@@ -81,7 +88,14 @@ export default function Navbar() {
     // ---------------- WEB ----------------
     if (Platform.OS === "web") {
         return (
-            <LinearGradient colors={["#1DDE9A", "#1FDDA0"]} style={style.container}>
+            <LinearGradient
+                colors={["#1DDE9A", "#1FDDA0"]}
+                style={style.container}
+                onLayout={(e) => {
+                    setNavbarWidth(e.nativeEvent.layout.width);
+                }}
+
+            >
                 <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
 
                     <View style={style.titleContainer}>
@@ -103,7 +117,13 @@ export default function Navbar() {
                                     key={tab.id}
                                     style={style.tabs}
                                     activeOpacity={0.7}
-                                    onPress={() => router.push(`/appPrincipal/${tab.id}`)}
+                                    onPress={() => {
+                                        if (tab.id === "notifications") {
+                                            openDrawer();
+                                        } else {
+                                            router.push(`/appPrincipal/${tab.id}`);
+                                        }
+                                    }}
                                 >
                                     <Image
                                         source={IconComponent}
