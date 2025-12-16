@@ -2,7 +2,7 @@ import React from "react";
 import {StyleSheet, View, Text, TouchableOpacity} from "react-native";
 
 
-export default function TabNavbarWeb({ongletActifId, onglets, setOngletActif}){
+export default function TabNavbarMobile({ongletActifId, onglets, setOngletActif}){
 
     return (
         <View style={styles.container}>
