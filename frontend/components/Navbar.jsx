@@ -22,7 +22,7 @@ import IconQrCodeOn from "../assets/icones/Navbar/QrCodeOn.png";
 import IconTrophyOn from "../assets/icones/Navbar/SocialOn.png";
 
 import ProfilCard from "./ProfilCard";
-import styles from "./styles/StyleNavbar";
+import mobileStyles from "./styles/StyleNavbar.native"
 import {isWeb} from "../utils/platform"
 import {getStyles} from "./styles/StyleNavbar.web";
 import {useWindowDimensions} from "react-native-web";
@@ -49,7 +49,7 @@ function UserCard({ user }) {
 // ------------------------------
 export default function Navbar() {
     const { width } = useWindowDimensions();
-    const styles = getStyles(width);
+    const styles = isWeb ? getStyles(width) : mobileStyles;
     const router = useRouter();
     const pathname = usePathname();
 
@@ -66,7 +66,7 @@ export default function Navbar() {
 
     const tabs = [
         { id: "accueil", label: "Accueil", Icon: IconAccueil, IconActive: IconAccueilOn },
-        { id: "missions/listes", label: "Missions", Icon: IconMission, IconActive: IconMissionOn },
+        { id: "missions", label: "Missions", Icon: IconMission, IconActive: IconMissionOn },
         { id: "social", label: "Social", Icon: IconTrophy, IconActive: IconTrophyOn },
         { id: "boutique", label: "Boutique", Icon: IconBoutique, IconActive: IconBoutiqueOn },
         { id: "qrcode", label: "QR Code", Icon: IconQrCode, IconActive: IconQrCodeOn },

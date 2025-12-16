@@ -28,7 +28,7 @@ export default function Index(){
                     isWeb ?
                         <Header onglets={onglets} />
                         :
-                        <Header titre={"Régulières"} boutonRetour={true}/>
+                        <Header titre={"Missions"} boutonRetour={true}/>
                 }
             </View>
         </View>
