@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, Pressable, Platform } from "react-native";
 
-import Navbar from "../../components/Navbar";
-import Header from "../../components/Header";
+import Navbar from "../../../components/Navbar";
+import Header from "../../../components/Header";
 import styles from "./styles/parametresStyle";
 
 const SETTINGS_MENU = [

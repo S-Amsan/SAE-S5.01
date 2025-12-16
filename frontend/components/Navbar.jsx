@@ -48,8 +48,10 @@ function UserCard({ user }) {
 // NAVBAR PRINCIPALE
 // ------------------------------
 export default function Navbar() {
-    const { width } = useWindowDimensions();
-    const styles = isWeb ? getStyles(width) : mobileStyles;
+    const { width, height } = useWindowDimensions();
+    const styles = isWeb ? getStyles(width, height) : mobileStyles;
+    console.log(styles);
+
     const router = useRouter();
     const pathname = usePathname();
 
@@ -77,6 +79,7 @@ export default function Navbar() {
 
     // ---------------- WEB ----------------
     if (isWeb) {
+
         return (
             <LinearGradient colors={["#1DDE9A", "#1FDDA0"]} style={styles.container}>
                 <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>

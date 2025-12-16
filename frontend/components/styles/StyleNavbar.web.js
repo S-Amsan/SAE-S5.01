@@ -1,7 +1,7 @@
 import { Dimensions, StyleSheet } from "react-native";
 
 const { width, height } = Dimensions.get('window');
-
+export const getStyles = (width, height) => {
 // Breakpoints pour responsive
 const isDesktop = width > 1024;
 const navbarWidth = isDesktop ? 280 : width * 0.25; // max 280px ou 25% de l'écran
@@ -12,7 +12,7 @@ const paddingVerticalTab = isDesktop ? 12 : 8;
 const marginBottomTitleContainer = height * 0.05;
 const marginTopTitleContainer = height * 0.02;
 
-export default StyleSheet.create({
+return StyleSheet.create({
     container: {
         width: navbarWidth,
         maxWidth: 280,
@@ -28,7 +28,7 @@ export default StyleSheet.create({
         backgroundColor: '#00DB83',
         flexDirection: 'column',
         zIndex: 1000,     // AU-DESSUS DU DRAWER   //
-         },
+    },
 
     titleContainer: {
         flexDirection: 'row',
@@ -82,3 +82,4 @@ export default StyleSheet.create({
         marginLeft: 15,
     },
 });
+}
