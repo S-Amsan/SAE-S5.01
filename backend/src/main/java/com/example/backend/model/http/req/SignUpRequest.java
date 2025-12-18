@@ -20,11 +20,11 @@ public class SignUpRequest {
 
     @Size(
         min = 4,
-        message = "Username not valid, please enter at least {min} characters"
+        message = "Name not valid, please enter at least {min} characters"
     )
-    @NotBlank(message = "Username must not be blank")
-    @NotNull(message = "Username is required")
-    private String username;
+    @NotBlank(message = "Name must not be blank")
+    @NotNull(message = "Name is required")
+    private String name;
 
     @Size(
         min = 8,
