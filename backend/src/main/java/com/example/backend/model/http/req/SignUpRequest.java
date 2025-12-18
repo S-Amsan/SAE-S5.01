@@ -6,21 +6,35 @@ import lombok.Data;
 @Data
 public class SignUpRequest {
 
-    @Size(min = 3)
-    @NotBlank
-    @NotNull
+    @Size(
+        min = 3,
+        message = "Username not valid, please enter at least {min} characters"
+    )
+    @NotBlank(message = "Username must not be blank")
+    @NotNull(message = "Username is required")
     private String pseudo;
 
-    @Email
-    @NotBlank
+    @Email(message = "Email not valid")
+    @NotNull(message = "Email is required")
     private String email;
 
-    @NotBlank
-    private String name;
+    @Size(
+        min = 4,
+        message = "Username not valid, please enter at least {min} characters"
+    )
+    @NotBlank(message = "Username must not be blank")
+    @NotNull(message = "Username is required")
+    private String username;
 
-    @Size(min = 8)
+    @Size(
+        min = 8,
+        message = "Password not valid, please enter at least {min} characters"
+    )
+    @NotBlank(message = "Password must not be blank")
+    @NotNull(message = "Password is required")
     private String password;
 
+    // TODO: Add validation
     private String phone;
 
     @Min(13)
