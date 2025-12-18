@@ -1,5 +1,6 @@
 package com.example.backend.service;
 
+import com.example.backend.exceptions.AccountAlreadyExistsException;
 import com.example.backend.model.User;
 import com.example.backend.model.http.req.LoginRequest;
 import com.example.backend.model.http.req.SignUpRequest;
@@ -54,7 +55,7 @@ public class AuthService {
         SignUpRequest request
     ) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new IllegalArgumentException("Email already exists");
+            throw new AccountAlreadyExistsException(request.getEmail());
         }
 
         if (userRepository.existsByPseudo(request.getPseudo())) {
