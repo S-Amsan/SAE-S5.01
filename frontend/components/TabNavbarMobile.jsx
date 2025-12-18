@@ -2,10 +2,10 @@ import React from "react";
 import {StyleSheet, View, Text, TouchableOpacity} from "react-native";
 
 
-export default function TabNavbarMobile({ongletActifId, onglets, setOngletActif}){
+export default function TabNavbarMobile({ongletActifId, onglets, setOngletActif, transparent = false}){
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container,transparent && {backgroundColor: "rgba(0,0,0,0.15)"}]}>
             <View style={styles.ongletsContainer}>
                 {onglets.map((onglet) => {
                     const isActive = ongletActifId === onglet.id;
@@ -16,7 +16,7 @@ export default function TabNavbarMobile({ongletActifId, onglets, setOngletActif}
                             style={styles.ongletContainer}
                             onPress={() => !isActive && setOngletActif(onglet.id)}
                         >
-                            <Text style={[styles.ongletText, isActive && {color : "#05D993", backgroundColor : "#FFFFFF"}]}>{onglet.label}</Text>
+                            <Text style={[styles.ongletText,transparent && {color: "#FFFFFF"}, isActive && {color : "#05D993", backgroundColor : "#FFFFFF"}]}>{onglet.label}</Text>
                         </TouchableOpacity>)
                 })}
             </View>
