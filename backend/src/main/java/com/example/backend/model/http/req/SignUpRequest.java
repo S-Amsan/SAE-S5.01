@@ -6,7 +6,9 @@ import lombok.Data;
 @Data
 public class SignUpRequest {
 
+    @Size(min = 3)
     @NotBlank
+    @NotNull
     private String pseudo;
 
     @Email
@@ -24,4 +26,6 @@ public class SignUpRequest {
     @Min(13)
     @Max(120)
     private Integer age;
+
+    // private MultipartFile avatarImage;
 }
