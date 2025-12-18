@@ -2,6 +2,7 @@ package com.example.backend.model.http.req;
 
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class SignUpRequest {
@@ -41,5 +42,5 @@ public class SignUpRequest {
     @Max(120)
     private Integer age;
 
-    // private MultipartFile avatarImage;
+    private MultipartFile avatarImage;
 }

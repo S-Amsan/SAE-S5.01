@@ -5,16 +5,21 @@ import com.example.backend.model.User;
 import com.example.backend.model.http.req.LoginRequest;
 import com.example.backend.model.http.req.SignUpRequest;
 import com.example.backend.model.http.res.AuthenticationResponse;
+import com.example.backend.model.http.res.ImageUploadResponse;
 import com.example.backend.model.security.UserHashSalt;
 import com.example.backend.repository.HashSaltRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.security.PasswordService;
+import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
+
+    @Autowired
+    private ImageUploadService imageUploadService;
 
     @Autowired
     private UserRepository userRepository;
@@ -72,6 +77,30 @@ public class AuthService {
         user.setPhone(request.getPhone());
         user.setName(request.getName());
         user.setAge(request.getAge());
+
+        ImageUploadResponse imageUploadResponse;
+
+        try {
+            imageUploadResponse = imageUploadService.upload(
+                request.getAvatarImage()
+            );
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to upload avatar image", e);
+        }
+
+        if (imageUploadResponse.getError() != null) {
+            throw new RuntimeException(
+                "Error uploading avatar image: " +
+                    imageUploadResponse.getError()
+            );
+        }
+
+        user.setPhotoProfileUrl(
+            ImageUploadService.endpoint.toString() +
+                '/' +
+                imageUploadResponse.getFilename()
+        );
+
         userRepository.save(user);
 
         PasswordService.HashSalt hashsalt = passwordService.generate(

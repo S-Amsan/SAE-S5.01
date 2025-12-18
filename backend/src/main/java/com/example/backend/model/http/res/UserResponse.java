@@ -21,7 +21,7 @@ public class UserResponse {
         this.email = user.getEmail();
         this.pseudo = user.getPseudo();
         this.phone = user.getPhone();
-        this.photoProfile = user.getPhotoProfile();
+        this.photoProfile = user.getPhotoProfileUrl();
         this.actif = user.isActif();
         this.name = user.getName();
     }

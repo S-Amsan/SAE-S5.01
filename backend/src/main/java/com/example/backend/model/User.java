@@ -25,8 +25,8 @@ public class User {
     @Column(unique = true, nullable = true, length = 20)
     private String phone;
 
-    @Column(name = "photo_profile")
-    private String photoProfile;
+    @Column(name = "photo_profile_url")
+    private String photoProfileUrl;
 
     @CreationTimestamp
     @Column(name = "date_creation", updatable = false)
