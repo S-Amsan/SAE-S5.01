@@ -39,8 +39,10 @@ public class User {
     @Column
     private boolean actif = true;
 
+    @Column
     private Integer age;
 
+    @Column
     private String name;
 
     public User() {}
