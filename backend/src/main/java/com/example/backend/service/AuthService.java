@@ -30,6 +30,9 @@ public class AuthService {
     @Autowired
     private PasswordService passwordService;
 
+    @Autowired
+    private JwtService jwtService;
+
     public ResponseEntity<AuthenticationResponse> login(LoginRequest request) {
         User user = userRepository
             .findByEmail(request.getEmail())
@@ -51,8 +54,13 @@ public class AuthService {
             throw new RuntimeException("Mot de passe incorrect");
         }
 
+        String token = jwtService.generateToken(
+            request.getEmail(),
+            request.getPassword()
+        );
+
         return ResponseEntity.ok(
-            new AuthenticationResponse(user.getId(), user.getPseudo())
+            new AuthenticationResponse(user.getId(), user.getPseudo(), token)
         );
     }
 
@@ -109,8 +117,13 @@ public class AuthService {
         UserHashSalt userHashSalt = new UserHashSalt(user.getId(), hashsalt);
         hashSaltRepository.save(userHashSalt);
 
+        String token = jwtService.generateToken(
+            request.getEmail(),
+            request.getPassword()
+        );
+
         return ResponseEntity.ok(
-            new AuthenticationResponse(user.getId(), user.getPseudo())
+            new AuthenticationResponse(user.getId(), user.getPseudo(), token)
         );
     }
 

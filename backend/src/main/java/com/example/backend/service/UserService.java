@@ -31,6 +31,10 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
+
     public boolean updateAccount(User user, AccountUpdateRequest request)
         throws IOException {
         boolean update = false;
