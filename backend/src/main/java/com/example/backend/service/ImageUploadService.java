@@ -61,4 +61,19 @@ public class ImageUploadService {
         }
         return "";
     }
+
+    public HttpResponse<String> delete(String url)
+        throws IllegalArgumentException, IOException {
+        if (!url.startsWith(endpoint.toString())) {
+            throw new IllegalArgumentException(
+                "Invalid base URL, should start with " + endpoint
+            );
+        }
+
+        var request = HttpRequest.newBuilder(endpoint.resolve(url))
+            .DELETE()
+            .build();
+
+        return sendRequest(request);
+    }
 }
