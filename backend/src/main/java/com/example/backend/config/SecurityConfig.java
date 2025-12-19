@@ -18,6 +18,8 @@ public class SecurityConfig {
                     .permitAll()
                     .requestMatchers("/users")
                     .permitAll()
+                    .requestMatchers("/update")
+                    .authenticated()
             )
             .csrf(AbstractHttpConfigurer::disable);
         return http.build();
