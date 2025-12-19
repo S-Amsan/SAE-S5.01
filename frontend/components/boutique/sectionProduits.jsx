@@ -1,51 +1,108 @@
 import {View, Text, ScrollView, StyleSheet, Pressable} from "react-native";
 import BlocProduit from "./blocProduit";
 import { PRODUITS } from "../../utils/data/produit";
+import { COUPONS } from "../../utils/data/couponReduction";
+import { DONS } from "../../utils/data/association";
 
-export default function SectionProduits() {
+export default function SectionProduits({ selected }) {
+    const estFiltre = selected !== null;
+    const montreTout = selected === null;
+
+    const montreCartes = !selected || selected === "cartes";
+    const montreCoupons = !selected || selected === "coupons";
+    const montreDons = !selected || selected === "dons";
+
     return (
         <View style={styles.section}>
-            <View style={styles.entete}>
-                <Text style={styles.titre}>Cartes Cadeaux</Text>
+            {montreCartes && (
+                <>
+                    <Text style={styles.lien}>Cartes Cadeaux &gt;</Text>
 
-                <Pressable nPress={() => router.push("./boutique/touslesProduits")}>
-                    <Text style={styles.lien}>Voir tout ></Text>
-                </Pressable>
+                    {!estFiltre ? (
+                        <ScrollView
+                            horizontal
+                            showsHorizontalScrollIndicator={false}
+                            contentContainerStyle={styles.scroller}
+                        >
+                            {PRODUITS.map((p) => (
+                                <BlocProduit key={p.id} {...p} />
+                            ))}
+                        </ScrollView>
+                    ) : (
+                        <View style={styles.grid}>
+                            {PRODUITS.map((p) => (
+                                <BlocProduit key={p.id} {...p} style={styles.gridItem} />
+                            ))}
+                        </View>
+                    )}
+                </>
+            )}
 
-            </View>
+            {montreCoupons && (
+                <>
+                    <Text style={styles.lien}>Bons de réduction &gt;</Text>
 
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                {PRODUITS.map((p) => (
-                    <BlocProduit
-                        key={p.id}
-                        titre={p.titre}
-                        description={p.description}
-                        points={p.points}
-                        image={p.image}
-                        action={() => console.log("Ajout :", p.titre)}
-                    />
-                ))}
-            </ScrollView>
+                    {!estFiltre ? (
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scroller}>
+                            {COUPONS.map((p) => <BlocProduit key={p.id} {...p} />)}
+                        </ScrollView>
+                    ) : (
+                        <View style={styles.grid}>
+                            {COUPONS.map((p) => <BlocProduit key={p.id} {...p} style={styles.gridItem} />)}
+                        </View>
+                    )}
+                </>
+            )}
+
+            {montreDons && (
+                <>
+                    <Text style={styles.lien}>Dons aux associations &gt;</Text>
+
+                    {!estFiltre ? (
+                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scroller}>
+                            {DONS.map((p) => <BlocProduit key={p.id} {...p} />)}
+                        </ScrollView>
+                    ) : (
+                        <View style={styles.grid}>
+                            {DONS.map((p) => <BlocProduit key={p.id} {...p} style={styles.gridItem} />)}
+                        </View>
+                    )}
+                </>
+            )}
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    section: {
-        marginTop: 20
-    },
-    entete: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        marginBottom: 10
-    },
-    titre: {
-        fontSize: 20,
-        fontWeight: "700"
-    },
+    section: { marginLeft: 36 },
+
     lien: {
-        color: "#000000",
-        fontSize: 16,
-        fontWeight : "bold"
-    }
+        color: "#000",
+        fontFamily: "Inter",
+        fontSize: 24,
+        fontWeight: "500",
+        marginBottom: 18,
+    },
+
+    scroller: {
+        paddingHorizontal: 16,
+        paddingBottom: 6,
+    },
+
+    grid: {
+        flexDirection: "row",
+        flexWrap: "wrap",
+        justifyContent: "flex-start",
+        gap: 32,
+        paddingHorizontal: 16,
+    },
+
+    gridItem: {
+        width: "22.5%",
+        marginRight: 0,
+        marginBottom: 0,
+    },
+
 });
+
+
