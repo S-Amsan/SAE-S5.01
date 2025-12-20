@@ -72,7 +72,7 @@ public class RestExceptionHandler {
         AuthenticationException ex
     ) {
         System.out.println("Handling AuthenticationException ");
-        return buildResponse(HttpStatus.UNAUTHORIZED, "Invalid credentials");
+        return buildResponse(HttpStatus.UNAUTHORIZED, "Authentication error: "+ex.getMessage());
     }
 
     /**
