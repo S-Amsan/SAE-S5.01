@@ -55,8 +55,7 @@ public class AuthService {
         }
 
         String token = jwtService.generateToken(
-            request.getEmail(),
-            request.getPassword()
+            request.getEmail()
         );
 
         return ResponseEntity.ok(
@@ -118,8 +117,7 @@ public class AuthService {
         hashSaltRepository.save(userHashSalt);
 
         String token = jwtService.generateToken(
-            request.getEmail(),
-            request.getPassword()
+            request.getEmail()
         );
 
         return ResponseEntity.ok(
