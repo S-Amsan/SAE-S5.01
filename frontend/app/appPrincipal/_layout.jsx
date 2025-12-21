@@ -12,7 +12,7 @@ export default function Layout() {
             <Stack.Screen name="missions" />
             <Stack.Screen name="social"/>
             <Stack.Screen name="boutique" />
-            <Stack.Screen name="qrcode" />
+            <Stack.Screen name="codebar" />
             <Stack.Screen name="notifications"/>
             <Stack.Screen name="parametres"/>
         </Stack>

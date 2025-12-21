@@ -58,6 +58,7 @@ export default function Index() {
                 </View>
             ) : (
                 <Navbar />
+
             )}
 
             <View style={{ flex: 1 }}>
