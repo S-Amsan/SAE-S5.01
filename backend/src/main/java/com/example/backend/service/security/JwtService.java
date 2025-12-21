@@ -1,6 +1,8 @@
-package com.example.backend.service;
+package com.example.backend.service.security;
 
 import com.example.backend.model.security.MyUserDetails;
+import com.example.backend.service.UserService;
+
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;

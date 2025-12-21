@@ -9,6 +9,7 @@ import com.example.backend.model.http.res.ImageUploadResponse;
 import com.example.backend.model.security.UserHashSalt;
 import com.example.backend.repository.HashSaltRepository;
 import com.example.backend.repository.UserRepository;
+import com.example.backend.service.security.JwtService;
 import com.example.backend.service.security.PasswordService;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,9 +55,7 @@ public class AuthService {
             throw new RuntimeException("Mot de passe incorrect");
         }
 
-        String token = jwtService.generateToken(
-            request.getEmail()
-        );
+        String token = jwtService.generateToken(request.getEmail());
 
         return ResponseEntity.ok(
             new AuthenticationResponse(user.getId(), user.getPseudo(), token)
@@ -116,9 +115,7 @@ public class AuthService {
         UserHashSalt userHashSalt = new UserHashSalt(user.getId(), hashsalt);
         hashSaltRepository.save(userHashSalt);
 
-        String token = jwtService.generateToken(
-            request.getEmail()
-        );
+        String token = jwtService.generateToken(request.getEmail());
 
         return ResponseEntity.ok(
             new AuthenticationResponse(user.getId(), user.getPseudo(), token)

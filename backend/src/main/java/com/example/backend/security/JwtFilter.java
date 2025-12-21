@@ -1,7 +1,7 @@
 package com.example.backend.security;
 
 import com.example.backend.model.security.MyUserDetails;
-import com.example.backend.service.JwtService;
+import com.example.backend.service.security.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
