@@ -2,6 +2,7 @@ package com.example.backend.controller;
 
 import com.example.backend.model.User;
 import com.example.backend.model.http.req.AccountUpdateRequest;
+import com.example.backend.model.security.MyUserDetails;
 import com.example.backend.service.UserService;
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -27,9 +28,9 @@ public class UserController {
     @PostMapping("/update")
     public ResponseEntity<String> updateAccountInfo(
         @Valid AccountUpdateRequest request,
-        @AuthenticationPrincipal User user
+        @AuthenticationPrincipal MyUserDetails userDetails
     ) throws IOException {
-        if (userService.updateAccount(user, request)) {
+        if (userService.updateAccount(userDetails.getUser(), request)) {
             return ResponseEntity.ok("Account updated successfully");
         }
 
