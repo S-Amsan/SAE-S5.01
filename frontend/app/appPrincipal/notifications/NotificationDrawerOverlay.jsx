@@ -1,9 +1,9 @@
 // NotificationDrawerOverlay.jsx
 import React, { useEffect, useRef, useState } from "react";
-import { Animated, View, TouchableOpacity, ScrollView, Platform } from "react-native";
+import {Animated, View, TouchableOpacity, ScrollView, Platform, Text} from "react-native";
 import { useNotifications } from "./NotificationContext";
 import NotificationItem from "./NotificationItem";
-import style from "./styles/StyleNotificationDrawer";
+import style from "./styles/styleNotificationsDrawer";
 
 const DRAWER_WIDTH = 420;
 

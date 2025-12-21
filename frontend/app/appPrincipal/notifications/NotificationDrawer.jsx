@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useNotifications } from "./NotificationContext";
 import NotificationItem from "./NotificationItem";
-import style from "./styles/StyleNotificationDrawer";
+import style from "./styles/styleNotificationsDrawer";
 
 const { width } = Dimensions.get("window");
 const DRAWER_WIDTH = Math.min(420, Math.round(width * 0.92));
