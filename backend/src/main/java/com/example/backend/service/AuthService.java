@@ -112,7 +112,7 @@ public class AuthService {
         PasswordService.HashSalt hashsalt = passwordService.generate(
             request.getPassword()
         );
-        UserHashSalt userHashSalt = new UserHashSalt(user.getId(), hashsalt);
+        UserHashSalt userHashSalt = new UserHashSalt(user, hashsalt);
         hashSaltRepository.save(userHashSalt);
 
         String token = jwtService.generateToken(request.getEmail());

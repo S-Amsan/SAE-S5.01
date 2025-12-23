@@ -1,5 +1,6 @@
 package com.example.backend.model.security;
 
+import com.example.backend.model.User;
 import com.example.backend.service.security.PasswordService;
 import jakarta.persistence.*;
 import jakarta.persistence.Column;
@@ -15,9 +16,9 @@ public class UserHashSalt {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // TODO: Use user id as actual id
-    @Column(name = "user_id")
-    private Long userId;
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column(nullable = false)
     private String hash;
@@ -27,12 +28,12 @@ public class UserHashSalt {
 
     public UserHashSalt() {}
 
-    public UserHashSalt(Long userId, PasswordService.HashSalt hashsalt) {
-        this(userId, hashsalt.getHash(), hashsalt.getSalt());
+    public UserHashSalt(User user, PasswordService.HashSalt hashsalt) {
+        this(user, hashsalt.getHash(), hashsalt.getSalt());
     }
 
-    public UserHashSalt(Long userId, String hash, String salt) {
-        this.userId = userId;
+    public UserHashSalt(User user, String hash, String salt) {
+        this.user = user;
         this.hash = hash;
         this.salt = salt;
     }
