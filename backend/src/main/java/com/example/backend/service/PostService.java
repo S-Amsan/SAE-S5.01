@@ -32,7 +32,11 @@ public class PostService {
             .name(request.getName())
             .description(request.getDescription())
             .address(request.getAddress())
-            .imageUrl(response.getUrl())
+            .imageUrl(
+                ImageUploadService.endpoint.toString() +
+                    '/' +
+                    response.getFilename()
+            )
             .build();
 
         return postRepository.save(post);
