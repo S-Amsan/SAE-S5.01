@@ -2,36 +2,38 @@ import { Pressable, View, Text, StyleSheet, Image } from "react-native";
 import { useRouter } from "expo-router";
 import point from "../../assets/icones/point.png";
 
-export default function HeaderBoutique({ filtreActif, setFiltreActif }) {
+export default function HeaderBoutique({ filtreActif, setFiltreActif, mode = "complet" }) {
     const router = useRouter();
 
     return (
         <View style={styles.conteneur}>
-            <View style={styles.gauche}>
-                <Pressable style={[styles.boutonFiltre, filtreActif === "cartes" && styles.boutonFiltreActif]}
-                    onPress={() => setFiltreActif(filtreActif === "cartes" ? null : "cartes")}
-                >
-                    <Text style={[styles.texteFiltre, filtreActif === "cartes" && styles.texteFiltreActif]}>
-                        Cartes cadeaux
-                    </Text>
-                </Pressable>
+            {mode === "complet" && (
+                <View style={styles.gauche}>
+                    <Pressable style={[styles.boutonFiltre, filtreActif === "cartes" && styles.boutonFiltreActif]}
+                               onPress={() => setFiltreActif(filtreActif === "cartes" ? null : "cartes")}
+                    >
+                        <Text style={[styles.texteFiltre, filtreActif === "cartes" && styles.texteFiltreActif]}>
+                            Cartes cadeaux
+                        </Text>
+                    </Pressable>
 
-                <Pressable style={[styles.boutonFiltre, filtreActif === "coupons" && styles.boutonFiltreActif]}
-                    onPress={() => setFiltreActif(filtreActif === "coupons" ? null : "coupons")}
-                >
-                    <Text style={[styles.texteFiltre, filtreActif === "coupons" && styles.texteFiltreActif]}>
-                        Bons de réduction
-                    </Text>
-                </Pressable>
+                    <Pressable style={[styles.boutonFiltre, filtreActif === "coupons" && styles.boutonFiltreActif]}
+                               onPress={() => setFiltreActif(filtreActif === "coupons" ? null : "coupons")}
+                    >
+                        <Text style={[styles.texteFiltre, filtreActif === "coupons" && styles.texteFiltreActif]}>
+                            Bons de réduction
+                        </Text>
+                    </Pressable>
 
-                <Pressable style={[styles.boutonFiltre, filtreActif === "dons" && styles.boutonFiltreActif]}
-                    onPress={() => setFiltreActif(filtreActif === "dons" ? null : "dons")}
-                >
-                    <Text style={[styles.texteFiltre, filtreActif === "dons" && styles.texteFiltreActif]}>
-                        Dons aux associations
-                    </Text>
-                </Pressable>
-            </View>
+                    <Pressable style={[styles.boutonFiltre, filtreActif === "dons" && styles.boutonFiltreActif]}
+                               onPress={() => setFiltreActif(filtreActif === "dons" ? null : "dons")}
+                    >
+                        <Text style={[styles.texteFiltre, filtreActif === "dons" && styles.texteFiltreActif]}>
+                            Dons aux associations
+                        </Text>
+                    </Pressable>
+                </View>
+            )}
 
             <View style={styles.droite}>
                 <Pressable style={styles.boutonPanier} onPress={() => router.push("./panier")}>

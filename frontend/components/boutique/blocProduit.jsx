@@ -3,14 +3,32 @@ import {useRouter} from "expo-router";
 
 import point from "../../assets/icones/point.png";
 
-export default function BlocProduit({ titre, description, points, image, action, style }) {
+export default function BlocProduit({ id, titre, titreComplet, description, descriptionLongue, points, imageCarte, banniere, type, style }) {
 
     const router = useRouter();
 
+    const ouvrirDetails = () => {
+        router.push({
+            pathname: "/appPrincipal/boutique/detailsproduit",
+            params: {
+                id,
+                titre,
+                titreComplet,
+                description,
+                descriptionLongue,
+                points: String(points),
+                imageCarte,
+                banniere,
+                type,
+            },
+        });
+    };
+
+
     return (
         <View style={[styles.carte, style]}>
-            <TouchableOpacity onPress={() => router.push("./detailsproduit")}>
-                <Image source={{ uri: image }} style={styles.image} />
+            <TouchableOpacity onPress={ouvrirDetails}>
+                <Image source={{ uri: imageCarte }} style={styles.image} />
 
                 <View style={styles.contenu}>
                     <View style={styles.ligneTitre}>
