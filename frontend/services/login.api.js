@@ -23,8 +23,12 @@ export async function login(email, password) {
         throw new Error("Login failed");
     }
 
-    // 🔹 IMPORTANT : on ne lit PAS le body ici
-    // le backend ne renvoie rien d’utile pour l’instant
+    // Read response body and get token
+    const responseData = await res.json();
+    const token = responseData.token;
+
+    // Save token to async storage
+    await AsyncStorage.setItem("@auth_token", token);
 
     // 🔹 On sauvegarde l’email pour la session
     await AsyncStorage.setItem("@auth_email", email);
