@@ -27,7 +27,7 @@ public class SecurityConfig {
                 authz
                     .requestMatchers("/auth/**")
                     .permitAll()
-                    .requestMatchers("/users")
+                    .requestMatchers("/user/**")
                     .permitAll()
                     .requestMatchers("/update")
                     .authenticated()
