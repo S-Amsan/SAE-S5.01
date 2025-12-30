@@ -1,9 +1,11 @@
 import { Pressable, View, Text, StyleSheet, Image } from "react-native";
 import { useRouter } from "expo-router";
+import { usePanier } from "../../context/PanierContext";
 import point from "../../assets/icones/point.png";
 
 export default function HeaderBoutique({ filtreActif, setFiltreActif, mode = "complet" }) {
     const router = useRouter();
+    const { nbPanier } = usePanier();
 
     return (
         <View style={styles.conteneur}>
@@ -37,7 +39,16 @@ export default function HeaderBoutique({ filtreActif, setFiltreActif, mode = "co
 
             <View style={styles.droite}>
                 <Pressable style={styles.boutonPanier} onPress={() => router.push("./panier")}>
-                    <Image style={styles.iconePanier} source={{uri: "https://cdn-icons-png.flaticon.com/512/2662/2662459.png",}}/>
+                    <Image
+                        style={styles.iconePanier}
+                        source={{ uri: "https://cdn-icons-png.flaticon.com/512/2662/2662459.png" }}
+                    />
+
+                    {nbPanier > 0 && (
+                        <View style={styles.badgePanier}>
+                            <Text style={styles.badgePanierTexte}>{nbPanier > 99 ? "99+" : nbPanier}</Text>
+                        </View>
+                    )}
                 </Pressable>
 
                 <View style={styles.blocPoints}>
@@ -112,6 +123,26 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         borderWidth: 1,
         borderColor: "#EDEDED",
+        position: "relative",
+    },
+
+    badgePanier: {
+        position: "absolute",
+        top: 6,
+        right: 10,
+        minWidth: 22,
+        height: 22,
+        paddingHorizontal: 6,
+        borderRadius: 999,
+        backgroundColor: "#04DA90",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+
+    badgePanierTexte: {
+        color: "#FFFFFF",
+        fontWeight: "800",
+        fontSize: 12,
     },
 
     iconePanier: {

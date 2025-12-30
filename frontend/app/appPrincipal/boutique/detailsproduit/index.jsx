@@ -1,6 +1,7 @@
 import React from "react";
 import {Platform, View, Text, Image, Pressable, StyleSheet, ScrollView, ImageBackground,} from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
+import { usePanier } from "../../../../context/PanierContext";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import Navbar from "../../../../components/Navbar";
@@ -16,6 +17,7 @@ import styles from "./styles/styles";
 export default function DetailProduit() {
     const router = useRouter();
     const params = useLocalSearchParams();
+    const { ajouterAuPanier } = usePanier();
 
     const titreCourt = params.titre ?? "Produit";
     const titreComplet = params.titreComplet ?? `E-carte cadeau ${titreCourt} de 10€`;
@@ -23,6 +25,11 @@ export default function DetailProduit() {
     const points = params.points ?? "0";
     const imageCarte = params.imageCarte ?? params.image ?? "";
     const imageBanniere = params.banniere ?? params.image ?? "";
+
+    const ajouterEtAllerAuPanier = () => {
+        ajouterAuPanier();
+        router.push("/appPrincipal/boutique/panier");
+    };
 
     return (
         <View style={styles.racine}>
@@ -125,7 +132,7 @@ export default function DetailProduit() {
                                                 <Image source={coeur} style={styles.boutonSecondaireIcon} resizeMode="contain"/>
                                             </Pressable>
 
-                                            <Pressable style={styles.boutonPrincipal}>
+                                            <Pressable style={styles.boutonPrincipal} onPress={ajouterEtAllerAuPanier}>
                                                 <LinearGradient
                                                     colors={["#00DB83", "#0CD8A9"]}
                                                     start={{ x: 0, y: 0 }}
@@ -133,7 +140,12 @@ export default function DetailProduit() {
                                                     style={styles.boutonGradient}
                                                     pointerEvents="none"
                                                 />
-                                                <Text style={styles.boutonPrincipalTexte}>Ajouter au panier</Text>
+                                                <Text
+                                                    style={styles.boutonPrincipalTexte}
+                                                    selectable={false}
+                                                >
+                                                    Ajouter au panier
+                                                </Text>
                                             </Pressable>
                                         </View>
                                     </View>
