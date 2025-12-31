@@ -1,37 +1,109 @@
-import React, {useState} from "react";
-import {View, Text, Image, TouchableOpacity, ScrollView, Pressable} from "react-native";
+import React, { useState } from "react";
+import {
+    View,
+    Text,
+    Image,
+    ScrollView,
+    Pressable,
+} from "react-native";
 import styles from "./styles/styles";
+import { isWeb } from "../../../../../utils/platform";
 
-export default function Gestes() {
+export default function Gestes({ onAssociate }) {
     const partenaires = [
         {
             id: "ratp",
             name: "RATP",
-            title: "Associer votre abonnement Ratp à Ecoception",
-            status: "pending",
+            title: "Associer votre abonnement RATP à Ecoception",
+            status: "pending", // start | pending | validated
+            points: 50000,
             logo: require("../../../../../assets/icones/missions/ratp.png"),
-            points: "+50 000",
         },
         {
             id: "velib",
             name: "Vélib",
             title: "Associer votre abonnement Vélib à Ecoception",
             status: "validated",
+            points: 50000,
             logo: require("../../../../../assets/icones/missions/velib.png"),
-            points: "+50 000",
-            active: true,
         },
         {
             id: "nous",
             name: "Nous anti-gaspi",
             title: "Associer votre carte fidélité à Ecoception",
             status: "start",
+            points: 50000,
             logo: require("../../../../../assets/icones/missions/gaspi.png"),
-            points: "+50 000",
         },
     ];
 
     const [hoveredId, setHoveredId] = useState(null);
+
+    if (isWeb) {
+        return (
+            <ScrollView contentContainerStyle={styles.webContainer}>
+                {partenaires.map((p) => (
+                    <View key={p.id} style={styles.webCard}>
+
+                        {/* HEADER */}
+                        <View style={styles.webHeader}>
+                            <View style={styles.webHeaderLeft}>
+                                <Image source={p.logo} style={styles.webSmallLogo} />
+                                <Text style={styles.webPartnerName}>{p.name}</Text>
+                            </View>
+
+                            <View style={styles.webPointsBadge}>
+                                <Text style={styles.webPointsText}>+50 000</Text>
+                                <Image
+                                    source={require("../../../../../assets/icones/point.png")}
+                                    style={styles.webPointsIcon}
+                                />
+                            </View>
+                        </View>
+
+                        {/* MAIN CONTENT */}
+                        <View style={styles.webContent}>
+                            <Text style={styles.webTitle}>
+                                Associer votre {p.id === "nous" ? "carte fidélité" : "abonnement"}{" "}
+                                {p.name} à Ecoception et gagner 50 000 points
+                            </Text>
+
+                            <Text style={styles.webDescription}>
+                                Vous devez fournir un justificatif{" "}
+                                {p.id === "nous" ? "de fidélité" : "d’abonnement"}{" "}
+                                (PDF officiel ou photo du reçu de paiement).
+                            </Text>
+
+                            <View style={styles.webActionRow}>
+                                <View />
+
+                                <Pressable
+                                    disabled={p.status !== "start"}
+                                    onPress={() => p.status === "start" && onAssociate?.(p)}
+                                    style={[
+                                        styles.webActionButton,
+                                        p.status === "pending" && styles.webButtonPending,
+                                        p.status === "validated" && styles.webButtonValidated,
+                                    ]}
+                                >
+                                    <Text style={styles.webActionText}>
+                                        {p.status === "start" && "Importer mon justificatif"}
+                                        {p.status === "pending" && "En attente"}
+                                        {p.status === "validated" && "✓ Validé"}
+                                    </Text>
+                                </Pressable>
+
+                            </View>
+
+                            <Text style={styles.webFooterText}>
+                                Vos documents seront traités en toute confidentialité et supprimés après vérification
+                            </Text>
+                        </View>
+                    </View>
+                ))}
+            </ScrollView>
+        );
+    }
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
@@ -39,40 +111,54 @@ export default function Gestes() {
                 const isHovered = hoveredId === p.id;
 
                 return (
-                    <Pressable
+                    <View
                         key={p.id}
-                        onHoverIn={() => setHoveredId(p.id)}
-                        onHoverOut={() => setHoveredId(null)}
+                        onMouseEnter={() => isWeb && setHoveredId(p.id)}
+                        onMouseLeave={() => isWeb && setHoveredId(null)}
                         style={[
                             styles.card,
                             isHovered && styles.cardHover,
                         ]}
                     >
-                        <View style={styles.pointsBadge}>
-                            <Text style={styles.pointsText}>{p.points}</Text>
-                        </View>
-
+                        {/* ===== LEFT (TEXTE) ===== */}
                         <View style={styles.left}>
                             <Text style={styles.name}>{p.name}</Text>
                             <Text style={styles.title}>{p.title}</Text>
 
-                            <TouchableOpacity
+                            <Pressable
+                                onPress={() => p.status === "start" && onAssociate?.(p)}
                                 style={[
                                     styles.button,
+                                    p.status === "start" && styles.buttonStart,
                                     p.status === "pending" && styles.buttonPending,
                                     p.status === "validated" && styles.buttonValidated,
                                 ]}
                             >
                                 <Text style={styles.buttonText}>
+                                    {p.status === "start" && "Commencer"}
                                     {p.status === "pending" && "En attente"}
                                     {p.status === "validated" && "✓ Validé"}
-                                    {p.status === "start" && "Commencer"}
                                 </Text>
-                            </TouchableOpacity>
+                            </Pressable>
                         </View>
 
-                        <Image source={p.logo} style={styles.logo} />
-                    </Pressable>
+                        {/* ===== RIGHT (IMAGE + POINTS) ===== */}
+                        <View style={styles.imageWrapper}>
+                            {/* POINTS OVERLAY */}
+                            <View style={styles.pointsBadge}>
+                                <Text style={styles.pointsText}>
+                                    +{p.points.toLocaleString()}
+                                </Text>
+                                <Image
+                                    source={require("../../../../../assets/icones/point.png")}
+                                    style={styles.pointsIcon}
+                                />
+                            </View>
+
+                            {/* LOGO */}
+                            <Image source={p.logo} style={styles.logo} />
+                        </View>
+                    </View>
                 );
             })}
         </ScrollView>

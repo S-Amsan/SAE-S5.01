@@ -8,6 +8,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import MissionsListContent from "./_components/MissionsListContent/MissionsListContent";
 import Gestes from "./_components/Gestes/Gestes";
 import Post from "./_components/PostObjet/Post";
+import AssociateSubscription from "./_components/Associate/AssociateSubscription";
 
 export default function MissionsMobile() {
     const [ongletActifId, setOngletActifId] = useState("listes");
@@ -30,16 +31,23 @@ export default function MissionsMobile() {
     return (
         <View style={{ flex: 1, backgroundColor: "#fff" }}>
             <Header
-                titre={page === "postObjet" ? "Poster un objet" : "Missions"}
+                titre={
+                    page === "postObjet"
+                        ? "Poster un objet"
+                        : page === "associate"
+                            ? "Associer un abonnement"
+                            : "Missions"
+                }
                 boutonRetour
                 onBack={() => {
-                    if (page === "postObjet") {
+                    if (page === "postObjet" || page === "associate") {
                         setPage("listes");
                     } else {
                         router.back();
                     }
                 }}
             />
+
 
             {page === "listes" && (
                 <ScanActionButton
@@ -61,7 +69,17 @@ export default function MissionsMobile() {
                 <MissionsListContent onPostObjet={() => setPage("postObjet")} />
             )}
 
-            {page === "listes" && ongletActifId === "gestes" && <Gestes />}
+            {page === "listes" && ongletActifId === "gestes" && (
+                <Gestes
+                    onAssociate={() => setPage("associate")}
+                />
+            )}
+
+            {page === "associate" && (
+                <AssociateSubscription
+                    onBack={() => setPage("listes")}
+                />
+            )}
 
             {page === "postObjet" && <Post onBack={() => setPage("listes")} />}
         </View>

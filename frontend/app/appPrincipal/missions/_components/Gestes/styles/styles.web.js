@@ -1,89 +1,128 @@
 import { StyleSheet } from "react-native";
 
 export default StyleSheet.create({
-    container: {
-        padding: 20,
-        gap: 16,
+    /* ===== CONTAINER ===== */
+    webContainer: {
+        padding: 24,
+        gap: 24,
     },
 
-    card: {
-        backgroundColor: "#fff",
-        borderRadius: 16,
-        padding: 20,
+    /* ===== CARD ===== */
+    webCard: {
+        backgroundColor: "#FFFFFF",
+        borderRadius: 18,
+        padding: 22,
+        boxShadow: "0px 5px 18px rgba(0,0,0,0.10)",
+    },
+
+    /* ===== HEADER ===== */
+    webHeader: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 12,
+    },
+
+    webHeaderLeft: {
         flexDirection: "row",
         alignItems: "center",
-        position: "relative",
-        cursor:"pointer",
-
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.08,
-        shadowRadius: 10,
-
-        elevation: 6,
+        gap: 10,
     },
 
-
-    cardActive: {
-        borderWidth: 2,
-        borderColor: "#2F80ED",
-    },
-
-    left: {
-        flex: 1,
-        gap: 8,
-    },
-
-    name: {
-        fontSize: 18,
-        fontWeight: "700",
-    },
-
-    title: {
-        color: "#555",
-    },
-
-    logo: {
-        width: 72,
-        height: 72,
+    webSmallLogo: {
+        width: 38,
+        height: 38,
         resizeMode: "contain",
     },
 
-    pointsBadge: {
-        position: "absolute",
-        top: 12,
-        right: 12,
-        backgroundColor: "#2ECC71",
-        paddingHorizontal: 10,
-        paddingVertical: 4,
-        borderRadius: 8,
-    },
-
-    pointsText: {
-        color: "#fff",
+    webPartnerName: {
+        fontSize: 18,
         fontWeight: "700",
-        fontSize: 12,
+        color: "#3CBFA3",
     },
 
-    button: {
-        marginTop: 12,
-        alignSelf: "flex-start",
-        backgroundColor: "#2ECC71",
+    /* ===== POINTS BADGE ===== */
+    webPointsBadge: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#06DA95",
+        borderRadius: 10,
+        paddingVertical: 5,
+        paddingHorizontal: 12,
+    },
+
+    webPointsText: {
+        color: "#FFFFFF",
+        fontWeight: "800",
+        fontSize: 13,
+        marginRight: 6,
+    },
+
+    webPointsIcon: {
+        width: 20,
+        height: 20,
+        resizeMode: "contain",
+    },
+
+    /* ===== CONTENT ===== */
+    webContent: {
+        alignItems: "center",
+        gap: 14,
         paddingHorizontal: 16,
-        paddingVertical: 8,
-        borderRadius: 8,
     },
 
-    buttonPending: {
-        backgroundColor: "#2D9CDB",
+    webTitle: {
+        fontSize: 19,
+        fontWeight: "800",
+        textAlign: "center",
+        maxWidth: 720,
     },
 
-    buttonValidated: {
-        backgroundColor: "#27AE60",
+    webDescription: {
+        fontSize: 14,
+        color: "#444",
+        textAlign: "center",
+        maxWidth: 720,
     },
 
-    buttonText: {
-        color: "#fff",
-        fontWeight: "600",
+    /* ===== ACTION ===== */
+    webActionRow: {
+        width: "100%",
+        flexDirection: "row",
+        justifyContent: "flex-end",
+        marginTop: 6,
+    },
+
+    webActionButton: {
+        backgroundColor: "#06DA95",
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 10,
+        cursor: "pointer",
+    },
+
+    webActionText: {
+        color: "#FFFFFF",
+        fontSize: 14,
+        fontWeight: "700",
+    },
+
+    webButtonPending: {
+        backgroundColor: "#4DA6FF",
+        cursor: "not-allowed",
+    },
+
+    webButtonValidated: {
+        backgroundColor: "#1DBF73",
+        cursor: "default",
+    },
+
+    /* ===== FOOTER ===== */
+    webFooterText: {
+        fontSize: 12,
+        color: "#777",
+        fontStyle: "italic",
+        textAlign: "center",
+        marginTop: 6,
     },
 });

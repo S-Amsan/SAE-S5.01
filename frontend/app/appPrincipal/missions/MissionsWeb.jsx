@@ -6,10 +6,13 @@ import Header from "../../../components/Header";
 import MissionsListContent from "./_components/MissionsListContent/MissionsListContent";
 import Gestes from "./_components/Gestes/Gestes";
 import Post from "./_components/PostObjet/Post";
+import AssociateSubscription from "./_components/Associate/AssociateSubscription";
 
 export default function MissionsWeb() {
     const [ongletActifId, setOngletActifId] = useState("listes");
+
     const [showPostModal, setShowPostModal] = useState(false);
+    const [showAssociateModal, setShowAssociateModal] = useState(false);
 
     const onglets = [
         { id: "listes", label: "Régulières" },
@@ -38,38 +41,43 @@ export default function MissionsWeb() {
                         />
                     )}
 
-                    {ongletActifId === "gestes" && <Gestes />}
+                    {ongletActifId === "gestes" && (
+                        <Gestes
+                            onAssociate={() => setShowAssociateModal(true)}
+                        />
+                    )}
                 </View>
             </View>
 
-            {/* MODAL POST OBJET (WEB) */}
+            {/* ===== MODAL POST OBJET ===== */}
             {showPostModal && (
-                <View
-                    style={{
-                        position: "fixed",
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        backgroundColor: "rgba(0,0,0,0.5)",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        zIndex: 1000,
-                    }}
-                >
-                    <View
-                        style={{
-                            width: 500,
-                            maxHeight: "90vh",
-                            backgroundColor: "#fff",
-                            borderRadius: 16,
-                            overflow: "hidden",
-                        }}
-                    >
                         <Post onBack={() => setShowPostModal(false)} />
-                    </View>
-                </View>
+            )}
+
+            {/* ===== MODAL ASSOCIATE ===== */}
+            {showAssociateModal && (
+                <AssociateSubscription onBack={() => setShowAssociateModal(false)}/>
             )}
         </View>
     );
 }
+
+const overlayStyle = {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1000,
+};
+
+const modalStyle = {
+    width: 500,
+    maxHeight: "90vh",
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    overflow: "hidden",
+};
