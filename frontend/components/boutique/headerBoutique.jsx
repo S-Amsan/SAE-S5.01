@@ -1,34 +1,37 @@
 import { Pressable, View, Text, StyleSheet, Image } from "react-native";
 import { useRouter } from "expo-router";
-import { usePanier } from "../../context/PanierContext";
 import point from "../../assets/icones/point.png";
+import { usePanier } from "../../context/PanierContext";
 
 export default function HeaderBoutique({ filtreActif, setFiltreActif, mode = "complet" }) {
     const router = useRouter();
-    const { nbPanier } = usePanier();
+    const { cartCount } = usePanier();
 
     return (
         <View style={styles.conteneur}>
             {mode === "complet" && (
                 <View style={styles.gauche}>
-                    <Pressable style={[styles.boutonFiltre, filtreActif === "cartes" && styles.boutonFiltreActif]}
-                               onPress={() => setFiltreActif(filtreActif === "cartes" ? null : "cartes")}
+                    <Pressable
+                        style={[styles.boutonFiltre, filtreActif === "cartes" && styles.boutonFiltreActif]}
+                        onPress={() => setFiltreActif(filtreActif === "cartes" ? null : "cartes")}
                     >
                         <Text style={[styles.texteFiltre, filtreActif === "cartes" && styles.texteFiltreActif]}>
                             Cartes cadeaux
                         </Text>
                     </Pressable>
 
-                    <Pressable style={[styles.boutonFiltre, filtreActif === "coupons" && styles.boutonFiltreActif]}
-                               onPress={() => setFiltreActif(filtreActif === "coupons" ? null : "coupons")}
+                    <Pressable
+                        style={[styles.boutonFiltre, filtreActif === "coupons" && styles.boutonFiltreActif]}
+                        onPress={() => setFiltreActif(filtreActif === "coupons" ? null : "coupons")}
                     >
                         <Text style={[styles.texteFiltre, filtreActif === "coupons" && styles.texteFiltreActif]}>
                             Bons de réduction
                         </Text>
                     </Pressable>
 
-                    <Pressable style={[styles.boutonFiltre, filtreActif === "dons" && styles.boutonFiltreActif]}
-                               onPress={() => setFiltreActif(filtreActif === "dons" ? null : "dons")}
+                    <Pressable
+                        style={[styles.boutonFiltre, filtreActif === "dons" && styles.boutonFiltreActif]}
+                        onPress={() => setFiltreActif(filtreActif === "dons" ? null : "dons")}
                     >
                         <Text style={[styles.texteFiltre, filtreActif === "dons" && styles.texteFiltreActif]}>
                             Dons aux associations
@@ -44,9 +47,9 @@ export default function HeaderBoutique({ filtreActif, setFiltreActif, mode = "co
                         source={{ uri: "https://cdn-icons-png.flaticon.com/512/2662/2662459.png" }}
                     />
 
-                    {nbPanier > 0 && (
+                    {cartCount > 0 && (
                         <View style={styles.badgePanier}>
-                            <Text style={styles.badgePanierTexte}>{nbPanier > 99 ? "99+" : nbPanier}</Text>
+                            <Text style={styles.badgeTexte}>{cartCount}</Text>
                         </View>
                     )}
                 </Pressable>
@@ -59,7 +62,6 @@ export default function HeaderBoutique({ filtreActif, setFiltreActif, mode = "co
                         <Image source={point} style={styles.pointIcon} />
                     </View>
                 </View>
-
             </View>
         </View>
     );
@@ -126,29 +128,29 @@ const styles = StyleSheet.create({
         position: "relative",
     },
 
-    badgePanier: {
-        position: "absolute",
-        top: 6,
-        right: 10,
-        minWidth: 22,
-        height: 22,
-        paddingHorizontal: 6,
-        borderRadius: 999,
-        backgroundColor: "#04DA90",
-        alignItems: "center",
-        justifyContent: "center",
-    },
-
-    badgePanierTexte: {
-        color: "#FFFFFF",
-        fontWeight: "800",
-        fontSize: 12,
-    },
-
     iconePanier: {
         width: 36,
         height: 36,
         resizeMode: "contain",
+    },
+
+    badgePanier: {
+        position: "absolute",
+        top: 6,
+        right: 8,
+        minWidth: 22,
+        height: 22,
+        borderRadius: 999,
+        backgroundColor: "#04DA90",
+        alignItems: "center",
+        justifyContent: "center",
+        paddingHorizontal: 6,
+    },
+
+    badgeTexte: {
+        color: "#FFFFFF",
+        fontSize: 13,
+        fontWeight: "700",
     },
 
     blocPoints: {
@@ -159,7 +161,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 24,
         height: 60,
         borderWidth: 1,
-        gap : 8,
+        gap: 8,
         borderColor: "#EDEDED",
     },
 
@@ -187,5 +189,4 @@ const styles = StyleSheet.create({
         resizeMode: "contain",
         marginTop: 2,
     },
-
 });
