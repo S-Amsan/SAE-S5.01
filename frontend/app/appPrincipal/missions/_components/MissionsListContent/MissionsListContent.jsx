@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {
     View,
     Text,
@@ -8,8 +8,11 @@ import {
 } from "react-native";
 import styles from "./styles/styles";
 import { isWeb } from "../../../../../utils/platform";
+import { useLocalSearchParams, useRouter } from "expo-router";
 
-export default function MissionsPage() {
+export default function MissionsPage({ onPostObjet }) {
+
+    const router = useRouter();
 
     const items = [
         {
@@ -139,6 +142,10 @@ export default function MissionsPage() {
                                 description="Scanner le QR code d’un partenaire puis prenez le produit en photo."
                                 button="Commencer"
                                 image={require("../../../../../assets/missions/scan.png")}
+                                onPress={() => {
+                                    console.log("CLICK SCAN");
+                                    router.push("/appPrincipal/codebar");
+                                }}
                             />
 
                             <InfoCard
@@ -146,6 +153,7 @@ export default function MissionsPage() {
                                 description="Poster des objets abandonnés pour leur donner une seconde vie."
                                 button="Commencer"
                                 image={require("../../../../../assets/missions/objet.png")}
+                                onPress={onPostObjet}
                             />
                     </View>
                     </View>
@@ -170,14 +178,21 @@ export default function MissionsPage() {
                     description="Scanner le QR code d’un partenaire puis prenez le produit en photo."
                     button="Commencer"
                     image={require("../../../../../assets/missions/scan.png")}
+                    onPress={() => {
+                        console.log("CLICK SCAN");
+                        router.push("/appPrincipal/codebar");
+                    }}
                 />
+
 
                 <InfoCard
                     title="Objets abandonnés"
                     description="Poster des objets abandonnés pour leur donner une seconde vie."
                     button="Commencer"
                     image={require("../../../../../assets/missions/objet.png")}
+                    onPress={onPostObjet}
                 />
+
             </View>
 
             {/* LIST HEADER */}
@@ -218,15 +233,17 @@ export default function MissionsPage() {
 }
 
 
-function InfoCard({ title, description, button, image }) {
+function InfoCard({ title, description, button, image, onPress }) {
     return (
         <View style={styles.infoCard}>
-
             <View style={styles.infoContent}>
                 <Text style={styles.infoTitle}>{title}</Text>
                 <Text style={styles.infoDesc}>{description}</Text>
 
-                <TouchableOpacity style={styles.infoButton}>
+                <TouchableOpacity
+                    style={styles.infoButton}
+                    onPress={onPress}
+                >
                     <Text style={styles.infoButtonText}>{button}</Text>
                 </TouchableOpacity>
             </View>
@@ -234,10 +251,10 @@ function InfoCard({ title, description, button, image }) {
             <View style={styles.imageWrapper}>
                 <Image source={image} style={styles.infoImage} />
             </View>
-
         </View>
     );
 }
+
 
 function InfoHeader({ title, description,image}) {
     return (

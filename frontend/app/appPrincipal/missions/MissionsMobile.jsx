@@ -7,9 +7,12 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 
 import MissionsListContent from "./_components/MissionsListContent/MissionsListContent";
 import Gestes from "./_components/Gestes/Gestes";
+import Post from "./_components/PostObjet/Post";
 
 export default function MissionsMobile() {
     const [ongletActifId, setOngletActifId] = useState("listes");
+    const [page, setPage] = useState("listes");
+
     const router = useRouter();
     const { scannedData } = useLocalSearchParams();
 
@@ -26,21 +29,42 @@ export default function MissionsMobile() {
 
     return (
         <View style={{ flex: 1, backgroundColor: "#fff" }}>
-            <Header titre="Missions" boutonRetour />
-
-            <ScanActionButton
-                label="Scanner un produit"
-                onPress={() => router.push("/appPrincipal/codebar")}
+            <Header
+                titre={page === "postObjet" ? "Poster un objet" : "Missions"}
+                boutonRetour
+                onBack={() => {
+                    if (page === "postObjet") {
+                        setPage("listes");
+                    } else {
+                        router.back();
+                    }
+                }}
             />
 
-            <TabNavbarMobile
-                ongletActifId={ongletActifId}
-                onglets={onglets}
-                setOngletActif={setOngletActifId}
-            />
+            {page === "listes" && (
+                <ScanActionButton
+                    onPress={() => router.push("/appPrincipal/codebar")}
+                />
+            )}
 
-            {ongletActifId === "listes" && <MissionsListContent />}
-            {ongletActifId === "gestes" && <Gestes />}
+            {/* Onglets visibles UNIQUEMENT sur la page listes */}
+            {page === "listes" && (
+                <TabNavbarMobile
+                    ongletActifId={ongletActifId}
+                    onglets={onglets}
+                    setOngletActif={setOngletActifId}
+                />
+            )}
+
+            {/* Pages internes */}
+            {page === "listes" && ongletActifId === "listes" && (
+                <MissionsListContent onPostObjet={() => setPage("postObjet")} />
+            )}
+
+            {page === "listes" && ongletActifId === "gestes" && <Gestes />}
+
+            {page === "postObjet" && <Post onBack={() => setPage("listes")} />}
         </View>
     );
 }
+
