@@ -11,11 +11,11 @@ export default function BlocInfos() {
             image: "https://upload.wikimedia.org/wikipedia/commons/8/83/Steam_icon_logo.svg",
         },
         {
-            titre: "Cet utilisateur est actuellement recherché",
-            image: "https://media.licdn.com/dms/image/v2/D4D03AQEuxNTNZ9pcyw/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1732986053908?e=2147483647&v=beta&t=KXGYmWrWy4lV6GsVKTahXunyKG4OOIU7-TS_oMW5Q-8",
+            titre: "Vous pouvez maintenant faire des dons à des associations depuis la boutique",
+            image: "https://afsep.fr/wp-content/uploads/2024/06/Don.jpg",
         },
         {
-            titre: "Vous pouvez maintenant acheter des cartes cadeaux Amazon",
+            titre: "Les cartes cadeaux Amazon sont de nouveau disponibles",
             image: "https://icons.veryicon.com/png/o/application/fill-2/amazon-circle.png",
         },
     ];
@@ -104,7 +104,9 @@ export default function BlocInfos() {
                             <Text style={styles.titre} numberOfLines={1} ellipsizeMode="tail">
                                 {slides[indexActif].titre}
                             </Text>
-                            <Text style={styles.lien}>Voir plus</Text>
+                            <Pressable style={{ alignSelf: 'flex-start' }}>
+                                <Text style={styles.lien}>Voir plus</Text>
+                            </Pressable>
                         </View>
 
                         <View style={styles.pagination}>
