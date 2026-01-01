@@ -1,14 +1,16 @@
-import React, {useState} from "react";
+import React, {useRef, useState} from "react";
 import {
     View,
     Text,
     ScrollView,
     Image,
-    TouchableOpacity,
+    TouchableOpacity, Animated,
 } from "react-native";
 import styles from "./styles/styles";
 import { isWeb } from "../../../../../utils/platform";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import Navbar from "../../../../../components/Navbar";
+import ScanActionButton from "../../../../../components/ScanActionButton";
 
 export default function MissionsPage({ onPostObjet }) {
 
@@ -81,6 +83,46 @@ export default function MissionsPage({ onPostObjet }) {
             image: require("../../../../../assets/missions/scan.png"),
         },
     ];
+
+    const navbarTranslateY = useRef(new Animated.Value(0)).current;
+    const scanBtnTranslateX = useRef(new Animated.Value(0)).current;
+    const SCAN_BTN_HIDE_X = 120; // largeur + marge
+    const lastScrollY = useRef(0);
+    const NAVBAR_HEIGHT = 90;
+
+    const handleScroll = (event) => {
+        const currentY = event.nativeEvent.contentOffset.y;
+
+        if (currentY > lastScrollY.current + 5) {
+            Animated.parallel([
+                Animated.timing(navbarTranslateY, {
+                    toValue: NAVBAR_HEIGHT,
+                    duration: 200,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(scanBtnTranslateX, {
+                    toValue: SCAN_BTN_HIDE_X,
+                    duration: 200,
+                    useNativeDriver: true,
+                }),
+            ]).start();
+        } else if (currentY < lastScrollY.current - 5) {
+            Animated.parallel([
+                Animated.timing(navbarTranslateY, {
+                    toValue: 0,
+                    duration: 200,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(scanBtnTranslateX, {
+                    toValue: 0,
+                    duration: 200,
+                    useNativeDriver: true,
+                }),
+            ]).start();
+        }
+
+        lastScrollY.current = currentY;
+    };
 
     if (isWeb) {
         return (
@@ -161,49 +203,49 @@ export default function MissionsPage({ onPostObjet }) {
         );
     }
     return (
-        <ScrollView
-            showsVerticalScrollIndicator
-            contentContainerStyle={{ paddingBottom: 20 }}
-        >
-            {/* HEADER INFO */}
-            <InfoHeader
-                title="Parrainer un ami +1000/filleul"
-                image={require("../../../../../assets/missions/parrainage.png")}
-            />
-
-            {/* INFO CARDS */}
-            <View style={styles.infoBox}>
-                <InfoCard
-                    title="Scanner un QR code et poster"
-                    description="Scanner le QR code d’un partenaire puis prenez le produit en photo."
-                    button="Commencer"
-                    image={require("../../../../../assets/missions/scan.png")}
-                    onPress={() => {
-                        console.log("CLICK SCAN");
-                        router.push("/appPrincipal/codebar");
-                    }}
+        <View style={{ flex: 1, backgroundColor: "#fff" }}>
+            {/* CONTENU SCROLLABLE */}
+            <ScrollView
+                onScroll={handleScroll}
+                scrollEventThrottle={16}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{
+                    paddingBottom: NAVBAR_HEIGHT + 20, // espace pour la navbar
+                }}
+            >
+                {/* HEADER INFO */}
+                <InfoHeader
+                    title="Parrainer un ami +1000/filleul"
+                    image={require("../../../../../assets/missions/parrainage.png")}
                 />
 
+                {/* INFO CARDS */}
+                <View style={styles.infoBox}>
+                    <InfoCard
+                        title="Scanner un QR code et poster"
+                        description="Scanner le QR code d’un partenaire puis prenez le produit en photo."
+                        button="Commencer"
+                        image={require("../../../../../assets/missions/scan.png")}
+                        onPress={() => router.push("/appPrincipal/codebar")}
+                    />
 
-                <InfoCard
-                    title="Objets abandonnés"
-                    description="Poster des objets abandonnés pour leur donner une seconde vie."
-                    button="Commencer"
-                    image={require("../../../../../assets/missions/objet.png")}
-                    onPress={onPostObjet}
-                />
+                    <InfoCard
+                        title="Objets abandonnés"
+                        description="Poster des objets abandonnés pour leur donner une seconde vie."
+                        button="Commencer"
+                        image={require("../../../../../assets/missions/objet.png")}
+                        onPress={onPostObjet}
+                    />
+                </View>
 
-            </View>
+                {/* LIST HEADER */}
+                <View style={styles.header}>
+                    <Text style={styles.headerTitle}>
+                        Objets à récupérer autour de vous
+                    </Text>
+                </View>
 
-            {/* LIST HEADER */}
-            <View style={styles.header}>
-                <Text style={styles.headerTitle}>
-                    Objets à récupérer autour de vous
-                </Text>
-            </View>
-
-            {/* LIST */}
-            <View>
+                {/* LIST */}
                 {items.map(item => (
                     <View key={item.id} style={styles.card}>
                         <Image source={item.image} style={styles.image} />
@@ -227,13 +269,44 @@ export default function MissionsPage({ onPostObjet }) {
                         </View>
                     </View>
                 ))}
-            </View>
-        </ScrollView>
+            </ScrollView>
+
+            {/* NAVBAR ANIMÉE (AU-DESSUS DU SCROLL) */}
+            <Animated.View
+                style={{
+                    position: "absolute",
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    transform: [{ translateY: navbarTranslateY }],
+                    zIndex: 100,
+                }}
+            >
+                <Navbar />
+            </Animated.View>
+
+            <Animated.View
+                pointerEvents="box-none"
+                style={{
+                    position: "absolute",
+                    bottom: 10,
+                    right: 16,
+                    width: 72,
+                    height: 72,
+                    transform: [{ translateX: scanBtnTranslateX }],
+                    zIndex: 99,
+                }}
+            >
+                <ScanActionButton
+                    onPress={() => router.push("/appPrincipal/codebar")}
+                />
+            </Animated.View>
+        </View>
     );
 }
 
 
-function InfoCard({ title, description, button, image, onPress }) {
+    function InfoCard({ title, description, button, image, onPress }) {
     return (
         <View style={styles.infoCard}>
             <View style={styles.infoContent}>

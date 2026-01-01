@@ -165,4 +165,21 @@ export default StyleSheet.create({
         backgroundColor: "rgba(255,255,255,0.2)",
         marginHorizontal: 12,
     },
+
+    /* WEB MODAL */
+    modalOverlay: {
+        position: "fixed",
+        inset: 0,
+        backgroundColor: "rgba(0,0,0,0.4)",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+
+    modalContent: {
+        width: 420,
+        maxHeight: "90%",
+        backgroundColor: "#fff",
+        borderRadius: 12,
+        overflow: "hidden",
+    },
 });

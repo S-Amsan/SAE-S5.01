@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { View } from "react-native";
+import React, {useEffect, useRef, useState} from "react";
+import {Animated, View} from "react-native";
 import Header from "../../../components/Header";
 import TabNavbarMobile from "../../../components/TabNavbarMobile";
 import ScanActionButton from "../../../components/ScanActionButton";
@@ -47,13 +47,6 @@ export default function MissionsMobile() {
                     }
                 }}
             />
-
-
-            {page === "listes" && (
-                <ScanActionButton
-                    onPress={() => router.push("/appPrincipal/codebar")}
-                />
-            )}
 
             {/* Onglets visibles UNIQUEMENT sur la page listes */}
             {page === "listes" && (

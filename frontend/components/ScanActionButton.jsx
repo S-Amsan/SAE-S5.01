@@ -20,7 +20,7 @@ export default function ScanActionButton({ onPress }) {
 const styles = StyleSheet.create({
     button: {
         position: "absolute",
-        bottom: 50,
+        bottom: 130,
         right: 24,
 
         width: 64,

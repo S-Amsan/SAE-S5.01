@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, {useRef, useState} from "react";
 import {
     View,
     Text,
     Image,
     ScrollView,
-    Pressable,
+    Pressable, Animated,
 } from "react-native";
 import styles from "./styles/styles";
 import { isWeb } from "../../../../../utils/platform";
+import Navbar from "../../../../../components/Navbar";
+import ScanActionButton from "../../../../../components/ScanActionButton";
+import {useRouter} from "expo-router";
 
 export default function Gestes({ onAssociate }) {
     const partenaires = [
@@ -35,9 +38,60 @@ export default function Gestes({ onAssociate }) {
             points: 50000,
             logo: require("../../../../../assets/icones/missions/gaspi.png"),
         },
+
+        {
+            id: "nouse",
+            name: "Nous anti-gaspi",
+            title: "Associer votre carte fidélité à Ecoception",
+            status: "start",
+            points: 50000,
+            logo: require("../../../../../assets/icones/missions/gaspi.png"),
+        },
     ];
 
     const [hoveredId, setHoveredId] = useState(null);
+
+    const router = useRouter();
+
+    const navbarTranslateY = useRef(new Animated.Value(0)).current;
+    const scanBtnTranslateX = useRef(new Animated.Value(0)).current;
+    const SCAN_BTN_HIDE_X = 120; // largeur + marge
+    const lastScrollY = useRef(0);
+    const NAVBAR_HEIGHT = 90;
+
+    const handleScroll = (event) => {
+        const currentY = event.nativeEvent.contentOffset.y;
+
+        if (currentY > lastScrollY.current + 5) {
+            Animated.parallel([
+                Animated.timing(navbarTranslateY, {
+                    toValue: NAVBAR_HEIGHT,
+                    duration: 200,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(scanBtnTranslateX, {
+                    toValue: SCAN_BTN_HIDE_X,
+                    duration: 200,
+                    useNativeDriver: true,
+                }),
+            ]).start();
+        } else if (currentY < lastScrollY.current - 5) {
+            Animated.parallel([
+                Animated.timing(navbarTranslateY, {
+                    toValue: 0,
+                    duration: 200,
+                    useNativeDriver: true,
+                }),
+                Animated.timing(scanBtnTranslateX, {
+                    toValue: 0,
+                    duration: 200,
+                    useNativeDriver: true,
+                }),
+            ]).start();
+        }
+
+        lastScrollY.current = currentY;
+    };
 
     if (isWeb) {
         return (
@@ -106,61 +160,101 @@ export default function Gestes({ onAssociate }) {
     }
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            {partenaires.map((p) => {
-                const isHovered = hoveredId === p.id;
+        <View style={{ flex: 1 }}>
+            {/* CONTENU SCROLLABLE */}
+            <ScrollView
+                contentContainerStyle={[
+                    styles.container,
+                    { paddingBottom: NAVBAR_HEIGHT + 20 }, // espace navbar
+                ]}
+                onScroll={handleScroll}
+                scrollEventThrottle={16}
+                showsVerticalScrollIndicator={false}
+            >
+                {partenaires.map((p) => {
+                    const isHovered = hoveredId === p.id;
 
-                return (
-                    <View
-                        key={p.id}
-                        onMouseEnter={() => isWeb && setHoveredId(p.id)}
-                        onMouseLeave={() => isWeb && setHoveredId(null)}
-                        style={[
-                            styles.card,
-                            isHovered && styles.cardHover,
-                        ]}
-                    >
-                        {/* ===== LEFT (TEXTE) ===== */}
-                        <View style={styles.left}>
-                            <Text style={styles.name}>{p.name}</Text>
-                            <Text style={styles.title}>{p.title}</Text>
+                    return (
+                        <View
+                            key={p.id}
+                            onMouseEnter={() => isWeb && setHoveredId(p.id)}
+                            onMouseLeave={() => isWeb && setHoveredId(null)}
+                            style={[
+                                styles.card,
+                                isHovered && styles.cardHover,
+                            ]}
+                        >
+                            {/* ===== LEFT (TEXTE) ===== */}
+                            <View style={styles.left}>
+                                <Text style={styles.name}>{p.name}</Text>
+                                <Text style={styles.title}>{p.title}</Text>
 
-                            <Pressable
-                                onPress={() => p.status === "start" && onAssociate?.(p)}
-                                style={[
-                                    styles.button,
-                                    p.status === "start" && styles.buttonStart,
-                                    p.status === "pending" && styles.buttonPending,
-                                    p.status === "validated" && styles.buttonValidated,
-                                ]}
-                            >
-                                <Text style={styles.buttonText}>
-                                    {p.status === "start" && "Commencer"}
-                                    {p.status === "pending" && "En attente"}
-                                    {p.status === "validated" && "✓ Validé"}
-                                </Text>
-                            </Pressable>
-                        </View>
-
-                        {/* ===== RIGHT (IMAGE + POINTS) ===== */}
-                        <View style={styles.imageWrapper}>
-                            {/* POINTS OVERLAY */}
-                            <View style={styles.pointsBadge}>
-                                <Text style={styles.pointsText}>
-                                    +{p.points.toLocaleString()}
-                                </Text>
-                                <Image
-                                    source={require("../../../../../assets/icones/point.png")}
-                                    style={styles.pointsIcon}
-                                />
+                                <Pressable
+                                    onPress={() => p.status === "start" && onAssociate?.(p)}
+                                    style={[
+                                        styles.button,
+                                        p.status === "start" && styles.buttonStart,
+                                        p.status === "pending" && styles.buttonPending,
+                                        p.status === "validated" && styles.buttonValidated,
+                                    ]}
+                                >
+                                    <Text style={styles.buttonText}>
+                                        {p.status === "start" && "Commencer"}
+                                        {p.status === "pending" && "En attente"}
+                                        {p.status === "validated" && "✓ Validé"}
+                                    </Text>
+                                </Pressable>
                             </View>
 
-                            {/* LOGO */}
-                            <Image source={p.logo} style={styles.logo} />
+                            {/* ===== RIGHT (IMAGE + POINTS) ===== */}
+                            <View style={styles.imageWrapper}>
+                                <View style={styles.pointsBadge}>
+                                    <Text style={styles.pointsText}>
+                                        +{p.points.toLocaleString()}
+                                    </Text>
+                                    <Image
+                                        source={require("../../../../../assets/icones/point.png")}
+                                        style={styles.pointsIcon}
+                                    />
+                                </View>
+
+                                <Image source={p.logo} style={styles.logo} />
+                            </View>
                         </View>
-                    </View>
-                );
-            })}
-        </ScrollView>
+                    );
+                })}
+            </ScrollView>
+
+            {/* NAVBAR ANIMÉE */}
+            <Animated.View
+                style={{
+                    position: "absolute",
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    transform: [{ translateY: navbarTranslateY }],
+                    zIndex: 100,
+                }}
+            >
+                <Navbar />
+            </Animated.View>
+
+            <Animated.View
+                pointerEvents="box-none"
+                style={{
+                    position: "absolute",
+                    bottom: 10,
+                    right: 16,
+                    width: 72,
+                    height: 72,
+                    transform: [{ translateX: scanBtnTranslateX }],
+                    zIndex: 99,
+                }}
+            >
+                <ScanActionButton
+                    onPress={() => router.push("/appPrincipal/codebar")}
+                />
+            </Animated.View>
+        </View>
     );
 }

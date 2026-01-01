@@ -1,10 +1,27 @@
 import React, { useState } from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import styles from "./styles/accueilStyle";
+import { useRouter } from "expo-router";
+import { isWeb } from "../../../../utils/platform";
+import styles from "../styles/accueilStyle";
 
-export default function PostCard({ post }) {
+export default function PostCard({ post, onSignaler }) {
     const [showMenu, setShowMenu] = useState(false);
+    const router = useRouter();
+
+    const handleSignaler = () => {
+        setShowMenu(false);
+
+        if (isWeb) {
+
+            onSignaler?.(post.id);
+        } else {
+            router.push({
+                pathname: "/appPrincipal/accueil/Post/signalement",
+                params: { postId: post.id },
+            });
+        }
+    };
 
     return (
         <View style={styles.card}>
@@ -28,7 +45,7 @@ export default function PostCard({ post }) {
                 </TouchableOpacity>
             </View>
 
-            {/* MENU LOCAL AU POST */}
+            {/* MENU */}
             {showMenu && (
                 <View style={styles.postMenu}>
                     <TouchableOpacity
@@ -39,20 +56,23 @@ export default function PostCard({ post }) {
                         }}
                     >
                         <Text style={styles.postMenuText}>Voir le profil</Text>
-                        <Image style={styles.profil} source={require("../../../assets/icones/accueil/profil.png")}/>
+                        <Image
+                            style={styles.profil}
+                            source={require("../../../../assets/icones/accueil/profil.png")}
+                        />
                     </TouchableOpacity>
 
                     <View style={styles.postMenuSeparator} />
 
                     <TouchableOpacity
                         style={styles.postMenuRow}
-                        onPress={() => {
-                            setShowMenu(false);
-                            console.log("Signaler post");
-                        }}
+                        onPress={handleSignaler}
                     >
                         <Text style={styles.postMenuDanger}>Signaler le post</Text>
-                        <Image style={styles.signal} source={require("../../../assets/icones/accueil/signal.png")}/>
+                        <Image
+                            style={styles.signal}
+                            source={require("../../../../assets/icones/accueil/signal.png")}
+                        />
                     </TouchableOpacity>
                 </View>
             )}
@@ -64,14 +84,14 @@ export default function PostCard({ post }) {
             <View style={styles.actions}>
                 <TouchableOpacity style={styles.actionBtn}>
                     <Image
-                        source={require("../../../assets/icones/accueil/likeNone.png")}
+                        source={require("../../../../assets/icones/accueil/likeNone.png")}
                         style={styles.icon}
                     />
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.actionBtn}>
                     <Image
-                        source={require("../../../assets/icones/accueil/dislikeNone.png")}
+                        source={require("../../../../assets/icones/accueil/dislikeNone.png")}
                         style={styles.icon}
                     />
                 </TouchableOpacity>

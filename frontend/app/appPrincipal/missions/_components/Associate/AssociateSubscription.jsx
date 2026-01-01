@@ -3,16 +3,18 @@ import {
     View,
     Text,
     TouchableOpacity,
-    ScrollView,
+    ScrollView, Pressable,
+    Image
 } from "react-native";
 import styles from "./styles/styles";
 import { isWeb } from "../../../../../utils/platform";
 
 export default function AssociateSubscription({ onBack }) {
     const [file, setFile] = useState(null);
+    const [showUploadMenu, setShowUploadMenu] = useState(false);
 
     const handleUpload = () => {
-        console.log("UPLOAD FILE");
+        setShowUploadMenu(true);
     };
 
     const handleSubmit = () => {
@@ -78,7 +80,44 @@ export default function AssociateSubscription({ onBack }) {
             <Text style={styles.deleteInfo}>
                 Votre justificatif est supprimé automatiquement après vérification.
             </Text>
+
+            {showUploadMenu && (
+                <Pressable
+                    style={styles.menuOverlay}
+                    onPress={() => setShowUploadMenu(false)}
+                >
+                    <Pressable style={styles.menuContainer} onPress={() => {}}>
+                        <TouchableOpacity
+                            style={styles.menuRow}
+                            onPress={() => {
+                                setShowUploadMenu(false);
+                                console.log("PRENDRE PHOTO");
+                            }}
+                        >
+                            <Image style={styles.menuIcon}
+                                   source={require("../../../../../assets/icones/missions/camera.png")}/>
+                            <Text style={styles.menuText}>Prendre une photo</Text>
+                        </TouchableOpacity>
+
+                        <View style={styles.menuSeparator} />
+
+                        <TouchableOpacity
+                            style={styles.menuRow}
+                            onPress={() => {
+                                setShowUploadMenu(false);
+                                console.log("IMPORTER PHOTO");
+                            }}
+                        >
+                            <Image style={styles.menuIcon}
+                                   source={require("../../../../../assets/icones/missions/picture.png")}/>
+                            <Text style={styles.menuText}>Importer une photo</Text>
+                        </TouchableOpacity>
+                    </Pressable>
+                </Pressable>
+            )}
+
         </ScrollView>
+
     );
 
     if (isWeb) {
@@ -94,9 +133,34 @@ export default function AssociateSubscription({ onBack }) {
 
                     {Content}
                 </View>
+
+                {showUploadMenu && (
+                    <Pressable
+                        style={styles.menuOverlay}
+                        onPress={() => setShowUploadMenu(false)}
+                    >
+                        <Pressable
+                            style={styles.menuContainer}
+                            onPress={() => {}}
+                        >
+                            <TouchableOpacity style={styles.menuRow}>
+                                <Image style={styles.menuIcon} source={require("../../../../../assets/icones/missions/camera.png")} />
+                                <Text style={styles.menuText}>Prendre une photo</Text>
+                            </TouchableOpacity>
+
+                            <View style={styles.menuSeparator} />
+
+                            <TouchableOpacity style={styles.menuRow}>
+                                <Image style={styles.menuIcon} source={require("../../../../../assets/icones/missions/picture.png")} />
+                                <Text style={styles.menuText}>Importer une photo</Text>
+                            </TouchableOpacity>
+                        </Pressable>
+                    </Pressable>
+                )}
             </View>
         );
     }
+
 
     return Content;
 }
