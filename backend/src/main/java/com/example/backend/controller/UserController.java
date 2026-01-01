@@ -3,6 +3,7 @@ package com.example.backend.controller;
 import com.example.backend.model.User;
 import com.example.backend.model.http.req.AccountUpdateRequest;
 import com.example.backend.model.security.MyUserDetails;
+import com.example.backend.repository.CompetitionParticipantRepository;
 import com.example.backend.service.UserService;
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -21,6 +22,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CompetitionParticipantRepository competitionParticipantRepository;
 
     @GetMapping("/user/all")
     public List<User> getAllUsers() {
@@ -48,5 +52,18 @@ public class UserController {
         }
 
         return ResponseEntity.ok("Account didn't need to be updated");
+    }
+
+    @GetMapping("/user/points/total")
+    public ResponseEntity<Integer> getTotalCompetitionPoints(
+        @AuthenticationPrincipal MyUserDetails userDetails
+    ) {
+        int total = competitionParticipantRepository
+            .findAllByUser(userDetails.getUser())
+            .stream()
+            .mapToInt(p -> p.getPoints())
+            .sum();
+
+        return ResponseEntity.ok(total);
     }
 }
