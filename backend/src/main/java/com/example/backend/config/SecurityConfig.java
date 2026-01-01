@@ -37,6 +37,8 @@ public class SecurityConfig {
                     .permitAll()
                     .requestMatchers("/competition/**")
                     .permitAll()
+                    .requestMatchers("/competition/following")
+                    .authenticated()
             )
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(sess ->
