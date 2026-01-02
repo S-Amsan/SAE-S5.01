@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Platform, View, Text, Image, StyleSheet, ScrollView, Pressable } from "react-native";
+import {Platform, View, Text, Image, StyleSheet, ScrollView, Pressable,} from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams } from "expo-router";
 
@@ -10,22 +10,42 @@ import TabNavbarWeb from "../../../../components/TabNavbarWeb";
 import point from "../../../../assets/icones/point.png";
 import { usePanier } from "../../../../context/PanierContext";
 
-function CartCard({ item }) {
+function CartePanier({ produit, onSupprimer }) {
     return (
-        <View style={styles.carte}>
-            <Image source={{ uri: item.imageCarte }} style={styles.image} />
-            <View style={styles.contenu}>
-                <View style={styles.ligneTitre}>
-                    <Text style={styles.titre}>{item.titre}</Text>
+        <View style={styles.carteProduit}>
+            <Image source={{ uri: produit.imageCarte }} style={styles.imageProduit} />
 
-                    <View style={styles.pointsWrapper}>
-                        <Text style={styles.points}>{item.points}</Text>
-                        <Image source={point} style={styles.pointIcon} />
+            <View style={styles.contenuCarte}>
+                <View style={styles.ligneTitre}>
+                    <Text style={styles.titreProduit} numberOfLines={1}>
+                        {produit.titre}
+                    </Text>
+
+                    <View style={styles.wrapperPoints}>
+                        <Text style={styles.points}>{produit.points}</Text>
+                        <Image source={point} style={styles.iconePoint} />
                     </View>
                 </View>
 
-                <Text style={styles.description}>{item.description || item.descriptionLongue}</Text>
-                {item.quantity > 1 && <Text style={styles.qty}>Quantité : {item.quantity}</Text>}
+                <Text style={styles.descriptionProduit} numberOfLines={3}>
+                    {produit.description || produit.descriptionLongue}
+                </Text>
+
+                <View style={styles.ligneBasCarte}>
+                    {produit.quantity > 1 ? (
+                        <Text style={styles.quantite}>Quantité : {produit.quantity}</Text>
+                    ) : (
+                        <View />
+                    )}
+
+                    <Pressable
+                        onPress={() => onSupprimer(produit.id)}
+                        style={styles.boutonSupprimer}
+                        hitSlop={8}
+                    >
+                        <Text style={styles.texteSupprimer}>Supprimer</Text>
+                    </Pressable>
+                </View>
             </View>
         </View>
     );
@@ -34,27 +54,40 @@ function CartCard({ item }) {
 export default function Index() {
     const onglets = [
         { id: "panier", label: "Mon panier", page: "boutique/panier" },
-        { id: "historique", label: "Historique", page: "boutique/historique" },
+        { id: "historique", label: "Mes achats", page: "boutique/historique" },
     ];
 
     const params = useLocalSearchParams();
-    const { items, totalPoints, clearCart } = usePanier();
+    const { items, totalPoints, clearCart, removeItem } = usePanier();
 
-    const [showJustAdded, setShowJustAdded] = useState(false);
+    const [afficherAjout, setAfficherAjout] = useState(false);
 
     useEffect(() => {
-        const raw = params?.justAdded;
-        const justAdded = Array.isArray(raw) ? raw[0] : raw;
+        const brut = params?.justAdded;
+        const vientDAjouter = Array.isArray(brut) ? brut[0] : brut;
 
-        if (String(justAdded) === "1") {
-            setShowJustAdded(true);
+        if (String(vientDAjouter) === "1") {
+            setAfficherAjout(true);
         }
     }, [params?.justAdded]);
 
-    const handleCheckout = useCallback(() => {
+    useEffect(() => {
+        if (items.length === 0) {
+            setAfficherAjout(false);
+        }
+    }, [items.length]);
+
+    const passerCommande = useCallback(() => {
         clearCart();
-        setShowJustAdded(false);
+        setAfficherAjout(false);
     }, [clearCart]);
+
+    const supprimerProduit = useCallback(
+        (id) => {
+            removeItem(id);
+        },
+        [removeItem]
+    );
 
     return (
         <View style={{ flex: 1, flexDirection: "row", backgroundColor: "#FFFFFF" }}>
@@ -66,43 +99,54 @@ export default function Index() {
 
             <View style={{ flex: 1 }}>
                 <Header />
-                {Platform.OS === "web" && <TabNavbarWeb onglets={onglets} pageBack={"boutique"} />}
+                {Platform.OS === "web" && (
+                    <TabNavbarWeb onglets={onglets} pageBack={"boutique"} />
+                )}
 
-                <ScrollView contentContainerStyle={styles.page}>
-                    {showJustAdded && <Text style={styles.addedTitle}>✅ Ajouté au panier</Text>}
+                <ScrollView contentContainerStyle={styles.pagePanier}>
+                    {afficherAjout && (
+                        <Text style={styles.titreAjout}>✅ Ajouté au panier</Text>
+                    )}
 
                     {items.length === 0 ? (
-                        <Text style={styles.empty}>Ton panier est vide.</Text>
+                        <Text style={styles.panierVide}>Ton panier est vide.</Text>
                     ) : (
-                        <View style={styles.grid}>
-                            {items.map((it) => (
-                                <CartCard key={String(it.id)} item={it} />
+                        <View style={styles.grilleProduits}>
+                            {items.map((produit) => (
+                                <CartePanier
+                                    key={String(produit.id)}
+                                    produit={produit}
+                                    onSupprimer={supprimerProduit}
+                                />
                             ))}
                         </View>
                     )}
 
-                    <View style={styles.footer}>
-                        <View style={styles.totalRow}>
-                            <Text style={styles.totalLabel}>Total :</Text>
-                            <View style={styles.totalValue}>
+                    <View style={styles.footerPanier}>
+                        <View style={styles.ligneTotal}>
+                            <Text style={styles.labelTotal}>Total :</Text>
+                            <View style={styles.valeurTotal}>
                                 <Text style={styles.totalPoints}>{totalPoints}</Text>
-                                <Image source={point} style={styles.totalPointIcon} />
+                                <Image source={point} style={styles.iconePointTotal} />
                             </View>
                         </View>
 
                         <Pressable
-                            style={[styles.checkoutButton, items.length === 0 && styles.checkoutDisabled]}
-                            onPress={handleCheckout}
+                            style={[
+                                styles.boutonCommande,
+                                items.length === 0 && styles.boutonDesactive,
+                            ]}
+                            onPress={passerCommande}
                             disabled={items.length === 0}
                         >
                             <LinearGradient
                                 colors={["#00DB83", "#0CD8A9"]}
                                 start={{ x: 0, y: 0 }}
                                 end={{ x: 1, y: 0 }}
-                                style={styles.boutonGradient}
+                                style={styles.gradientBouton}
                                 pointerEvents="none"
                             />
-                            <Text style={styles.checkoutText}>Passer la commande</Text>
+                            <Text style={styles.texteCommande}>Passer la commande</Text>
                         </Pressable>
                     </View>
                 </ScrollView>
@@ -112,73 +156,68 @@ export default function Index() {
 }
 
 const styles = StyleSheet.create({
-    page: {
+    pagePanier: {
         paddingHorizontal: 40,
         paddingVertical: 24,
     },
 
-    addedTitle: {
+    titreAjout: {
         fontSize: 22,
         fontWeight: "600",
         marginBottom: 18,
     },
 
-    empty: {
+    panierVide: {
         fontSize: 16,
         color: "#666",
         marginTop: 12,
     },
 
-    grid: {
+    grilleProduits: {
         flexDirection: "row",
         flexWrap: "wrap",
         gap: 24,
     },
 
-    carte: {
+    carteProduit: {
         width: 320,
-        backgroundColor: "#fff",
+        backgroundColor: "#FFFFFF",
         overflow: "hidden",
         borderRadius: 8,
         borderWidth: 2,
         borderColor: "#EDEDED",
     },
 
-    contenu: {
-        padding: 16,
-    },
-
-    image: {
+    imageProduit: {
         width: "100%",
         height: 180,
     },
 
-    titre: {
-        fontSize: 20,
-        fontWeight: "500",
+    contenuCarte: {
+        padding: 16,
     },
 
-    description: {
+    ligneTitre: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+    },
+
+    titreProduit: {
+        fontSize: 20,
+        fontWeight: "500",
+        flex: 1,
+        marginRight: 10,
+    },
+
+    descriptionProduit: {
         fontSize: 15,
         color: "#666",
         lineHeight: 20,
         marginTop: 6,
     },
 
-    qty: {
-        fontSize: 14,
-        color: "#278674",
-        marginTop: 10,
-        fontWeight: "600",
-    },
-
-    ligneTitre: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-    },
-
-    pointsWrapper: {
+    wrapperPoints: {
         flexDirection: "row",
         alignItems: "center",
         gap: 6,
@@ -190,33 +229,61 @@ const styles = StyleSheet.create({
         color: "#97D7B8",
     },
 
-    pointIcon: {
+    iconePoint: {
         width: 20,
         height: 20,
         resizeMode: "contain",
     },
 
-    footer: {
+    ligneBasCarte: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "space-between",
+        marginTop: 14,
+    },
+
+    quantite: {
+        fontSize: 14,
+        color: "#278674",
+        fontWeight: "600",
+    },
+
+    boutonSupprimer: {
+        paddingVertical: 8,
+        paddingHorizontal: 12,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: "#EDEDED",
+        backgroundColor: "#FFFFFF",
+    },
+
+    texteSupprimer: {
+        fontSize: 14,
+        fontWeight: "600",
+        color: "#C0392B",
+    },
+
+    footerPanier: {
         marginTop: 28,
         alignSelf: "flex-end",
         width: 420,
         gap: 14,
     },
 
-    totalRow: {
+    ligneTotal: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "flex-end",
         gap: 10,
     },
 
-    totalLabel: {
+    labelTotal: {
         fontSize: 20,
         fontWeight: "600",
         color: "#278674",
     },
 
-    totalValue: {
+    valeurTotal: {
         flexDirection: "row",
         alignItems: "center",
         gap: 8,
@@ -228,14 +295,14 @@ const styles = StyleSheet.create({
         color: "#278674",
     },
 
-    totalPointIcon: {
+    iconePointTotal: {
         width: 26,
         height: 26,
         resizeMode: "contain",
         marginTop: 2,
     },
 
-    checkoutButton: {
+    boutonCommande: {
         height: 54,
         borderRadius: 10,
         alignItems: "center",
@@ -244,14 +311,14 @@ const styles = StyleSheet.create({
         position: "relative",
     },
 
-    checkoutText: {
+    texteCommande: {
         color: "#FFFFFF",
         fontWeight: "500",
         fontSize: 20,
         zIndex: 2,
     },
 
-    boutonGradient: {
+    gradientBouton: {
         position: "absolute",
         top: 0,
         right: 0,
@@ -261,7 +328,7 @@ const styles = StyleSheet.create({
         zIndex: 1,
     },
 
-    checkoutDisabled: {
+    boutonDesactive: {
         opacity: 0.45,
     },
 });

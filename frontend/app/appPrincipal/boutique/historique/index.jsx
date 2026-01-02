@@ -9,7 +9,7 @@ export default function Index(){
 
     const onglets = [
         {id: "panier",label : "Mon panier", page : "boutique/panier"},
-        {id: "historique",label : "Historique", page : "boutique/historique"},
+        {id: "historique",label : "Mes achats", page : "boutique/historique"},
     ];
 
     return(

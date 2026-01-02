@@ -20,9 +20,24 @@ export function PanierProvider({ children }) {
         });
     }, []);
 
-    const removeItem = useCallback((id) => {
-        setItems((prev) => prev.filter((p) => String(p.id) !== String(id)));
-    }, []);
+    const removeItem = (id) => {
+        setItems((prev) =>
+            prev
+                .map((item) => {
+                    if (item.id !== id) return item;
+
+                    if (item.quantity > 1) {
+                        return {
+                            ...item,
+                            quantity: item.quantity - 1,
+                        };
+                    }
+                    return null;
+                })
+                .filter(Boolean)
+        );
+    };
+
 
     const clearCart = useCallback(() => {
         setItems([]);
