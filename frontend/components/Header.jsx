@@ -17,6 +17,8 @@ import DEFAULT_PICTURE from "../assets/icones/default_picture.jpg";
 import {formatNombreCourt} from "../utils/format";
 import {isWeb} from "../utils/platform";
 
+import { fetchUsers, fetchUserStats } from "../services/user.api";
+
 export default function Header({
                                    recherche,
                                    setRecherche,
@@ -54,12 +56,11 @@ export default function Header({
         setFiltreActif(null);
     };
 
-    // Affichage des détails :
-    const userDetailsData = [
-        {type : "points", valeur : 4501124},
-        {type : "trophees", valeur : 654684},
-        {type : "flammes", valeur : 121}
-    ] //TODO récupérer de la BDD les vrai valeur
+    const [userDetailsData, setUserDetailsData] = useState([]);
+
+    React.useEffect(() => {
+        fetchUserStats().then(setUserDetailsData);
+    }, []);
 
     const DETAILS_CONFIG = {
         flammes: {
@@ -354,6 +355,3 @@ export default function Header({
         )}
     </View>)
 }
-
-
-

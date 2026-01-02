@@ -1,4 +1,5 @@
 import {Platform} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const API_URL =
     Platform.OS === "android" ? "http://192.168.1.146:8080" : "http://localhost:8080";
@@ -37,4 +38,28 @@ export async function fetchUsers() {
     const users = await res.json();
 
     return users;
+}
+
+export async function fetchUserStats() {
+    const token = await AsyncStorage.getItem('@auth_token');
+
+    // Response example:
+    // {
+    //   "points": 35,
+    //   "trophies": 69,
+    //   "flames": 34
+    // }
+    const res = await fetch(`${API_URL}/user/stats`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    const stats = await res.json();
+
+    return [
+        {type: "points", valeur: stats.points},
+        {type: "trophees", valeur: stats.trophies},
+        {type: "flammes", valeur: stats.flames},
+    ];
 }

@@ -36,8 +36,9 @@ export default function Login(){
         }
 
         try {
-            await login(email.trim(), password);
-            router.replace("/appPrincipal/accueil");
+            await login(email.trim(), password).then(() => {
+                router.replace("/appPrincipal/accueil");
+            });
         } catch (e) {
             console.log("LOGIN ERROR", e);
             Toast.show({
