@@ -22,6 +22,17 @@ export default function AccueilWeb() {
     const [showSignalement, setShowSignalement] = useState(false);
     const [signalementStep, setSignalementStep] = useState("reasons");
 
+    const [recherche, setRecherche] = useState("");
+    const [filtres, setFiltres] = useState([
+        { id: "tri", options: ["Récent", "Ancien"], select: "Récent" },
+        { id: "lieu", options: ["France", "Autre"], select: "France" },
+    ]);
+    
+    useEffect(() => {
+        console.log("Recherche :", recherche);
+        console.log("Filtres :", filtres);
+    }, [recherche, filtres]);
+
 
     useEffect(() => {
         const fakePosts = [
@@ -68,7 +79,11 @@ export default function AccueilWeb() {
             </View>
 
             <View style={{ flex: 1 }}>
-                <Header userDetails userProfil />
+                <Header  recherche={recherche}
+                         setRecherche={setRecherche}
+                         filtres={filtres}
+                         setFiltres={setFiltres}
+                         userDetails userProfil />
 
                 <ScrollView>
                     <View style={{ padding: 15 }}>

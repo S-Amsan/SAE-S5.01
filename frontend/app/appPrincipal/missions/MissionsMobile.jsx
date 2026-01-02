@@ -22,7 +22,6 @@ export default function MissionsMobile() {
         { id: "gestes", label: "Une fois" },
     ];
 
-    /* ===== HEADER ===== */
     const getTitle = () => {
         switch (page) {
             case "postObjet":
