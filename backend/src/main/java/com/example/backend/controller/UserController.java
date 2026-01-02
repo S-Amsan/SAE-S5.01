@@ -58,12 +58,18 @@ public class UserController {
     public ResponseEntity<Integer> getTotalCompetitionPoints(
         @AuthenticationPrincipal MyUserDetails userDetails
     ) {
-        int total = competitionParticipantRepository
-            .findAllByUser(userDetails.getUser())
+        var participants = competitionParticipantRepository.findAllByUser(
+            userDetails.getUser()
+        );
+
+        if (participants.isEmpty()) {
+            return ResponseEntity.ok(null);
+        }
+
+        int total = participants
             .stream()
             .mapToInt(p -> p.getPoints())
             .sum();
-
         return ResponseEntity.ok(total);
     }
 }
