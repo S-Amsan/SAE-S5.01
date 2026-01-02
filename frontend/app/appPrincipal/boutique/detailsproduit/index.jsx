@@ -18,7 +18,7 @@ import styles from "./styles/styles";
 export default function DetailProduit() {
     const router = useRouter();
     const params = useLocalSearchParams();
-    const { addItem } = usePanier();
+    const { ajouterAuPanier } = usePanier();
 
     const id = params.id ?? "";
     const titreCourt = params.titre ?? "Produit";
@@ -30,7 +30,7 @@ export default function DetailProduit() {
     const type = params.type ?? "cartes";
 
     const handleAddToCart = useCallback(() => {
-        addItem({
+        ajouterAuPanier({
             id: String(id),
             titre: String(titreCourt),
             titreComplet: String(titreComplet),
@@ -48,7 +48,7 @@ export default function DetailProduit() {
             params: { justAdded: "1" },
         });
 
-    }, [addItem, id, titreCourt, titreComplet, params.description, description, points, imageCarte, imageBanniere, type, router]);
+    }, [ajouterAuPanier, id, titreCourt, titreComplet, params.description, description, points, imageCarte, imageBanniere, type, router]);
 
     return (
         <View style={styles.racine}>

@@ -5,7 +5,7 @@ import { usePanier } from "../../context/PanierContext";
 
 export default function HeaderBoutique({ filtreActif, setFiltreActif, mode = "complet" }) {
     const router = useRouter();
-    const { cartCount } = usePanier();
+    const { nombreProduits } = usePanier();
 
     return (
         <View style={styles.conteneur}>
@@ -47,9 +47,11 @@ export default function HeaderBoutique({ filtreActif, setFiltreActif, mode = "co
                         source={{ uri: "https://cdn-icons-png.flaticon.com/512/2662/2662459.png" }}
                     />
 
-                    {cartCount > 0 && (
+                    {nombreProduits > 0 && (
                         <View style={styles.badgePanier}>
-                            <Text style={styles.badgeTexte}>{cartCount}</Text>
+                            <Text style={styles.badgePanierTexte}>
+                                {nombreProduits > 99 ? "99+" : String(nombreProduits)}
+                            </Text>
                         </View>
                     )}
                 </Pressable>
@@ -136,21 +138,23 @@ const styles = StyleSheet.create({
 
     badgePanier: {
         position: "absolute",
-        top: 6,
-        right: 8,
-        minWidth: 22,
-        height: 22,
-        borderRadius: 999,
+        top: -6,
+        right: -6,
+        minWidth: 26,
+        height: 26,
+        paddingHorizontal: 6,
+        borderRadius: 13,
         backgroundColor: "#04DA90",
         alignItems: "center",
         justifyContent: "center",
-        paddingHorizontal: 6,
+        borderWidth: 2,
+        borderColor: "#FFFFFF",
     },
 
-    badgeTexte: {
+    badgePanierTexte: {
         color: "#FFFFFF",
+        fontWeight: "800",
         fontSize: 13,
-        fontWeight: "700",
     },
 
     blocPoints: {
