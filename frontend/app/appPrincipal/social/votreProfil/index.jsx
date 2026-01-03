@@ -23,6 +23,7 @@ import {getCurrentRank} from "../../../../constants/rank";
 import {formatNombreEspace} from "../../../../utils/format";
 import {useNavigation, useRouter} from "expo-router";
 import { fetchSuccess } from "../../../../services/competitions.api";
+import { getFriends } from "../../../../services/friends.api";
 
 export default function Profil(){
     const navigation = useNavigation();
@@ -34,12 +35,14 @@ export default function Profil(){
     ];
     const [ongletActifId, setOngletActif] = React.useState("profil");
     const [succes_DATA, setSuccesData] = React.useState([]);
+    const [user_amis_DATA, setUserAmisData] = React.useState(0);
 
     useEffect(()=> {
         if(ongletActifId === "flamme"){
             router.push("./votreSerie")
         }
         fetchSuccess().then(setSuccesData);
+        getFriends().then((friends) => setUserAmisData(friends.length));
     },[ongletActifId])
 
     const user_DATA = {
@@ -83,9 +86,6 @@ export default function Profil(){
     };
 
     const {rank : userRank} = getCurrentRank(user_DATA.Trophees)
-
-    // Amis TODO récuperé le nombre amis de l'utilisateur connecté (Table User_Amis, si (#Id_User, #Id_User_1) et (#Id_User_1, #Id_User) existe alors ils sont amis), 0 si aucun
-    const user_amis_DATA = 12 // dans la table User_Amis
 
     // Recompences non ouvert TODO récupéré le nombre de récompence avec le status (non ouvert) Table RecompenceGagne, 0 si aucun
     const recompencesGagne = 0
