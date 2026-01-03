@@ -39,6 +39,8 @@ public class SecurityConfig {
                     .authenticated()
                     .requestMatchers("/user/notifications")
                     .authenticated()
+                    .requestMatchers("/user/points/total")
+                    .authenticated()
                     .requestMatchers("/update")
                     .authenticated()
                     .requestMatchers("/post")
@@ -49,6 +51,8 @@ public class SecurityConfig {
                     .permitAll()
                     .requestMatchers("/competition/**")
                     .permitAll()
+                    .requestMatchers("/competition/following")
+                    .authenticated()
             )
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(sess ->

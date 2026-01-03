@@ -63,3 +63,21 @@ export async function fetchUserStats() {
         {type: "flammes", valeur: stats.flames},
     ];
 }
+
+export async function fetchCompetitionUserPoints() {
+    const token = await AsyncStorage.getItem('@auth_token');
+    const res = await fetch(`${API_URL}/user/points/total`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    const text = await res.text();
+
+    if (!text) {
+        return null;
+    }
+
+    const points = parseInt(text, 10);
+
+    return Number.isNaN(points) ? null : points;
+}

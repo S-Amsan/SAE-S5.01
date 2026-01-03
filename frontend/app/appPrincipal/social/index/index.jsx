@@ -21,6 +21,8 @@ import {tempsRestant} from "../../../../utils/temps";
 import {isWeb} from "../../../../utils/platform";
 
 import {getRequiredTrophiesByRankName,RANG_MINIMUM_EVENEMENT} from "../../../../constants/rank"
+import { fetchLatestCompetition, fetchFollowingCompetitions } from "../../../../services/competitions.api"
+import { fetchCompetitionUserPoints } from "../../../../services/user.api";
 
 import styles from "./styles/styles";
 
@@ -99,10 +101,10 @@ const EventCarte = ({type, onPress, event_DATA, event_user_DATA, user_DATA}) => 
         );
     }
 
-    const pointsObjectif = formatNombreEspace(event_DATA.Points_objectif);
-    const pointsRecolte = formatNombreEspace(event_user_DATA?.Points_recolte ?? 0);
+    const pointsObjectif = formatNombreEspace(event_DATA.goalPoints);
+    const pointsRecolte = formatNombreEspace(event_user_DATA ?? 0);
     const pourcentageDAvancement = Math.min(
-        (event_user_DATA?.Points_recolte ?? 0) / event_DATA.Points_objectif,
+        (event_user_DATA ?? 0) / event_DATA.goalPoints,
         1
     );
 
@@ -139,11 +141,11 @@ const EventCarte = ({type, onPress, event_DATA, event_user_DATA, user_DATA}) => 
                 </View>
 
                 <Text style={styles.tempsRestantText}>
-                    Fin dans {tempsRestant(event_DATA.Date_fin)}
+                    Fin dans {tempsRestant(event_DATA.deadline)}
                 </Text>
 
                 <Text style={styles.nomText}>
-                    {event_DATA.Nom} <Text style={styles.etatText}>(en cours)</Text>
+                    {event_DATA.name} <Text style={styles.etatText}>(en cours)</Text>
                 </Text>
             </View>
 
@@ -313,16 +315,26 @@ const Place = ({user_DATA}) => {
 
 export default function Social(){
     const router = useRouter();
+    const [concours_DATA, setConcoursData] = React.useState(null);
+    const [user_points , setUserPoints] = React.useState(null);
 
-    const concours_DATA = {
-        Nom : "Concours de Décembre 2025",
-        Date_fin : "2025-12-30T17:59:59",
-        Points_objectif : 10000,
-    }; //TODO récupérer les vrai données -> renvoyer null si pas de concours en cours
+    // const concours_DATA = {
+    //     Nom : "Concours de Décembre 2025",
+    //     Date_fin : "2025-12-30T17:59:59",
+    //     Points_objectif : 10000,
+    // }; //TODO récupérer les vrai données -> renvoyer null si pas de concours en cours
 
-    const concours_user_DATA = {
-        Points_recolte : 2324
-    }; //TODO récupérer les vrai données -> renvoyer null si l'utilisateur actuel n'est pas inscrit
+    React.useEffect(() => {
+        fetchLatestCompetition().then(setConcoursData); // le concours le plus récent et pas fini, Date_fin > date d'aujourd'hui
+
+        fetchCompetitionUserPoints().then(setUserPoints); // Tous les concours où l'utilisateur connecté s'est inscrit -> renvoyer null si pas de concours
+    }, []);
+
+    React.useEffect(() => {
+        console.log("===================================== concours_DATA =====================================")
+        console.log(concours_DATA)
+        console.log("===================================== concours_DATA =====================================")
+    }, [concours_DATA]);
 
     const evenements_DATA = {
         Nom : "Événements Hiver Durable ❄️",
@@ -389,7 +401,7 @@ export default function Social(){
                             <ConcoursCarte
                                 onPress={() => router.push("./concours")}
                                 concours_DATA={concours_DATA}
-                                concours_user_DATA={concours_user_DATA}
+                                concours_user_DATA={user_points}
                             />
 
                             <EvenementsCarte

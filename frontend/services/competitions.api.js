@@ -1,4 +1,5 @@
 import { Platform } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const API_URL =
     Platform.OS === "android"
@@ -43,7 +44,9 @@ export async function fetchCompetitions() {
 */
 export async function fetchLatestCompetition() {
     const res = await fetch(`${API_URL}/competition/latest`);
-    const competition = await res.json();
+    const text = await res.text();
+    if (!text) return null;
+    const competition = JSON.parse(text);
     return competition;
 }
 
@@ -73,4 +76,31 @@ export async function fetchSuccess() {
     }));
 
     return mappedSuccess;
+}
+
+/**
+ * Response example:
+ * ```js
+ * [
+ *   {
+ *     "id": 1,
+ *     "name": "Décembre 2025",
+ *     "deadline": "2025-12-30T17:59:59.000+00:00",
+ *     "goalPoints": 10000,
+ *     "participants": 112,
+ *     "qualified": 54,
+ *     "inscriptionCost": 1000
+ *   }
+ * ]
+ * ```
+*/
+export async function fetchFollowingCompetitions() {
+    const token = await AsyncStorage.getItem('@auth_token');
+    const res = await fetch(`${API_URL}/competition/following`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    const competitions = await res.json();
+    return competitions;
 }

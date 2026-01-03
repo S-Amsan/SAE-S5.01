@@ -2,7 +2,10 @@ package com.example.backend.model;
 
 import jakarta.persistence.*;
 import java.time.Instant;
+import java.util.Set;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -46,6 +49,11 @@ public class User {
 
     @Column
     private String name;
+
+    @OneToMany(mappedBy = "user")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<CompetitionParticipant> competitions;
 
     public User() {}
 

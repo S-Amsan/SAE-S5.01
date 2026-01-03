@@ -46,17 +46,17 @@ const EnCours = ({config, event_DATA, user_event_DATA}) => {
             || null
         : null;
 
-    const pointsObjectif = formatNombreEspace(event_DATA.Points_objectif);
+    const pointsObjectif = formatNombreEspace(event_DATA.goalPoints);
     const pointsRecolte = formatNombreEspace(event_user_DATA?.Points_recolte ?? 0);
-    const pourcentageDAvancement = Math.min((event_user_DATA?.Points_recolte ?? 0) / event_DATA.Points_objectif, 1);
+    const pourcentageDAvancement = Math.min((event_user_DATA?.Points_recolte ?? 0) / event_DATA.goalPoints, 1);
 
-    const eventNom = event_DATA.Nom
-    const eventFin = tempsRestant(event_DATA.Date_fin)
+    const eventNom = event_DATA.name
+    const eventFin = tempsRestant(event_DATA.deadline)
 
     const participants = event_DATA.Participants
-    const qualifies = event_DATA.Qualifies
-    const coutInscriptionEvent = formatNombreEspace(event_DATA.Cout_inscription)
-    const pointsARedistribuer = formatNombreEspace(participants * event_DATA.Cout_inscription)
+    const qualifies = event_DATA.qualified
+    const coutInscriptionEvent = formatNombreEspace(event_DATA.inscriptionCost)
+    const pointsARedistribuer = formatNombreEspace(participants * event_DATA.inscriptionCost)
 
     return (
         <View style={styles.enCoursContainer}>
@@ -313,6 +313,11 @@ export default function EventPage({type, event_DATA,user_event_DATA}) {
     if (!config) {
         return null;
     }
+
+    console.log("===================================== concours_DATA =====================================")
+    console.log(event_DATA)
+    console.log(user_event_DATA)
+    console.log("===================================== concours_DATA =====================================")
 
     return (
         <View style={styles.container}>

@@ -6,6 +6,7 @@ import com.example.backend.model.UserStats;
 import com.example.backend.model.http.req.AccountUpdateRequest;
 import com.example.backend.model.http.res.UserStatsResponse;
 import com.example.backend.model.security.MyUserDetails;
+import com.example.backend.repository.CompetitionParticipantRepository;
 import com.example.backend.repository.NotificationRepository;
 import com.example.backend.repository.UserStatsRepository;
 import com.example.backend.service.UserService;
@@ -32,6 +33,9 @@ public class UserController {
 
     @Autowired
     private NotificationRepository notificationRepository;
+
+    @Autowired
+    private CompetitionParticipantRepository competitionParticipantRepository;
 
     @GetMapping("/user/all")
     public List<User> getAllUsers() {
@@ -83,5 +87,24 @@ public class UserController {
         }
 
         return ResponseEntity.ok("Account didn't need to be updated");
+    }
+
+    @GetMapping("/user/points/total")
+    public ResponseEntity<Integer> getTotalCompetitionPoints(
+        @AuthenticationPrincipal MyUserDetails userDetails
+    ) {
+        var participants = competitionParticipantRepository.findAllByUser(
+            userDetails.getUser()
+        );
+
+        if (participants.isEmpty()) {
+            return ResponseEntity.ok(null);
+        }
+
+        int total = participants
+            .stream()
+            .mapToInt(p -> p.getPoints())
+            .sum();
+        return ResponseEntity.ok(total);
     }
 }
