@@ -64,9 +64,9 @@ export async function fetchUserStats() {
     ];
 }
 
-export async function fetchCompetitionUserPoints() {
+export async function fetchUserPointsForCompetition(competitionId) {
     const token = await AsyncStorage.getItem('@auth_token');
-    const res = await fetch(`${API_URL}/user/points/total`, {
+    const res = await fetch(`${API_URL}/user/points/${competitionId}`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
