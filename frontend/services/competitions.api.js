@@ -104,3 +104,29 @@ export async function fetchFollowingCompetitions() {
     const competitions = await res.json();
     return competitions;
 }
+
+export async function fetchCountOfParticipantsForCompetition(competition_id) {
+    const res = await fetch(`${API_URL}/competition/${competition_id}/participantsCount`);
+    const text = await res.text();
+
+    if (!text) {
+        return null;
+    }
+
+    const count = parseInt(text, 10);
+
+    return Number.isNaN(count) ? null : count;
+}
+
+export async function fetchCountOfQualifiedParticipantsForCompetition(competition_id) {
+    const res = await fetch(`${API_URL}/competition/${competition_id}/qualifiedParticipantsCount`);
+    const text = await res.text();
+
+    if (!text) {
+        return null;
+    }
+
+    const count = parseInt(text, 10);
+
+    return Number.isNaN(count) ? null : count;
+}
