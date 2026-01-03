@@ -20,23 +20,18 @@ import {isWeb} from "../utils/platform";
 import { fetchUsers, fetchUserStats } from "../services/user.api";
 
 export default function Header({
-       recherche,
-       setRecherche,
-       filtres,
-       setFiltres,
+       recherche, setRecherche,  //Barre de recherche (web)
+       filtres, setFiltres, // filtre de la barre de recherche (web)
 
-       onglets,
-       ongletActifId,
-       setOngletActif,
+       onglets, ongletActifId, setOngletActif, // onglet (web)
 
-       titre,
-       boutonRetour = false,
-       onBack,
-       boutonParametres = false,
-       boutonNotification = false,
-       userProfil = false,
-       userDetails = false,
-       fondTransparent = false,
+       titre, // titre dans le header (mobile)
+       boutonRetour = false, onBack, // bouton retour (mobile)
+       boutonParametres = false,  // bouton parametre (mobile)
+       boutonNotification = false,  // bouton notification (mobile)
+       userProfil = false, // photo de profil de l'utilisateur (mobile)
+       userDetails = false, // info de l'utilisateur (web et mobile)
+       fondTransparent = false, //pas de fond blanc et pas d'ombre (mobile)
        user
 }) {
 
