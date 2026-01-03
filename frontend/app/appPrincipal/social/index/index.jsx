@@ -21,7 +21,11 @@ import {tempsRestant} from "../../../../utils/temps";
 import {isWeb} from "../../../../utils/platform";
 
 import {getRequiredTrophiesByRankName,RANG_MINIMUM_EVENEMENT} from "../../../../constants/rank"
-import { fetchLatestCompetition, fetchFollowingCompetitions } from "../../../../services/competitions.api"
+import {
+    fetchLatestCompetition,
+    fetchFollowingCompetitions,
+    fetchCountOfParticipantsForCompetition, fetchCountOfQualifiedParticipantsForCompetition
+} from "../../../../services/competitions.api"
 import { fetchCompetitionUserPoints } from "../../../../services/user.api";
 
 import styles from "./styles/styles";
@@ -316,25 +320,13 @@ const Place = ({user_DATA}) => {
 export default function Social(){
     const router = useRouter();
     const [concours_DATA, setConcoursData] = React.useState(null);
-    const [user_points , setUserPoints] = React.useState(null);
-
-    // const concours_DATA = {
-    //     Nom : "Concours de Décembre 2025",
-    //     Date_fin : "2025-12-30T17:59:59",
-    //     Points_objectif : 10000,
-    // }; //TODO récupérer les vrai données -> renvoyer null si pas de concours en cours
+    const [user_points, setUserPoints] = React.useState(null);
 
     React.useEffect(() => {
         fetchLatestCompetition().then(setConcoursData); // le concours le plus récent et pas fini, Date_fin > date d'aujourd'hui
-
-        fetchCompetitionUserPoints().then(setUserPoints); // Tous les concours où l'utilisateur connecté s'est inscrit -> renvoyer null si pas de concours
+        fetchCompetitionUserPoints().then(setUserPoints); // points recolté par l'utilisateurs connecté au concours le plus recent
     }, []);
 
-    React.useEffect(() => {
-        console.log("===================================== concours_DATA =====================================")
-        console.log(concours_DATA)
-        console.log("===================================== concours_DATA =====================================")
-    }, [concours_DATA]);
 
     const evenements_DATA = {
         Nom : "Événements Hiver Durable ❄️",
