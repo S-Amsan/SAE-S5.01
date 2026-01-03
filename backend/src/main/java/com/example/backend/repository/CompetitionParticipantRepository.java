@@ -12,10 +12,16 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CompetitionParticipantRepository
     extends JpaRepository<CompetitionParticipant, CompetitionParticipantId> {
-
     List<CompetitionParticipant> findAllByCompetition(Competition competition);
 
     List<CompetitionParticipant> findAllByUser(User user);
+
+    List<CompetitionParticipant> findAllByCompetitionAndPointsGreaterThanEqual(
+        Competition competition,
+        Integer points
+    );
+
+    List<CompetitionParticipant> findAllByCompetitionAndPointsGreaterThanEqual(Competition competition, int pointsIsGreaterThan);
 
     Optional<CompetitionParticipant> findByCompetitionAndUser(
         Competition competition,
