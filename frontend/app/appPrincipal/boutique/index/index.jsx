@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
+
 import Header from "../../../../components/Header";
 import Navbar from "../../../../components/Navbar";
 import BlocInfos from "../../../../components/boutique/blocInfos";
@@ -22,20 +23,23 @@ export default function Boutique() {
         console.log("Filtres :", filtres);
     }, [recherche, filtres]);
 
+    const isWeb = Platform.OS === "web";
+
     return (
-        <View style={{ flex: 1, flexDirection: "row", backgroundColor: "#F4F4F4" }}>
-            {Platform.OS === "web" && (
-                <View style={{ width: "15%" }}>
+        <View style={styles.container}>
+            {isWeb ? (
+                <View style={styles.sidebar}>
                     <Navbar />
                 </View>
+            ) : (
+                <Navbar />
             )}
 
-            <View style={{ flex: 1 }}>
+            <View style={styles.content}>
                 <Header
-                    recherche={recherche}
-                    setRecherche={setRecherche}
-                    filtres={filtres}
-                    setFiltres={setFiltres}
+                    boutonNotification={true}
+                    userDetails={true}
+                    userProfil={true}
                 />
 
                 <HeaderBoutique
@@ -43,7 +47,11 @@ export default function Boutique() {
                     setFiltreActif={setFiltreActif}
                 />
 
-                <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator>
+                <ScrollView
+                    style={{ flex: 1 }}
+                    contentContainerStyle={styles.scrollContent}
+                    showsVerticalScrollIndicator
+                >
                     <View style={styles.page}>
                         {filtreActif === null && <BlocInfos />}
                         <SectionProduits key={filtreActif ?? "all"} selected={filtreActif} />
