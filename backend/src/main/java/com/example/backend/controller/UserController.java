@@ -21,9 +21,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/user")
 public class UserController {
 
     @Autowired
@@ -41,12 +43,12 @@ public class UserController {
     @Autowired
     private CompetitionRepository competitionRepository;
 
-    @GetMapping("/user/all")
+    @GetMapping("/all")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/user/{email}")
+    @GetMapping("/{email}")
     public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
         Optional<User> maybeUser = userService.getUserByEmail(email);
 
@@ -57,7 +59,7 @@ public class UserController {
         return ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/user/stats")
+    @GetMapping("/stats")
     public ResponseEntity<UserStatsResponse> getMyStats(
         @AuthenticationPrincipal MyUserDetails userDetails
     ) {
@@ -71,7 +73,7 @@ public class UserController {
         );
     }
 
-    @GetMapping("/user/notifications")
+    @GetMapping("/notifications")
     public ResponseEntity<List<Notification>> getMyNotifications(
         @AuthenticationPrincipal MyUserDetails userDetails
     ) {
@@ -93,7 +95,7 @@ public class UserController {
         return ResponseEntity.ok("Account didn't need to be updated");
     }
 
-    @GetMapping("/user/points/{competitionId}")
+    @GetMapping("/points/{competitionId}")
     public ResponseEntity<Integer> getTotalCompetitionPoints(
         @AuthenticationPrincipal MyUserDetails userDetails,
         @PathVariable Long competitionId
