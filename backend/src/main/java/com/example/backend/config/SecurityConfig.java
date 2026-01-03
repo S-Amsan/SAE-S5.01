@@ -23,8 +23,14 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http, JwtFilter filter)
         throws Exception {
         http
+            .cors(cors -> {})
             .authorizeHttpRequests(authz ->
                 authz
+                    .requestMatchers(
+                        org.springframework.http.HttpMethod.OPTIONS,
+                        "/**"
+                    )
+                    .permitAll()
                     .requestMatchers("/auth/**")
                     .permitAll()
                     .requestMatchers("/user/**")
