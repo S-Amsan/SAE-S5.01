@@ -18,6 +18,7 @@ export default function AssociateSubscription({ onBack }) {
     };
 
     const handleSubmit = () => {
+        // TODO: Service Post pour un document de type PDF, JPG, PNG,
         if (!file) return;
         console.log("SEND FILE", file);
         onBack?.();

@@ -23,6 +23,10 @@ export default function PostCard({ post, onSignaler }) {
         }
     };
 
+    const handleLike = () => {
+        // TODO: Service qui enregistre le nb de like/dislike
+    };
+
     return (
         <View style={styles.card}>
             {/* Header */}
@@ -82,7 +86,7 @@ export default function PostCard({ post, onSignaler }) {
 
             {/* Actions */}
             <View style={styles.actions}>
-                <TouchableOpacity style={styles.actionBtn}>
+                <TouchableOpacity onPress={handleLike} style={styles.actionBtn}>
                     <Image
                         source={require("../../../../assets/icones/accueil/likeNone.png")}
                         style={styles.icon}

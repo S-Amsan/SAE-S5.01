@@ -16,7 +16,7 @@ export default function MissionsPage({ onPostObjet, onSeeObjet }) {
 
     const router = useRouter();
 
-    const items = [
+    const items = [  // TODO: Remplacé par un service qui récupe les posts
         {
             id: 1,
             title: "Barbecue",

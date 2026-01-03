@@ -13,7 +13,8 @@ import ScanActionButton from "../../../../../components/ScanActionButton";
 import {useRouter} from "expo-router";
 
 export default function Gestes({ onAssociate }) {
-    const partenaires = [
+
+    const partenaires = [  // TODO: Besoin de Mettre sa dans la BD?
         {
             id: "ratp",
             name: "RATP",
@@ -32,15 +33,6 @@ export default function Gestes({ onAssociate }) {
         },
         {
             id: "nous",
-            name: "Nous anti-gaspi",
-            title: "Associer votre carte fidélité à Ecoception",
-            status: "start",
-            points: 50000,
-            logo: require("../../../../../assets/icones/missions/gaspi.png"),
-        },
-
-        {
-            id: "nouse",
             name: "Nous anti-gaspi",
             title: "Associer votre carte fidélité à Ecoception",
             status: "start",

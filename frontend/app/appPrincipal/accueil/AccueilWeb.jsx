@@ -27,7 +27,7 @@ export default function AccueilWeb() {
         { id: "tri", options: ["Récent", "Ancien"], select: "Récent" },
         { id: "lieu", options: ["France", "Autre"], select: "France" },
     ]);
-    
+
     useEffect(() => {
         console.log("Recherche :", recherche);
         console.log("Filtres :", filtres);

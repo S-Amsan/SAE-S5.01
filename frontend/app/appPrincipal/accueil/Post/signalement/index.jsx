@@ -10,6 +10,8 @@ import SignalementSuccess from "./_components/SignalementSuccess";
 export default function Index() {
     const router = useRouter();
     const [page, setPage] = useState("reasons");
+    const [reason, setReason] = useState(null);
+
 
     if (isWeb) {
         router.back();
@@ -32,9 +34,14 @@ export default function Index() {
 
             {page === "reasons" && (
                 <SignalementReasons
-                    onSelect={() => setPage("success")}
+                    onSelect={async (selectedReason) => {
+                        setReason(selectedReason);
+                        // TODO: Enregister la raison du signalement avec id de Post
+                        setPage("success");
+                    }}
                 />
             )}
+
 
             {page === "success" && (
                 <SignalementSuccess

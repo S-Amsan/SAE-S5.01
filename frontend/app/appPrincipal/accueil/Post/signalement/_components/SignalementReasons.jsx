@@ -31,7 +31,7 @@ export default function SignalementReasons({ onSelect }) {
                 <TouchableOpacity
                     key={index}
                     style={styles.row}
-                    onPress={onSelect}
+                    onPress={() => onSelect(label)}
                 >
                     <Text style={styles.rowText}>{label}</Text>
                     <Text style={styles.chevron}>›</Text>

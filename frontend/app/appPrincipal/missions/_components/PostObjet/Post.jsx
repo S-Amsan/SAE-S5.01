@@ -16,6 +16,7 @@ export default function Post({ onBack }) {
     const [description, setDescription] = useState("");
 
     const handleSubmit = () => {
+        // TODO: Service posté obejt
         console.log({ title, address, description });
         onBack();
     };
