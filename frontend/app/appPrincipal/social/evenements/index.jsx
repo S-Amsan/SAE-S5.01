@@ -1,28 +1,67 @@
 import React from "react";
 
 import EventPage from "../_components/EventPage";
+import {fetchUserPointsForEvent} from "../../../../services/user.api";
+import {
+    fetchCountOfParticipantsForEvent, fetchCountOfQualifiedParticipantsForEvent,
+    fetchFollowingEvents,
+    fetchLatestEvent
+} from "../../../../services/events.api";
 
 export default function Evenements() {
 
-    const evenements_DATA = {
-        Nom : "Hiver Durable ❄️",
-        Date_fin : "2026-01-15T17:59:59",
-        Points_objectif : 50000,
-        Participants : 342,
-        Qualifies : 72,
-        Cout_inscription : 5000,
-    }; //TODO récupérer les vrai données (l'événements le plus récent et pas fini, Date_fin > date d'aujourd'hui) -> renvoyer null si pas d'événements en cours
+    const [evenements_DATA, setEvenementsData] = React.useState(null);
+    const [user_event_DATA, setUserEventData] = React.useState(null);
 
-    const user_event_DATA = [{
-        Nom : "Hiver Durable ❄️",
-        Date_fin : "2026-01-15T17:59:59",
-        Points_objectif : 50000,
-        Points_recolte : 2324,
-        Recompense : null,
-        Participants : 342,
-        Qualifies : 72,
-        Cout_inscription : 5000,
-    }]; //TODO récupérer les vrai données (Tous les événements où l'utilisateur connecté s'est inscrit) -> renvoyer null si pas d'événements
+    React.useEffect(() => {
+        fetchLatestEvent().then(setEvenementsData);
+        fetchFollowingEvents().then(setUserEventData);
+    }, []);
 
+    React.useEffect(() => {
+        if (!evenements_DATA?.id) return;
+
+        Promise.all([
+            fetchCountOfParticipantsForEvent(evenements_DATA.id),
+            fetchCountOfQualifiedParticipantsForEvent(evenements_DATA.id),
+            fetchUserPointsForEvent(evenements_DATA.id)
+        ]).then(([participants, qualified, collectedPoints]) => {
+            setEvenementsData(prev => ({
+                ...prev,
+                participants,
+                qualified,
+                collectedPoints
+            }));
+        });
+
+    }, [evenements_DATA?.id]);
+
+    React.useEffect(() => {
+        if (!user_event_DATA?.length) return;
+
+        const hasStats = user_event_DATA.every(
+            c => c.participants !== undefined
+        );
+        if (hasStats) return;
+
+        Promise.all(
+            user_event_DATA.map(async (evenement) => {
+                const [participants, qualified, collectedPoints] = await Promise.all([
+                    fetchCountOfParticipantsForEvent(evenement.id),
+                    fetchCountOfQualifiedParticipantsForEvent(evenement.id),
+                    fetchUserPointsForEvent(evenement.id)
+                ]);
+
+                return {
+                    ...evenement,
+                    participants,
+                    qualified,
+                    recompense : null,
+                    collectedPoints
+                };
+            })
+        ).then(setUserEventData);
+
+    }, [user_event_DATA]);
     return <EventPage type={"evenements"} event_DATA={evenements_DATA} user_event_DATA={user_event_DATA}/>
 };

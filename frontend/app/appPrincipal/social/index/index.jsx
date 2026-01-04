@@ -21,7 +21,12 @@ import {isWeb} from "../../../../utils/platform";
 
 import {getRequiredTrophiesByRankName,RANG_MINIMUM_EVENEMENT} from "../../../../constants/rank"
 import {fetchLatestCompetition,} from "../../../../services/competitions.api"
-import {fetchUserPointsForCompetition, fetchUsers} from "../../../../services/user.api";
+import {
+    fetchUserPointsForCompetition,
+    fetchUserPointsForEvent,
+    fetchUsers,
+    fetchUserStats
+} from "../../../../services/user.api";
 
 import styles from "./styles/styles";
 import {fetchFollowingEvents, fetchLatestEvent} from "../../../../services/events.api";
@@ -77,7 +82,7 @@ export const EVENT_CONFIG = {
     },
 };
 
-const EventCarte = ({type, onPress, event_DATA, event_user_DATA, user_DATA}) => {
+const EventCarte = ({type, onPress, event_DATA, user_stats}) => {
     const config = EVENT_CONFIG[type];
     if (!config) return null;
 
@@ -109,10 +114,15 @@ const EventCarte = ({type, onPress, event_DATA, event_user_DATA, user_DATA}) => 
     );
 
     // Spécifique événements
-    let accessible = true;
+    let accessible = false;
     if (config.lockable) {
         const tropheesMin = getRequiredTrophiesByRankName(RANG_MINIMUM_EVENEMENT);
-        accessible = (user_DATA?.Trophees ?? 0) >= tropheesMin;
+        if (user_stats) {
+            const userTrophees = user_stats.find(item => item.type === 'trophees')?.valeur || 0
+            accessible = userTrophees >= tropheesMin;
+        }
+    }else{
+        accessible = true;
     }
 
     return (
@@ -203,14 +213,15 @@ const ConcoursCarte = ({onPress, concours_DATA}) => {
     )
 }
 
-const EvenementsCarte = ({onPress, evenements_DATA, evenements_user_DATA, user_DATA}) => {
+const EvenementsCarte = ({onPress, evenements_DATA, user_stats}) => {
+    if (!user_stats) return null;
+
     return (
         <EventCarte
             type="evenement"
             onPress={onPress}
             event_DATA={evenements_DATA}
-            event_user_DATA={evenements_user_DATA}
-            user_DATA={user_DATA}
+            user_stats={user_stats}
         />
     )
 }
@@ -314,14 +325,24 @@ const Place = ({user_DATA}) => {
 
 export default function Social(){
     const router = useRouter();
+
     const [concours_DATA, setConcoursData] = useState(null);
     const [evenements_DATA, setEvenementsData] = useState(null);
+
+    const [user_DATA, setUserDATA] = useState(null);
+    const [user_stats, setUserStats] = useState(null);
+    const [users_DATA, setUsers_DATA] = React.useState([]);
 
     React.useEffect(() => {
         fetchLatestCompetition().then(setConcoursData);
         fetchLatestEvent().then(setEvenementsData);
+        loadUser().then(setUserDATA)
+        fetchUserStats().then(setUserStats)
+        fetchUsers().then(setUsers_DATA);
+
     }, []);
 
+    // Concours
     React.useEffect(() => {
         if (!concours_DATA?.id) return;
 
@@ -330,43 +351,41 @@ export default function Social(){
         })
     }, [concours_DATA?.id]);
 
-    // const evenements_DATA = {
-    //     Nom : "Événements Hiver Durable ❄️",
-    //     Date_fin : "2026-01-15T17:59:59",
-    //     Points_objectif : 50000,
-    // }; //TODO récupérer les vrai données -> renvoyer null si pas d'
-
-    const evenements_user_DATA = {
-        Points_recolte : 2324
-    }; //TODO récupérer les vrai données -> renvoyer null si pas inscrit
-
-    const user_DATA = loadUser();
-
-    const [users_DATA, setUsers_DATA] = React.useState([]);
+    // Evenements
+    React.useEffect(() => {
+        if (!evenements_DATA?.id) return;
+        fetchUserPointsForEvent(evenements_DATA.id).then((collectedPoints) => {
+            setEvenementsData((prev) => ({...prev, collectedPoints}));
+        })
+    }, [evenements_DATA?.id]);
 
     React.useEffect(() => {
-        fetchUsers().then(setUsers_DATA);
-    }, [])
-
-    const allUsers = [
-        ...users_DATA.filter(u => u.Id !== user_DATA.Id),
-        user_DATA,
-    ];
-
-    const usersSortedByRank = [...allUsers]
-        .sort((a, b) => b.Trophees - a.Trophees)
-        .map((u, i) => ({ ...u, Classement: i + 1 }));
+        console.log("users_DATA")
+        console.log(users_DATA)
+        console.log("users_DATA")
+    }, [users_DATA])
 
 
-    const podium_DATA = usersSortedByRank.slice(0,3)
 
-    const userClassement =
-        usersSortedByRank.findIndex(u => u.Id === user_DATA.Id) + 1;
-
-    const user_DATA_WITH_RANK = {
-        ...user_DATA,
-        Classement: userClassement,
-    };
+    // const allUsers = [
+    //     ...users_DATA.filter(u => u.Id !== user_DATA.Id),
+    //     user_DATA,
+    // ];
+    //
+    // const usersSortedByRank = [...allUsers]
+    //     .sort((a, b) => b.Trophees - a.Trophees)
+    //     .map((u, i) => ({ ...u, Classement: i + 1 }));
+    //
+    //
+    // const podium_DATA = usersSortedByRank.slice(0,3)
+    //
+    // const userClassement =
+    //     usersSortedByRank.findIndex(u => u.Id === user_DATA.Id) + 1;
+    //
+    // const user_DATA_WITH_RANK = {
+    //     ...user_DATA,
+    //     Classement: userClassement,
+    // };
 
     return(
         <View style={styles.container}>
@@ -400,16 +419,15 @@ export default function Social(){
                             <EvenementsCarte
                                 onPress={() => router.push("./evenements")}
                                 evenements_DATA={evenements_DATA}
-                                evenements_user_DATA={evenements_user_DATA}
-                                user_DATA={user_DATA}
+                                user_stats={user_stats}
                             />
 
                         </View>
                         <View style={styles.classementContainer}>
                             <ClassementCarte
                                 onPress={() => router.push("./classement")}
-                                user_DATA={user_DATA_WITH_RANK}
-                                podium_DATA={podium_DATA}
+                                // user_DATA={user_DATA_WITH_RANK}
+                                // podium_DATA={podium_DATA}
                             />
                         </View>
                     </View>
