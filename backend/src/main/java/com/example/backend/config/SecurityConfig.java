@@ -53,6 +53,10 @@ public class SecurityConfig {
                     .permitAll()
                     .requestMatchers("/competition/following")
                     .authenticated()
+                    .requestMatchers("/event/**")
+                    .permitAll()
+                    .requestMatchers("/event/following")
+                    .authenticated()
             )
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(sess ->
