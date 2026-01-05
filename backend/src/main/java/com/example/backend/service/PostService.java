@@ -27,17 +27,17 @@ public class PostService {
             );
         }
 
-        Post post = Post.builder()
-            .user(user)
-            .name(request.getName())
-            .description(request.getDescription())
-            .address(request.getAddress())
-            .imageUrl(
-                ImageUploadService.endpoint.toString() +
-                    '/' +
-                    response.getFilename()
-            )
-            .build();
+        Post post = new Post();
+
+        post.setUser(user);
+        post.setName(request.getName());
+        post.setDescription(request.getDescription());
+        post.setAddress(request.getAddress());
+        post.setImageUrl(
+            ImageUploadService.endpoint.toString() +
+                '/' +
+                response.getFilename()
+        );
 
         return postRepository.save(post);
     }
