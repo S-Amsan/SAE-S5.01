@@ -1,6 +1,7 @@
 package com.example.backend.model;
 
 import com.example.backend.model.competition.CompetitionParticipant;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.Set;
@@ -51,6 +52,7 @@ public class User {
     @Column
     private String name;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
