@@ -1,9 +1,11 @@
 import { Platform } from "react-native";
+import {IPv4} from "../constants/ip";
 
 const API_URL =
     Platform.OS === "android"
-        ? "http://192.168.1.146:8080"
+        ? `http://${IPv4}:8080`
         : "http://localhost:8080";
+
 
 export async function signupMultipart({
                                           pseudo,

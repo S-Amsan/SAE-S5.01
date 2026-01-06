@@ -2,11 +2,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { saveUser } from "./RegisterStorage";
 import { Platform } from "react-native";
 import { fetchUserByEmail } from "./user.api";
+import {IPv4} from "../constants/ip";
 
 const API_URL =
     Platform.OS === "android"
-        ? "http://192.168.1.146:8080"
+        ? `http://${IPv4}:8080`
         : "http://localhost:8080";
+
 
 export async function login(email, password) {
     const formData = new FormData();

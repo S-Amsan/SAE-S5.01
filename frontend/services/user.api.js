@@ -1,8 +1,12 @@
 import {Platform} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {IPv4} from "../constants/ip";
 
 const API_URL =
-    Platform.OS === "android" ? "http://192.168.1.146:8080" : "http://localhost:8080";
+    Platform.OS === "android"
+        ? `http://${IPv4}:8080`
+        : "http://localhost:8080";
+
 
 /**
  * Response example:
