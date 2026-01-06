@@ -1,8 +1,9 @@
 import {View, Text, ScrollView, StyleSheet, Pressable} from "react-native";
-import BlocProduit from "./blocProduit";
-import { PRODUITS } from "../../utils/data/produit";
-import { COUPONS } from "../../utils/data/couponReduction";
-import { DONS } from "../../utils/data/association";
+import BlocProduit from "../blocProduit/blocProduit";
+import { PRODUITS } from "../../../utils/data/produit";
+import { COUPONS } from "../../../utils/data/couponReduction";
+import { DONS } from "../../../utils/data/association";
+import styles from "./styles/styles";
 
 export default function SectionProduits({ selected }) {
     const estFiltre = selected !== null;
@@ -73,36 +74,5 @@ export default function SectionProduits({ selected }) {
     );
 }
 
-const styles = StyleSheet.create({
-    section: { marginLeft: 36 },
-
-    lien: {
-        color: "#000",
-        fontFamily: "Inter",
-        fontSize: 24,
-        fontWeight: "500",
-        marginBottom: 18,
-    },
-
-    scroller: {
-        paddingHorizontal: 16,
-        paddingBottom: 6,
-    },
-
-    grid: {
-        flexDirection: "row",
-        flexWrap: "wrap",
-        justifyContent: "flex-start",
-        gap: 32,
-        paddingHorizontal: 16,
-    },
-
-    gridItem: {
-        width: "22.5%",
-        marginRight: 0,
-        marginBottom: 0,
-    },
-
-});
 
 
