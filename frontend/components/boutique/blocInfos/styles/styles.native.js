@@ -9,7 +9,7 @@ export default StyleSheet.create({
 
         width: "97%",
         alignSelf: "center",
-        height: 190,
+        height: 200,
 
         marginTop: 18,
         marginBottom: 22,
@@ -36,8 +36,9 @@ export default StyleSheet.create({
         height: "100%",
         paddingRight: 14,
         justifyContent: "flex-start",
-        paddingBottom: 22,
+        paddingBottom: 68,
         position: "relative",
+
     },
 
     texteTop: {
@@ -46,10 +47,10 @@ export default StyleSheet.create({
     },
 
     titre: {
-        fontSize: 18,
+        fontSize: 19,
         fontWeight: "500",
-        marginBottom: 2,
-        lineHeight: 22,
+        marginBottom: 3,
+        opacity : 0.68,
     },
 
     lien: {
@@ -66,16 +67,17 @@ export default StyleSheet.create({
     },
 
     image: {
-        width: 110,
-        height: 110,
-        borderRadius: 55,
+        width: 125,
+        height: 125,
+        borderRadius: 85,
+        marginTop : -4,
     },
 
     pagination: {
         position: "absolute",
         left: 0,
         right: 0,
-        bottom: -40,
+        bottom: -20,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",

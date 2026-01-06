@@ -1,18 +1,17 @@
-import { Text, View, Image, Pressable, Animated, Easing, Platform} from "react-native";
+import { Text, View, Image, Pressable, Animated, Easing, Platform } from "react-native";
 import { useState, useEffect, useRef } from "react";
 import styles from "./styles/styles";
 
 export default function BlocInfos() {
-
     const [indexActif, setIndexActif] = useState(0);
 
-    const slides = [
+    const slidesWeb = [
         {
             titre: "Steam est notre nouveau partenaire dans la boutique",
             image: "https://upload.wikimedia.org/wikipedia/commons/8/83/Steam_icon_logo.svg",
         },
         {
-            titre: "Vous pouvez maintenant faire des dons à des associations depuis la boutique",
+            titre: "Faites des dons à une association depuis la boutique",
             image: "https://afsep.fr/wp-content/uploads/2024/06/Don.jpg",
         },
         {
@@ -20,6 +19,23 @@ export default function BlocInfos() {
             image: "https://icons.veryicon.com/png/o/application/fill-2/amazon-circle.png",
         },
     ];
+
+    const slidesMobile = [
+        {
+            titre: "Steam arrive dans la boutique",
+            image: "https://e7.pngegg.com/pngimages/448/550/png-clipart-steam-computer-icons-logo-steam-logo-video-game.png",
+        },
+        {
+            titre: "Faites un don depuis la boutique",
+            image: "https://afsep.fr/wp-content/uploads/2024/06/Don.jpg",
+        },
+        {
+            titre: "Cartes cadeaux Amazon disponibles",
+            image: "https://icons.veryicon.com/png/o/application/fill-2/amazon-circle.png",
+        },
+    ];
+
+    const slides = Platform.OS === "web" ? slidesWeb : slidesMobile;
 
     const DELAI_AUTO = 5000;
 
@@ -54,9 +70,7 @@ export default function BlocInfos() {
 
         timerRef.current = setInterval(() => {
             directionRef.current = 1;
-            setIndexActif((i) =>
-                i === slides.length - 1 ? 0 : i + 1
-            );
+            setIndexActif((i) => (i === slides.length - 1 ? 0 : i + 1));
         }, DELAI_AUTO);
     };
 
@@ -66,17 +80,13 @@ export default function BlocInfos() {
 
     const precedent = () => {
         directionRef.current = -1;
-        setIndexActif((i) =>
-            i === 0 ? slides.length - 1 : i - 1
-        );
+        setIndexActif((i) => (i === 0 ? slides.length - 1 : i - 1));
         reinitialiserAuto();
     };
 
     const suivant = () => {
         directionRef.current = 1;
-        setIndexActif((i) =>
-            i === slides.length - 1 ? 0 : i + 1
-        );
+        setIndexActif((i) => (i === slides.length - 1 ? 0 : i + 1));
         reinitialiserAuto();
     };
 
@@ -92,10 +102,8 @@ export default function BlocInfos() {
     }, [indexActif]);
 
     return (
-        <Animated.View
-            style={{flex: 1, opacity: opacite, transform: [{ translateX: decalageX }],}}>
+        <Animated.View style={{ flex: 1, opacity: opacite, transform: [{ translateX: decalageX }] }}>
             <View style={styles.infos}>
-
                 {Platform.OS === "web" && (
                     <Pressable onPress={precedent} style={styles.fleche}>
                         <Text style={styles.flecheTexte}>‹</Text>
@@ -104,30 +112,29 @@ export default function BlocInfos() {
 
                 <View style={styles.contenuCentre}>
                     <View style={styles.texteBloc}>
-                        <View>
-                            <Text style={styles.titre} numberOfLines={2} ellipsizeMode="tail">
-                                {slides[indexActif].titre}
-                            </Text>
-                            <Pressable style={{ alignSelf: 'flex-start' }}>
+                        <View style={styles.texteTop}>
+                            <Text style={styles.titre}>{slides[indexActif].titre}</Text>
+
+                            <Pressable>
                                 <Text style={styles.lien}>Voir plus</Text>
                             </Pressable>
                         </View>
+                    </View>
 
-                        <View style={styles.pagination}>
-                            {slides.map((_, i) => (
-                                <View key={i} style={[
-                                    styles.dot, i === indexActif ? styles.dotActif : styles.dotInactif, i === indexActif && { transform: [{ scaleX: 1.05 }, { scaleY: 1.05 }],},
-                                    ]}
-                                />
-                            ))}
-                        </View>
+                    <View style={[styles.pagination]}>
+                        {slides.map((_, i) => (
+                            <View
+                                key={i}
+                                style={[
+                                    styles.dot,
+                                    i === indexActif ? styles.dotActif : styles.dotInactif,
+                                ]}
+                            />
+                        ))}
                     </View>
 
                     <View style={styles.imageWrapper}>
-                        <Image
-                            source={{ uri: slides[indexActif].image }}
-                            style={styles.image}
-                        />
+                        <Image source={{ uri: slides[indexActif].image }} style={styles.image} />
                     </View>
                 </View>
 
@@ -136,9 +143,7 @@ export default function BlocInfos() {
                         <Text style={styles.flecheTexte}>›</Text>
                     </Pressable>
                 )}
-
             </View>
         </Animated.View>
     );
 }
-
