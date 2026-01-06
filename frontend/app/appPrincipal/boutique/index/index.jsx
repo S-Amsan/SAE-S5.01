@@ -3,7 +3,7 @@ import { Platform, ScrollView, View } from "react-native";
 
 import Header from "../../../../components/Header";
 import Navbar from "../../../../components/Navbar";
-import BlocInfos from "../../../../components/boutique/blocInfos";
+import BlocInfos from "../../../../components/boutique/blocInfos/blocInfos";
 import SectionProduits from "../../../../components/boutique/sectionProduits";
 import HeaderBoutique from "../../../../components/boutique/headerBoutique";
 
