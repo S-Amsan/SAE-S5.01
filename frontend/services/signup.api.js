@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import { Platform } from "react-native";
 import {IPv4} from "../constants/ip";
 
@@ -5,6 +6,9 @@ const API_URL =
     Platform.OS === "android"
         ? `http://${IPv4}:8080`
         : "http://localhost:8080";
+=======
+import { API_URL } from "../constants/API_URL";
+>>>>>>> Stashed changes
 
 
 export async function signupMultipart({
