@@ -4,7 +4,7 @@ import com.example.backend.model.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -35,7 +35,7 @@ public class Action {
 
     @CreationTimestamp
     @Column(nullable = false)
-    private LocalDateTime acquiredAt;
+    private LocalDate acquiredAt;
 
     @JsonProperty("user_id")
     public Long getUserId() {
