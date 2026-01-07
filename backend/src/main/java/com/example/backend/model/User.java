@@ -60,10 +60,15 @@ public class User {
     private Set<CompetitionParticipant> competitions;
 
     @JsonManagedReference
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToOne(
+        mappedBy = "user",
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private UserStats stats;
+    private UserStats stats = new UserStats(this);
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
@@ -71,14 +76,27 @@ public class User {
     @EqualsAndHashCode.Exclude
     private Set<Post> posts;
 
-    public User() {}
+    public User() {
+        this.stats = new UserStats(this);
+    }
 
     public User(String pseudo, String email) {
         this.pseudo = pseudo;
         this.email = email;
+        this.stats = new UserStats(this);
     }
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    @PrePersist
+    @PreUpdate
+    private void ensureStats() {
+        if (this.stats == null) {
+            this.stats = new UserStats(this);
+        } else if (this.stats.getUser() == null) {
+            this.stats.setUser(this);
+        }
     }
 }
