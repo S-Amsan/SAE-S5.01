@@ -43,7 +43,7 @@ public class SecurityConfig {
                     .authenticated()
                     .requestMatchers("/user/update")
                     .authenticated()
-                    .requestMatchers("/post")
+                    .requestMatchers("/post/**")
                     .authenticated()
                     .requestMatchers("/posts")
                     .permitAll()

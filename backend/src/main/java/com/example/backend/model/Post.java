@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -43,5 +44,33 @@ public class Post {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(
+        name = "post_likes",
+        joinColumns = @JoinColumn(name = "post_id"),
+        inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private Set<User> likes;
+
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(
+        name = "post_dislikes",
+        joinColumns = @JoinColumn(name = "post_id"),
+        inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    private Set<User> dislikes;
+
     public Post() {}
+
+    public void like(User u) {
+        this.dislikes.remove(u);
+        this.likes.add(u);
+    }
+
+    public void dislike(User u) {
+        this.likes.remove(u);
+        this.dislikes.add(u);
+    }
 }
