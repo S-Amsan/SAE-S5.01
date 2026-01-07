@@ -1,4 +1,4 @@
-import {View, Image, Text, ScrollView, TouchableOpacity, FlatList} from "react-native";
+import {View, Image, Text, ScrollView, TouchableOpacity, FlatList, Pressable} from "react-native";
 import React, {useEffect} from "react";
 
 import Navbar from "../../../../components/Navbar";
@@ -23,17 +23,18 @@ import {formatNombreEspace} from "../../../../utils/format";
 import {useNavigation, useRouter} from "expo-router";
 import { fetchSuccess } from "../../../../services/competitions.api";
 import { getFriends } from "../../../../services/friends.api";
+import OverlaySombre from "../../../../components/OverlaySombre";
 
-const Profil = ({user_DATA, user_amis_DATA}) => {
+const Profil = ({user_DATA, user_amis_DATA, router}) => {
     return (
         <View>
             <View style={styles.userWrapper}>
                 <View style={styles.userContainer}>
                     <Image source={DEFAULT_PICTURE} style={styles.userPicture}/>
-                    <View style={styles.userFlammeContainer}>
+                    <Pressable style={styles.userFlammeContainer} onPress={() => router.push("./votreSerie")}>
                         <Text style={styles.userFlammeText}>{user_DATA?.Flammes || 0}</Text>
                         <Image source={flamme} style={styles.flammeIcon}/>
-                    </View>
+                    </Pressable>
                 </View>
                 <View style={styles.userInfoContainer}>
                     <Text style={styles.userPseudo}>{user_DATA?.Nom || "USER_NOM"}</Text>
@@ -70,7 +71,7 @@ const Profil = ({user_DATA, user_amis_DATA}) => {
     )
 }
 
-const Cartes = ({user_DATA}) => {
+const Cartes = ({user_DATA, router}) => {
     const users_DATA = Array.from({ length: 150000 }, (_, index) => ({
         Id: index + 1,
         Nom: "",
@@ -99,28 +100,40 @@ const Cartes = ({user_DATA}) => {
     const {rank : userRank} = getCurrentRank(user_DATA.Trophees)
 
     return (
-        <View style={styles.cartesContainer}>
-            <View style={styles.carte}>
+        <View style={styles.cartesContainer} >
+            <TouchableOpacity
+                style={styles.carte}
+                onPress={() => router.push("./classement")}
+            >
                 <Image source={trophee} style={styles.carteIcon}/>
                 <View>
                     <Text style={styles.InfoText}>{formatNombreEspace(user_DATA.Trophees)}</Text>
                     <Text style={styles.InfoTitre}>Trophée</Text>
                 </View>
-            </View>
-            <View style={styles.carte}>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.carte}
+                onPress={() =>   router.push({
+                    pathname: "./classement",
+                    params: { onglet: "macarriere" },
+                })}
+            >
                 <Image source={userRank.image} style={[styles.carteIcon, styles.rankIcon]}/>
                 <View>
                     <Text style={styles.InfoText}>{`${userRank.name} ${userRank.division}`}</Text>
                     <Text style={styles.InfoTitre}>Ligue Actuelle</Text>
                 </View>
-            </View>
-            <View style={styles.carte}>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.carte}
+                onPress={() => router.push("./classement")}
+            >
                 <Image source={hastag} style={styles.carteIcon}/>
                 <View>
                     <Text style={styles.InfoText}>{formatNombreEspace(user_DATA_WITH_RANK.Classement)}</Text>
                     <Text style={styles.InfoTitre}>Classement global</Text>
                 </View>
-            </View>
+            </TouchableOpacity>
         </View>
     )
 }
@@ -234,19 +247,19 @@ const Realisations = ({succes_DATA}) => {
     )
 }
 
-const RealisationItem = ({ item }) => (
-    <TouchableOpacity>
-        <View>
-            <Image source={item.Img_url} style={styles.realisationIcon} />
-            {!item.debloque && (
-                <Image
-                    source={item.Img_url}
-                    style={[styles.realisationIcon, styles.succesNonDebloque]}
-                />
-            )}
-        </View>
-    </TouchableOpacity>
-);
+const RealisationItem = ({ item }) => {
+    const image = (
+        <Image source={item.Img_url} style={styles.realisationIcon} />
+    );
+
+    return (
+        <TouchableOpacity>
+            <View>
+                {item.debloque ? image : <OverlaySombre>{image}</OverlaySombre>}
+            </View>
+        </TouchableOpacity>
+    )
+};
 
 const UserStatistiques = ({user_statistique_DATA}) => {
 
@@ -365,11 +378,11 @@ export default function VotreProfil(){
                             <View style={{flex : 1}}>
                                 <Image source={DEFAULT_BANNER} style={styles.banner} />
                                 <View style={{paddingLeft : "7.5%", paddingRight : "2.5%",flex : 1}}>
-                                    <Profil user_DATA={user_DATA} user_amis_DATA={user_amis_DATA}/>
+                                    <Profil user_DATA={user_DATA} user_amis_DATA={user_amis_DATA} router={router}/>
                                     <View style={{flex : 1, flexDirection: "row", marginTop : 200,}}>
                                         <View style={styles.contenuPrincipal}>
                                             <View>
-                                                <Cartes user_DATA={user_DATA}/>
+                                                <Cartes user_DATA={user_DATA} router={router}/>
                                                 <MesRecompenses/>
                                             </View>
                                             <View style={{flexDirection: "row"}}>
@@ -390,8 +403,8 @@ export default function VotreProfil(){
 
                             <ScrollView>
                                 <Image source={DEFAULT_BANNER} style={styles.banner} />
-                                <Profil user_DATA={user_DATA} user_amis_DATA={user_amis_DATA}/>
-                                <Cartes user_DATA={user_DATA}/>
+                                <Profil user_DATA={user_DATA} user_amis_DATA={user_amis_DATA} router={router}/>
+                                <Cartes user_DATA={user_DATA} router={router}/>
                                 <MesRecompenses/>
                                 <Realisations succes_DATA={succes_DATA}/>
                                 <UserStatistiques user_statistique_DATA={user_statistique_DATA}/>

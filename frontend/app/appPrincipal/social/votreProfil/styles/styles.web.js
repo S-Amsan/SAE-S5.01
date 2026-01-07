@@ -197,11 +197,6 @@ export default StyleSheet.create({
         height: 60,
         resizeMode: "contain",
     },
-    succesNonDebloque : {
-        opacity: 0.5,
-        tintColor: "#000000",
-        position: "absolute"
-    },
     message : {
         textAlign : "center",
         marginTop : 30,

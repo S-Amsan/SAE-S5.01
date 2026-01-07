@@ -1,4 +1,4 @@
-import {Modal, TouchableOpacity, StyleSheet} from "react-native";
+import {Modal, TouchableOpacity, StyleSheet, View} from "react-native";
 import React from "react";
 
 export default function PopUp({
@@ -8,19 +8,25 @@ export default function PopUp({
 }) {
     return (
         <Modal transparent visible={!!visible} statusBarTranslucent>
-            <TouchableOpacity
-                style={styles.overlay}
-                activeOpacity={1}
-                onPress={() => setVisible(false)}
-            >
+            <View style={styles.container}>
+                <TouchableOpacity
+                    style={styles.overlay}
+                    activeOpacity={1}
+                    onPress={() => setVisible(false)}
+                >
+                </TouchableOpacity>
                 {children}
-            </TouchableOpacity>
-
+            </View>
         </Modal>
     )
 }
 
 const styles = StyleSheet.create({
+    container : {
+        flex : 1,
+        alignItems: "center",
+        justifyContent: "center",
+    },
     overlay: {
         position: "absolute",
         top: 0,
@@ -33,4 +39,5 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
     },
+
 })

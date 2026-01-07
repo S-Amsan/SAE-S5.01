@@ -250,13 +250,13 @@ const ClassementCarte = ({onPress, user_DATA, podium_DATA}) => {
             <View style={styles.classementUserWrapper}>
                 <View style={styles.ligneSeparateur}/>
                 <View style={styles.classementUserContainer}>
-                    <View style={styles.topContainer}><Text style={styles.topText}>{isWeb && <Text style={styles.gras}>TOP</Text>} {formatNombreCourt(user_DATA?.Classement || -1)}</Text></View>
+                    <View style={styles.topContainer}><Text style={styles.topText}>{isWeb && <Text style={styles.gras}>TOP</Text>} {formatNombreCourt(user_DATA?.classement || -1)}</Text></View>
                     <View style={styles.userContainer}>
                         <Image source={user_DATA?.photoProfileUrl || DEFAULT_PICTURE} style={styles.userPhoto}/>
                         <Text style={styles.userNomText}>{user_DATA?.name || "USER_NOM"} (Vous)</Text>
                     </View>
                     <View style={styles.tropheesContainer}>
-                        <Text style={styles.tropheesText}>{formatNombreCourt(user_DATA?.Trophees || -1)}</Text>
+                        <Text style={styles.tropheesText}>{formatNombreCourt(user_DATA?.stats?.trophies ?? 0)}</Text>
                         <Image source={tropheeIcon} style={styles.tropheesIcon} />
                     </View>
                 </View>
@@ -304,7 +304,7 @@ const podiumStyle = [0, 1, 2].map((index) => ({
 
 
 const Place = ({user_DATA}) => {
-    const num = user_DATA.Classement;
+    const num = user_DATA.classement;
     const style = podiumStyle[num - 1];
 
     if (!user_DATA) return null;
@@ -331,15 +331,15 @@ export default function Social(){
 
     const [user_DATA, setUserDATA] = useState(null);
     const [user_stats, setUserStats] = useState(null);
-    const [users_DATA, setUsers_DATA] = React.useState([]);
+    const [users_DATA, setUsersDATA] = React.useState(null);
+    const [podium_DATA, setPodiumDATA] = React.useState(null);
 
     React.useEffect(() => {
         fetchLatestCompetition().then(setConcoursData);
         fetchLatestEvent().then(setEvenementsData);
         loadUser().then(setUserDATA)
         fetchUserStats().then(setUserStats)
-        fetchUsers().then(setUsers_DATA);
-
+        fetchUsers().then(setUsersDATA);
     }, []);
 
     // Concours
@@ -359,33 +359,37 @@ export default function Social(){
         })
     }, [evenements_DATA?.id]);
 
+    // Classement
     React.useEffect(() => {
-        console.log("users_DATA")
-        console.log(users_DATA)
-        console.log("users_DATA")
-    }, [users_DATA])
+        if (!users_DATA || !user_DATA) return;
+
+        const normalizedUsers = users_DATA.map(user => ({
+            ...user,
+            stats: user.stats || {
+                trophies: 0,
+                flames: 0,
+                points: 0,
+                userId: user.id
+            }
+        }));
+
+        const usersSortedByRank = [...normalizedUsers]
+            .sort((a, b) => b.stats.trophies - a.stats.trophies)
+            .map((u, i) => ({ ...u, classement: i + 1 }));
+
+        setPodiumDATA(usersSortedByRank.slice(0,3))
+
+        const userClassement =
+            usersSortedByRank.findIndex(u => u.Id === user_DATA.Id) + 1;
 
 
+        setUserDATA((prev) => {
+            if (!prev) return prev;
+            return { ...prev, classement: userClassement };
+        });
 
-    // const allUsers = [
-    //     ...users_DATA.filter(u => u.Id !== user_DATA.Id),
-    //     user_DATA,
-    // ];
-    //
-    // const usersSortedByRank = [...allUsers]
-    //     .sort((a, b) => b.Trophees - a.Trophees)
-    //     .map((u, i) => ({ ...u, Classement: i + 1 }));
-    //
-    //
-    // const podium_DATA = usersSortedByRank.slice(0,3)
-    //
-    // const userClassement =
-    //     usersSortedByRank.findIndex(u => u.Id === user_DATA.Id) + 1;
-    //
-    // const user_DATA_WITH_RANK = {
-    //     ...user_DATA,
-    //     Classement: userClassement,
-    // };
+    }, [users_DATA,user_DATA?.id])
+
 
     return(
         <View style={styles.container}>
@@ -426,8 +430,8 @@ export default function Social(){
                         <View style={styles.classementContainer}>
                             <ClassementCarte
                                 onPress={() => router.push("./classement")}
-                                // user_DATA={user_DATA_WITH_RANK}
-                                // podium_DATA={podium_DATA}
+                                user_DATA={user_DATA}
+                                podium_DATA={podium_DATA}
                             />
                         </View>
                     </View>

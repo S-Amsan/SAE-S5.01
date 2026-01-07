@@ -186,11 +186,6 @@ export default StyleSheet.create({
         width : 150,
         height : 150,
     },
-    rankSombre : {
-        opacity: 0.7,
-        tintColor: "#000000",
-        position: "absolute"
-    },
     rankActuel : {
         width : 200,
         height : 200,
