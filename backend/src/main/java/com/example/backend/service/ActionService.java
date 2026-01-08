@@ -7,7 +7,6 @@ import com.example.backend.model.action.ActionType;
 import com.example.backend.repository.UserStatsRepository;
 import com.example.backend.repository.action.ActionRepository;
 import com.example.backend.repository.action.ActionTypeRepository;
-import java.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +22,9 @@ public class ActionService {
     @Autowired
     private UserStatsRepository userStatsRepository;
 
+    @Autowired
+    private RewardService rewardService;
+
     public void onPostLike(User user) {
         if (user.getVotes() == 5) {
             user.setVotes(0);
@@ -34,16 +36,6 @@ public class ActionService {
         }
     }
 
-    private boolean shouldWinAFlame(UserStats stats) {
-        LocalDate lastActionDate = stats.getLastActionDate();
-
-        if (lastActionDate == null) {
-            return true;
-        }
-
-        return !lastActionDate.equals(LocalDate.now());
-    }
-
     private void updateActions(User user, ActionType actionType) {
         Action action = new Action();
 
@@ -53,9 +45,7 @@ public class ActionService {
 
         UserStats stats = userStatsRepository.findByUserId(user.getId()).get();
 
-        if (shouldWinAFlame(stats)) {
-            stats.setFlames(stats.getFlames() + 1);
-        }
+        rewardService.maybeGainFlame(user);
 
         stats.setLastActionDate(action.getAcquiredAt());
         userStatsRepository.save(stats);
