@@ -80,4 +80,15 @@ export async function getAllObjects() {
     return JSON.parse(text);
 }
 
+export async function pickupObject(object_id) {
+    const token = await AsyncStorage.getItem("@auth_token");
 
+    const response = await fetch(`${API_URL}/object/pickup/${object_id}`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    return response;
+}
