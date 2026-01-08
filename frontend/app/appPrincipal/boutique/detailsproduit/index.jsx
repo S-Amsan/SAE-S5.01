@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import {Platform, View, Text, Image, Pressable, StyleSheet, ScrollView, ImageBackground,} from "react-native";
+import {Platform, View, Text, Image, Pressable, StyleSheet, ScrollView, ImageBackground} from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
@@ -29,7 +29,7 @@ export default function DetailProduit() {
     const imageBanniere = params.banniere ?? params.image ?? "";
     const type = params.type ?? "cartes";
 
-    const handleAddToCart = useCallback(() => {
+    const handleAddToCartWeb = useCallback(() => {
         ajouterAuPanier({
             id: String(id),
             titre: String(titreCourt),
@@ -47,16 +47,145 @@ export default function DetailProduit() {
             pathname: "/appPrincipal/boutique/panier",
             params: { justAdded: "1" },
         });
+    }, [
+        ajouterAuPanier,
+        id,
+        titreCourt,
+        titreComplet,
+        params.description,
+        description,
+        points,
+        imageCarte,
+        imageBanniere,
+        type,
+        router,
+    ]);
 
-    }, [ajouterAuPanier, id, titreCourt, titreComplet, params.description, description, points, imageCarte, imageBanniere, type, router]);
+    const handleBuyMobile = useCallback(() => {
+        ajouterAuPanier({
+            id: String(id),
+            titre: String(titreCourt),
+            titreComplet: String(titreComplet),
+            description: String(params.description ?? ""),
+            descriptionLongue: String(description),
+            points: Number(points),
+            imageCarte: String(imageCarte),
+            banniere: String(imageBanniere),
+            type: String(type),
+            quantity: 1,
+        });
+
+        router.push({
+            pathname: "/appPrincipal/boutique/historique",
+            params: { justBought: "1" },
+        });
+    }, [
+        ajouterAuPanier,
+        id,
+        titreCourt,
+        titreComplet,
+        params.description,
+        description,
+        points,
+        imageCarte,
+        imageBanniere,
+        type,
+        router,
+    ]);
+
+    if (Platform.OS !== "web") {
+        return (
+            <View style={styles.ecran}>
+
+                <Header
+                    boutonNotification={true}
+                    userDetails={true}
+                    userProfil={true}
+                />
+
+                <ScrollView style={styles.defilement} showsVerticalScrollIndicator={false}>
+                    <View style={styles.banniere}>
+                        <ImageBackground source={{ uri: imageBanniere }} style={styles.banniereImage} blurRadius={8}>
+
+                            <View style={styles.banniereFiltre} />
+
+                            <View style={styles.actionsHaut}>
+                                <Pressable onPress={() => router.back()} style={styles.boutonRetour}>
+                                    <Text style={styles.iconeRetour}>‹</Text>
+                                </Pressable>
+
+                                <View style={styles.actionsDroite}>
+                                    <Pressable style={styles.boutonIcone}>
+                                        <Image source={partage} style={styles.iconeAction} />
+                                    </Pressable>
+                                    <Pressable style={styles.boutonIcone}>
+                                        <Image source={coeur} style={styles.iconeAction} />
+                                    </Pressable>
+                                </View>
+                            </View>
+
+                            <View style={styles.carteAuCentre}>
+                                <Image source={{ uri: imageCarte }} style={styles.imageCarte} />
+                            </View>
+                        </ImageBackground>
+                    </View>
+
+                    <View style={styles.contenu}>
+                        <Text style={styles.badgeType}>
+                            {String(type).toLowerCase() === "carte"
+                                ? "Cartes cadeaux"
+                                : String(type).toLowerCase() === "coupon"
+                                    ? "Bons de réduction"
+                                    : String(type).toLowerCase() === "don"
+                                        ? "Dons"
+                                        : "Catégorie"}
+                        </Text>
+
+                        <Text style={styles.titreProduitCourt}>{titreCourt}</Text>
+                        <Text style={styles.titreProduitComplet}>{titreComplet}</Text>
+
+                        <View style={styles.lignePrix}>
+                            <Text style={styles.prixLabel}>Dès</Text>
+                            <Text style={styles.prixValeur}>{points}</Text>
+                            <Image source={point} style={styles.iconePoints} />
+                        </View>
+
+                        <View style={styles.infosCourtes}>
+                            <Text style={styles.infosCourtesLigne}>✅ En stock</Text>
+                            <Text style={styles.infosCourtesSousTexte}>{titreCourt}</Text>
+                        </View>
+
+                        <View style={styles.separateur} />
+
+                        <Text style={styles.titreSection}>À propos</Text>
+                        <Text style={styles.label}>Description :</Text>
+                        <Text style={styles.texteDescription}>{description}</Text>
+
+                        <View style={{ height: 110 }} />
+                    </View>
+                </ScrollView>
+
+                <View style={styles.barreAchat}>
+                    <Pressable style={styles.boutonAchat} onPress={handleBuyMobile}>
+                        <LinearGradient
+                            colors={["#00DB83", "#0CD8A9"]}
+                            start={{ x: 0, y: 0 }}
+                            end={{ x: 1, y: 0 }}
+                            style={styles.fondGradient}
+                            pointerEvents="none"
+                        />
+                        <Text style={styles.texteBoutonAchat}>Acheter l’offre</Text>
+                    </Pressable>
+                </View>
+            </View>
+        );
+    }
 
     return (
         <View style={styles.racine}>
-            {Platform.OS === "web" && (
-                <View style={styles.zoneNavbar}>
-                    <Navbar />
-                </View>
-            )}
+            <View style={styles.zoneNavbar}>
+                <Navbar />
+            </View>
 
             <View style={styles.zonePrincipale}>
                 <Header />
@@ -70,7 +199,11 @@ export default function DetailProduit() {
                                 <View style={styles.zoneFlou} pointerEvents="none">
                                     <BlurView intensity={35} style={StyleSheet.absoluteFillObject} />
                                     <LinearGradient
-                                        colors={["rgba(255,255,255,0)", "rgba(255,255,255,0.25)", "rgba(255,255,255,1)"]}
+                                        colors={[
+                                            "rgba(255,255,255,0)",
+                                            "rgba(255,255,255,0.25)",
+                                            "rgba(255,255,255,1)",
+                                        ]}
                                         locations={[0, 0.65, 1]}
                                         style={StyleSheet.absoluteFillObject}
                                     />
@@ -144,8 +277,8 @@ export default function DetailProduit() {
                                             </Pressable>
 
                                             <Pressable
-                                                style={[styles.boutonPrincipal, Platform.OS === "web" && webNoSelect.noSelect]}
-                                                onPress={handleAddToCart}
+                                                style={[styles.boutonPrincipal, webNoSelect.noSelect]}
+                                                onPress={handleAddToCartWeb}
                                             >
                                                 <LinearGradient
                                                     colors={["#00DB83", "#0CD8A9"]}
@@ -154,7 +287,7 @@ export default function DetailProduit() {
                                                     style={styles.boutonGradient}
                                                     pointerEvents="none"
                                                 />
-                                                <Text style={[styles.boutonPrincipalTexte, Platform.OS === "web" && webNoSelect.noSelect]}>
+                                                <Text style={[styles.boutonPrincipalTexte, webNoSelect.noSelect]}>
                                                     Ajouter au panier
                                                 </Text>
                                             </Pressable>
@@ -201,7 +334,5 @@ export default function DetailProduit() {
 }
 
 const webNoSelect = StyleSheet.create({
-    noSelect: {
-        userSelect: "none",
-    },
+    noSelect: { userSelect: "none" },
 });
