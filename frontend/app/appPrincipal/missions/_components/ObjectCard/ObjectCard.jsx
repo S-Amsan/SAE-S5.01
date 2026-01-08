@@ -5,7 +5,9 @@ import styles from "./styles/styles";
 import { fetchUserById } from "../../../../../services/user.api";
 import { formatRelativeTime } from "../../../../../utils/format";
 
-export default function ObjectCard({ item, onSeeObjet }) {
+export default function ObjectCard({ item, buttonLabel, onSeeObjet }) {
+
+
     const [avatar, setAvatar] = useState(null);
     const [pseudo, setPseudo] = useState(null);
 
@@ -67,10 +69,12 @@ export default function ObjectCard({ item, onSeeObjet }) {
                 <View style={styles.actionRow}>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() => onSeeObjet?.(item)}
+                        onPress={() => onSeeObjet()}
+
                     >
-                        <Text style={styles.buttonText}>Voir l’objet</Text>
+                        <Text style={styles.buttonText}>{buttonLabel}</Text>
                     </TouchableOpacity>
+
                 </View>
             </View>
 

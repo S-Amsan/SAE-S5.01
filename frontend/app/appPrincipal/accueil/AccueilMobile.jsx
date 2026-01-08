@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
     View,
     ScrollView,
@@ -8,53 +8,91 @@ import {
 import { useRouter } from "expo-router";
 
 import Header from "../../../components/Header";
-import PostCard from "./Post/PostCard";
-import style from "./styles/accueilStyle";
 import Navbar from "../../../components/Navbar";
 import ScanActionButton from "../../../components/ScanActionButton";
+
+import PostCard from "./Post/PostCard";
+import ObjectCard from "../missions/_components/ObjectCard/ObjectCard";
+
+import style from "./styles/accueilStyle";
+
+import { fetchAllPosts } from "../../../services/posts.api";
+import { getAllObjects } from "../../../services/objects.api";
 import { loadUser as loadUserFromStorage } from "../../../services/RegisterStorage";
-import {fetchAllPosts} from "../../../services/posts.api";
 
 export default function AccueilMobile() {
-    const [posts, setPosts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState(null);
     const router = useRouter();
 
+    const [posts, setPosts] = useState([]);
+    const [objects, setObjects] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState(null);
+
+    /* ===========================
+       LOAD USER
+    =========================== */
+    useEffect(() => {
+        const loadUser = async () => {
+            try {
+                const storedUser = await loadUserFromStorage();
+                setUser(storedUser);
+            } catch (e) {
+                console.error("Erreur chargement user", e);
+            }
+        };
+        loadUser();
+    }, []);
+
+    /* ===========================
+       LOAD FEED
+    =========================== */
+    useEffect(() => {
+        const loadFeed = async () => {
+            try {
+                const [postsData, objectsData] = await Promise.all([
+                    fetchAllPosts(),
+                    getAllObjects(),
+                ]);
+
+                setPosts(Array.isArray(postsData) ? postsData : []);
+                setObjects(Array.isArray(objectsData) ? objectsData : []);
+            } catch (e) {
+                console.error("Erreur chargement feed", e);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadFeed();
+    }, []);
+
+    /* ===========================
+       FEED UNIFIÉ
+    =========================== */
+    const feed = [
+        ...posts.map(post => ({
+            type: "post",
+            id: `post-${post.id}`,
+            date: new Date(post.createdAt),
+            data: post,
+        })),
+        ...objects.map(object => ({
+            type: "object",
+            id: `object-${object.id}`,
+            date: new Date(object.creationDate),
+            data: object,
+        })),
+    ].sort((a, b) => b.date - a.date);
+
+    /* ===========================
+       ANIMATIONS
+    =========================== */
     const NAVBAR_HEIGHT = 90;
     const SCAN_BTN_HIDE_X = 120;
 
     const navbarTranslateY = useRef(new Animated.Value(0)).current;
     const scanBtnTranslateX = useRef(new Animated.Value(0)).current;
     const lastScrollY = useRef(0);
-
-    useEffect(() => {
-        const loadPosts = async () => {
-            try {
-                const data = await fetchAllPosts();
-                setPosts(data);
-            } catch (error) {
-                console.error("Erreur chargement posts :", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        loadPosts();
-    }, []);
-
-    useEffect(() => {
-        const loadUser = async () => {
-            try {
-                const storedUser = await loadUserFromStorage();
-                setUser(storedUser);
-            } catch (error) {
-                console.error("Erreur chargement utilisateur :", error);
-            }
-        };
-
-        loadUser();
-    }, []);
 
     const handleScroll = (event) => {
         const y = event.nativeEvent.contentOffset.y;
@@ -91,6 +129,9 @@ export default function AccueilMobile() {
         lastScrollY.current = y;
     };
 
+    /* ===========================
+       RENDER
+    =========================== */
     return (
         <View style={{ flex: 1, backgroundColor: "#f5f5f5" }}>
             {/* NAVBAR */}
@@ -108,27 +149,27 @@ export default function AccueilMobile() {
                 <Navbar />
             </Animated.View>
 
-            {/* CONTENU */}
+            {/* SCAN BUTTON */}
+            <Animated.View
+                pointerEvents="box-none"
+                style={{
+                    position: "absolute",
+                    bottom: 10,
+                    right: 16,
+                    width: 72,
+                    height: 72,
+                    transform: [{ translateX: scanBtnTranslateX }],
+                    zIndex: 99,
+                }}
+            >
+                <ScanActionButton
+                    onPress={() => router.push("/appPrincipal/codebar")}
+                />
+            </Animated.View>
+
+            {/* CONTENT */}
             <View style={{ flex: 1 }}>
                 <Header user={user} boutonNotification userProfil userDetails />
-
-                {/* SCAN BUTTON */}
-                <Animated.View
-                    pointerEvents="box-none"
-                    style={{
-                        position: "absolute",
-                        bottom: 10,
-                        right: 16,
-                        width: 72,
-                        height: 72,
-                        transform: [{ translateX: scanBtnTranslateX }],
-                        zIndex: 99,
-                    }}
-                >
-                    <ScanActionButton
-                        onPress={() => router.push("/appPrincipal/codebar")}
-                    />
-                </Animated.View>
 
                 <View style={{ flex: 1, padding: 10 }}>
                     {loading ? (
@@ -140,12 +181,42 @@ export default function AccueilMobile() {
                             showsVerticalScrollIndicator={false}
                             contentContainerStyle={{
                                 paddingBottom: NAVBAR_HEIGHT + 120,
-                                minHeight: "100%",
                             }}
                         >
-                            {posts.map((p) => (
-                                <PostCard key={p.id} post={p} styles={style} />
-                            ))}
+                            {feed.map(item => {
+                                if (item.type === "post") {
+                                    return (
+                                        <PostCard
+                                            key={item.id}
+                                            post={item.data}
+                                            styles={style}
+                                        />
+                                    );
+                                }
+
+                                if (item.type === "object") {
+                                    return (
+                                        <ObjectCard
+                                            key={item.id}
+                                            item={item.data}
+                                            buttonLabel="Récuperer l'objet"
+                                            onSeeObjet={() => {
+                                                console.log("CLICK");
+                                                router.push({
+                                                    pathname: "/appPrincipal/missions",
+                                                    params: {
+                                                        mode: "recup",
+                                                        objetId: item.data.id,
+                                                    },
+                                                });
+                                            }}
+                                        />
+
+                                    );
+                                }
+
+                                return null;
+                            })}
                         </ScrollView>
                     )}
                 </View>

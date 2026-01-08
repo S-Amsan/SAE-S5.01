@@ -12,6 +12,7 @@ import ObjetDetails from "./_components/ObejetDetails/ObjetDetails";
 import AssociateSubscription from "./_components/Associate/AssociateSubscription";
 import ObjetRecupPhoto from "./_components/CollectObjet/CollectObjet";
 import { useLocalSearchParams } from "expo-router";
+import {getAllObjects} from "../../../services/objects.api";
 
 export default function MissionsMobile() {
     /* ===== ÉTATS ===== */
@@ -19,6 +20,32 @@ export default function MissionsMobile() {
     const [ongletActifId, setOngletActifId] = useState("listes"); // listes | gestes
     const [selectedObjet, setSelectedObjet] = useState(null);
     const { page: pageFromScan, product, code } = useLocalSearchParams();
+
+    const { mode, objetId } = useLocalSearchParams();
+
+    useEffect(() => {
+        if (mode === "recup" && objetId) {
+            setPage("recupObjet");
+        }
+    }, [mode, objetId]);
+
+    useEffect(() => {
+        if (!objetId) return;
+
+        const id = Number(objetId);
+        if (!id) return;
+
+        const load = async () => {
+            const objects = await getAllObjects();
+            const found = objects.find(o => o.id === id);
+            if (!found) return;
+
+            setSelectedObjet(found);
+        };
+
+        load();
+    }, [objetId]);
+
 
     const onglets = [
         { id: "listes", label: "Régulières" },
@@ -127,13 +154,13 @@ export default function MissionsMobile() {
                     objet={selectedObjet}
                     onBack={handleBack}
                     onSubmit={() => {
-                        // TODO API
                         setSelectedObjet(null);
                         setPage("listes");
                         setOngletActifId("listes");
                     }}
                 />
             )}
+
 
             {/* GESTES */}
             {page === "listes" && ongletActifId === "gestes" && (

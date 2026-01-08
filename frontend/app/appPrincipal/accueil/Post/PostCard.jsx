@@ -5,12 +5,16 @@ import { useRouter } from "expo-router";
 import { isWeb } from "../../../../utils/platform";
 import styles from "../styles/accueilStyle";
 import {fetchUserById} from "../../../../services/user.api";
-import {setTheUsername} from "whatwg-url-without-unicode";
 import {formatRelativeTime} from "../../../../utils/format";
+import { likePost, dislikePost } from "../../../../services/posts.api";
+
 
 export default function PostCard({ post, onSignaler }) {
     const [showMenu, setShowMenu] = useState(false);
     const router = useRouter();
+    const [loadingLike, setLoadingLike] = useState(false);
+    const [reaction, setReaction] = useState(null);
+
 
     const handleSignaler = () => {
         setShowMenu(false);
@@ -42,9 +46,28 @@ export default function PostCard({ post, onSignaler }) {
 
         loadUser();
     }, [post.user_id]);
-    const handleLike = () => {
-        // TODO: Service qui enregistre le nb de like/dislike
+    const handleLike = async () => {
+        if (reaction === "like") return;
+
+        try {
+            await likePost(post.id);
+            setReaction("like");
+        } catch (e) {
+            console.error("Erreur like", e);
+        }
     };
+
+    const handleDislike = async () => {
+        if (reaction === "dislike") return;
+
+        try {
+            await dislikePost(post.id);
+            setReaction("dislike");
+        } catch (e) {
+            console.error("Erreur dislike", e);
+        }
+    };
+
 
     /**
      * Example response:
@@ -120,19 +143,28 @@ export default function PostCard({ post, onSignaler }) {
 
             {/* Actions */}
             <View style={styles.actions}>
-                <TouchableOpacity onPress={handleLike} style={styles.actionBtn}>
+                <TouchableOpacity onPress={handleLike}>
                     <Image
-                        source={require("../../../../assets/icones/accueil/likeNone.png")}
+                        source={
+                            reaction === "like"
+                                ? require("../../../../assets/icones/accueil/like.png")
+                                : require("../../../../assets/icones/accueil/likeNone.png")
+                        }
                         style={styles.icon}
                     />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.actionBtn}>
+                <TouchableOpacity onPress={handleDislike}>
                     <Image
-                        source={require("../../../../assets/icones/accueil/dislikeNone.png")}
+                        source={
+                            reaction === "dislike"
+                                ? require("../../../../assets/icones/accueil/dislike.png")
+                                : require("../../../../assets/icones/accueil/dislikeNone.png")
+                        }
                         style={styles.icon}
                     />
                 </TouchableOpacity>
+
             </View>
         </View>
     );
