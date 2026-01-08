@@ -32,7 +32,7 @@ public class Objekt {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "published_by_user_id", nullable = false)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private User publishedBy;
@@ -47,7 +47,11 @@ public class Objekt {
         return pickedUpBy != null ? pickedUpBy.getId() : null;
     }
 
-    @Column(nullable = true)
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "picked_up_by_user_id")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private User pickedUpBy;
 
     @CreationTimestamp

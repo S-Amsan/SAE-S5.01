@@ -66,7 +66,10 @@ public class Post {
     private Boolean validated = null;
 
     @JsonIgnore
-    @Column(nullable = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "object_id")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Objekt object;
 
     @JsonProperty("object_id")
