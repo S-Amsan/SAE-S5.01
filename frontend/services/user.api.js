@@ -108,3 +108,29 @@ export async function fetchUserPointsForEvent(eventId) {
 
     return Number.isNaN(points) ? null : points;
 }
+
+/**
+ * Response example:
+ * ```json
+ * [
+ *   {
+ *     "id": 1,
+ *     "acquiredAt": "2026-01-07",
+ *     "description": "voté 5 posts",
+ *     "user_id": 3,
+ *     "image_url": "http://82.66.240.161:8090/files/0ae4130a1bc9191dfceb17b7e485196944b10aa084b05d181095688813580331.png"
+ *   }
+ * ]
+ * ```
+*/
+export async function fetchActions() {
+    const token = await AsyncStorage.getItem('@auth_token');
+    const res = await fetch(`${API_URL}/user/actions`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    const actions = await res.json();
+    return actions;
+}
