@@ -1,6 +1,6 @@
 package com.example.backend.service;
 
-import com.example.backend.model.http.res.ImageUploadResponse;
+import com.example.backend.model.http.res.FileUploadResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.URI;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
-public class ImageUploadService {
+public class FileUploadService {
 
     public static final URI endpoint;
 
@@ -26,7 +26,7 @@ public class ImageUploadService {
         }
     }
 
-    public ImageUploadResponse upload(MultipartFile file) throws IOException {
+    public FileUploadResponse upload(MultipartFile file) throws IOException {
         var request = HttpRequest.newBuilder(endpoint)
             .header("Content-Type", "application/octet-stream")
             .header("X-File-Ext", getFileExtension(file.getOriginalFilename()))
@@ -35,7 +35,7 @@ public class ImageUploadService {
 
         HttpResponse<String> response = sendRequest(request);
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(response.body(), ImageUploadResponse.class);
+        return mapper.readValue(response.body(), FileUploadResponse.class);
     }
 
     private HttpResponse<String> sendRequest(HttpRequest request)

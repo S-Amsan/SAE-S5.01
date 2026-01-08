@@ -4,7 +4,7 @@ import com.example.backend.model.Objekt;
 import com.example.backend.model.http.req.ObjektPostRequest;
 import com.example.backend.model.security.MyUserDetails;
 import com.example.backend.repository.ObjektRepository;
-import com.example.backend.service.ImageUploadService;
+import com.example.backend.service.FileUploadService;
 import com.example.backend.service.RewardService;
 import jakarta.validation.Valid;
 import java.io.IOException;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ObjektController {
 
     @Autowired
-    private ImageUploadService imageUploadService;
+    private FileUploadService fileUploadService;
 
     @Autowired
     private ObjektRepository objektRepository;
@@ -36,7 +36,7 @@ public class ObjektController {
         @Valid ObjektPostRequest request,
         @AuthenticationPrincipal MyUserDetails userDetails
     ) throws IOException {
-        var response = imageUploadService.upload(request.getImage());
+        var response = fileUploadService.upload(request.getImage());
 
         if (response.getError() != null) {
             throw new RuntimeException(
@@ -52,9 +52,7 @@ public class ObjektController {
         object.setAddress(request.getAddress());
         object.setPickedUpBy(null);
         object.setPhotoUrl(
-            ImageUploadService.endpoint.toString() +
-                '/' +
-                response.getFilename()
+            FileUploadService.endpoint.toString() + '/' + response.getFilename()
         );
 
         return ResponseEntity.ok(objektRepository.save(object));

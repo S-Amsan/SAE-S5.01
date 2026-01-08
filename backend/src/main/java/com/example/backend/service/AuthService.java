@@ -6,7 +6,7 @@ import com.example.backend.model.User;
 import com.example.backend.model.http.req.LoginRequest;
 import com.example.backend.model.http.req.SignUpRequest;
 import com.example.backend.model.http.res.AuthenticationResponse;
-import com.example.backend.model.http.res.ImageUploadResponse;
+import com.example.backend.model.http.res.FileUploadResponse;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.security.JwtService;
 import java.io.IOException;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     @Autowired
-    private ImageUploadService imageUploadService;
+    private FileUploadService fileUploadService;
 
     @Autowired
     private UserRepository userRepository;
@@ -74,27 +74,26 @@ public class AuthService {
         user.setAge(request.getAge());
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
 
-        ImageUploadResponse imageUploadResponse;
+        FileUploadResponse fileUploadResponse;
 
         try {
-            imageUploadResponse = imageUploadService.upload(
+            fileUploadResponse = fileUploadService.upload(
                 request.getAvatarImage()
             );
         } catch (IOException e) {
             throw new LoginException("Failed to upload avatar image", e);
         }
 
-        if (imageUploadResponse.getError() != null) {
+        if (fileUploadResponse.getError() != null) {
             throw new LoginException(
-                "Error uploading avatar image: " +
-                    imageUploadResponse.getError()
+                "Error uploading avatar image: " + fileUploadResponse.getError()
             );
         }
 
         user.setPhotoProfileUrl(
-            ImageUploadService.endpoint.toString() +
+            FileUploadService.endpoint.toString() +
                 '/' +
-                imageUploadResponse.getFilename()
+                fileUploadResponse.getFilename()
         );
 
         userRepository.save(user);

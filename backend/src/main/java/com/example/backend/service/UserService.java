@@ -17,7 +17,7 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private ImageUploadService imageUploadService;
+    private FileUploadService fileUploadService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -91,16 +91,16 @@ public class UserService {
 
         if (request.getAvatarImage() != null) {
             String oldUrl = user.getPhotoProfileUrl();
-            String newUrl = imageUploadService
+            String newUrl = fileUploadService
                 .upload(request.getAvatarImage())
                 .getUrl();
 
             if (!oldUrl.equals(newUrl)) {
                 // Photo update needed
-                imageUploadService.delete(oldUrl);
+                fileUploadService.delete(oldUrl);
                 user.setPhotoProfileUrl(newUrl);
             } else {
-                imageUploadService.delete(newUrl);
+                fileUploadService.delete(newUrl);
             }
         }
 

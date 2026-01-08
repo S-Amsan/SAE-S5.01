@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 public class PostService {
 
     @Autowired
-    private ImageUploadService imageUploadService;
+    private FileUploadService fileUploadService;
 
     @Autowired
     private PostRepository postRepository;
@@ -30,7 +30,7 @@ public class PostService {
 
     public Post publish(PostPublishRequest request, User user)
         throws IOException {
-        var response = imageUploadService.upload(request.getImage());
+        var response = fileUploadService.upload(request.getImage());
 
         if (response.getError() != null) {
             throw new RuntimeException(
@@ -44,9 +44,7 @@ public class PostService {
         post.setName(request.getName());
         post.setDescription(request.getDescription());
         post.setImageUrl(
-            ImageUploadService.endpoint.toString() +
-                '/' +
-                response.getFilename()
+            FileUploadService.endpoint.toString() + '/' + response.getFilename()
         );
 
         Long objectId = request.getObjectId();

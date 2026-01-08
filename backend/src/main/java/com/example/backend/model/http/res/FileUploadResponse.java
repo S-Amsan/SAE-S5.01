@@ -3,7 +3,7 @@ package com.example.backend.model.http.res;
 import lombok.Data;
 
 @Data
-public class ImageUploadResponse {
+public class FileUploadResponse {
 
     private String filename;
     private String url;
