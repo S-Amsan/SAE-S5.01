@@ -4,6 +4,8 @@ import { PRODUITS } from "../../../utils/data/produit";
 import { COUPONS } from "../../../utils/data/couponReduction";
 import { DONS } from "../../../utils/data/association";
 import styles from "./styles/styles";
+import {Ionicons} from "@expo/vector-icons";
+import React from "react";
 
 export default function SectionProduits({ selected }) {
     const estFiltre = selected !== null;
@@ -17,7 +19,10 @@ export default function SectionProduits({ selected }) {
         <View style={styles.section}>
             {montreCartes && (
                 <>
-                    <Text style={styles.lien}>Cartes Cadeaux &gt;</Text>
+                    <View style={{flexDirection : "row", alignItems: "center", marginBottom: 12}}>
+                        <Text style={styles.lien}>Cartes Cadeaux </Text>
+                        <Ionicons name="chevron-forward" size={21} style={styles.flecheMobile} />
+                    </View>
 
                     {!estFiltre ? (
                         <ScrollView
@@ -41,7 +46,10 @@ export default function SectionProduits({ selected }) {
 
             {montreCoupons && (
                 <>
-                    <Text style={styles.lien}>Bons de réduction &gt;</Text>
+                    <View style={{flexDirection : "row", alignItems: "center", marginBottom: 12}}>
+                        <Text style={styles.lien}>Bons de réduction </Text>
+                        <Ionicons name="chevron-forward" size={21} style={styles.flecheMobile} />
+                    </View>
 
                     {!estFiltre ? (
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scroller}>
@@ -57,7 +65,11 @@ export default function SectionProduits({ selected }) {
 
             {montreDons && (
                 <>
-                    <Text style={styles.lien}>Dons aux associations &gt;</Text>
+                    <View style={{flexDirection : "row", alignItems: "center", marginBottom: 12}}>
+                        <Text style={styles.lien}>Dons aux associations </Text>
+                        <Ionicons name="chevron-forward" size={21} style={styles.flecheMobile} />
+                    </View>
+
 
                     {!estFiltre ? (
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scroller}>

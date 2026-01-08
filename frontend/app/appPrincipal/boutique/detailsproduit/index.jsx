@@ -14,6 +14,7 @@ import partage from "../../../../assets/icones/boutique/partage.png";
 import coeur from "../../../../assets/icones/boutique/coeur.png";
 
 import styles from "./styles/styles";
+import {Ionicons} from "@expo/vector-icons";
 
 export default function DetailProduit() {
     const router = useRouter();
@@ -111,7 +112,7 @@ export default function DetailProduit() {
 
                             <View style={styles.actionsHaut}>
                                 <Pressable onPress={() => router.back()} style={styles.boutonRetour}>
-                                    <Text style={styles.iconeRetour}>‹</Text>
+                                    <Text style={styles.iconeRetour}><Ionicons name="chevron-back" size={21}/></Text>
                                 </Pressable>
 
                                 <View style={styles.actionsDroite}>

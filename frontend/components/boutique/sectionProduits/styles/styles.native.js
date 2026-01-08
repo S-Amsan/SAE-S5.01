@@ -11,7 +11,6 @@ export default StyleSheet.create({
         fontFamily: "Inter",
         fontSize: 17,
         fontWeight: "700",
-        marginBottom: 10,
         marginLeft: -14,
     },
 
@@ -33,4 +32,7 @@ export default StyleSheet.create({
         marginRight: 0,
         marginBottom: 12,
     },
+    flecheMobile : {
+        marginTop: 2,
+    }
 });
