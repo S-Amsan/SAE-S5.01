@@ -2,7 +2,6 @@ package com.example.backend.model;
 
 import com.example.backend.model.competition.CompetitionParticipant;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import java.time.Instant;
 import java.util.Set;
