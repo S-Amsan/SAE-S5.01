@@ -6,7 +6,7 @@ import Header from "../../../components/Header";
 
 import MissionsListContent from "./_components/MissionsListContent/MissionsListContent";
 import Gestes from "./_components/Gestes/Gestes";
-import Post from "./_components/PostObjet/Post";
+import PostObjet from "./_components/PostObjet/PostObjet";
 import AssociateSubscription from "./_components/Associate/AssociateSubscription";
 import ObjetDetail from "./_components/ObejetDetails/ObjetDetails";
 import ObjetRecupPhoto from "./_components/CollectObjet/CollectObjet";
@@ -72,7 +72,7 @@ export default function MissionsWeb() {
 
             {/* ===== MODAL POST OBJET ===== */}
             {showPostModal && (
-                <Post
+                <PostObjet
                     onBack={() => setShowPostModal(false)}
                 />
             )}

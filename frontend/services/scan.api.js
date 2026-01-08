@@ -28,11 +28,34 @@ function getApiUrlFor(code) {
  */
 export async function getProductData(code) {
     const apiUrl = getApiUrlFor(code);
+
     const response = await fetch(apiUrl, {
-        headers: {
-            Accept: "application/json",
-        },
+        headers: { Accept: "application/json" },
     });
+
     const data = await response.json();
-    return data;
+
+    const hasPlastic = Boolean(
+        data.product?.packagings_materials &&
+        data.product.packagings_materials["en:plastic"]
+    );
+
+
+    return {
+        status: data.status,
+        status_verbose: data.status_verbose,
+        product: {
+            product_name: data.product?.product_name ?? null,
+            brands: data.product?.brands ?? null,
+            product_quantity: data.product?.product_quantity ?? null,
+            product_quantity_unit: data.product?.product_quantity_unit ?? null,
+            packaging_tags: data.product?.packaging_tags ?? [],
+            plastic: hasPlastic,
+        },
+    };
 }
+
+
+
+
+

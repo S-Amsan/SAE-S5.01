@@ -36,7 +36,7 @@ export default function Index() {
                 <SignalementReasons
                     onSelect={async (selectedReason) => {
                         setReason(selectedReason);
-                        // TODO: Enregister la raison du signalement avec id de Post
+                        // TODO: Enregister la raison du signalement avec id de PostAction
                         setPage("success");
                     }}
                 />

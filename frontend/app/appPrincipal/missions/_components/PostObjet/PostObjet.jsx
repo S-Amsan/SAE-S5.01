@@ -10,7 +10,7 @@ import {
 import { isWeb } from "../../../../../utils/platform";
 import styles from "./Styles/styles";
 
-export default function Post({ onBack }) {
+export default function PostObjet({ onBack }) {
     const [title, setTitle] = useState("");
     const [address, setAddress] = useState("");
     const [description, setDescription] = useState("");

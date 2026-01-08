@@ -347,9 +347,9 @@ export default function VotreProfil(){
 
     // les stats de l'utilisateur TODO récupere les statistiques de l'utilisateur connecte
     const user_statistique_DATA = {
-        Action_eco : 2560, // TODO (de l'utilisateur) : Nombre de post avec status validé (dans la Table Post) + Nombre de documents avec status validé (dans la Table User_Documents)
+        Action_eco : 2560, // TODO (de l'utilisateur) : Nombre de post avec status validé (dans la Table PostAction) + Nombre de documents avec status validé (dans la Table User_Documents)
         Votes_effectues : 5448, // TODO (de l'utilisateur) : nombre de vote qu'il a fait dans la table Post_Validation, nombre de lignes avec le id_user
-        Objets_Recup : 21 // TODO (de l'utilisateur) : Nombre de post avec status validé (dans la Table Post) et avec pour id_Action qui a pour type "Objet récupéré"
+        Objets_Recup : 21 // TODO (de l'utilisateur) : Nombre de post avec status validé (dans la Table PostAction) et avec pour id_Action qui a pour type "Objet récupéré"
     }
 
     // les activité récent de l'utilisateur TODO récupere les activité récent de l'utilisateur connecte (Table User_Activite, récuperer que les 3 dernier, prendre la clé #Id_Activite et dans la table Activite prendre l'activité correspondant), null si aucun

@@ -6,16 +6,19 @@ import TabNavbarMobile from "../../../components/TabNavbarMobile";
 
 import MissionsListContent from "./_components/MissionsListContent/MissionsListContent";
 import Gestes from "./_components/Gestes/Gestes";
-import Post from "./_components/PostObjet/Post";
+import PostObjet from "./_components/PostObjet/PostObjet";
+import PostAction from "./_components/Post/PostAction";
 import ObjetDetails from "./_components/ObejetDetails/ObjetDetails";
 import AssociateSubscription from "./_components/Associate/AssociateSubscription";
 import ObjetRecupPhoto from "./_components/CollectObjet/CollectObjet";
+import { useLocalSearchParams } from "expo-router";
 
 export default function MissionsMobile() {
     /* ===== ÉTATS ===== */
     const [page, setPage] = useState("listes"); // listes | recupObjet | associate | postObjet
     const [ongletActifId, setOngletActifId] = useState("listes"); // listes | gestes
     const [selectedObjet, setSelectedObjet] = useState(null);
+    const { page: pageFromScan, product, code } = useLocalSearchParams();
 
     const onglets = [
         { id: "listes", label: "Régulières" },
@@ -26,6 +29,8 @@ export default function MissionsMobile() {
         switch (page) {
             case "postObjet":
                 return "Poster un objet";
+            case "postAcion":
+                return "Publier votre action";
             case "associate":
                 return "Associer un abonnement";
             case "recupObjet":
@@ -59,6 +64,13 @@ export default function MissionsMobile() {
                 return;
             }
         };
+
+    useEffect(() => {
+        if (pageFromScan === "post") {
+            setPage("post");
+        }
+    }, [pageFromScan]);
+
 
     return (
         <View style={{ flex: 1, backgroundColor: "#fff" }}>
@@ -128,7 +140,11 @@ export default function MissionsMobile() {
 
             {/* POST OBJET */}
             {page === "postObjet" && (
-                <Post onBack={handleBack} />
+                <PostObjet onBack={handleBack} />
+            )}
+
+            {page === "post" && (
+                <PostAction onBack={handleBack} />
             )}
 
         </View>

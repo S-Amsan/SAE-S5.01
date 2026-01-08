@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
     View,
     Text,
@@ -10,6 +10,7 @@ import {
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import {getProductData} from "../../../services/scan.api";
 
 export default function ScanPage() {
     const router = useRouter();
@@ -24,14 +25,35 @@ export default function ScanPage() {
         }
     }, [permission, isWeb]);
 
-    const handleBarcodeScanned = ({ data, type }) => {
+    const handleBarcodeScanned = async ({ data, type }) => {
         setScanned(true);
         console.log("SCAN:", type, data);
 
-        router.replace({
-            pathname: "/appPrincipal/missions",
-            params: { scannedData: data },
-        });
+        try {
+            const productData = await getProductData(data);
+
+            console.log("OPENFOODFACTS RAW RESPONSE:", productData);
+            console.log("PRODUCT ONLY:", productData.product);
+
+            if (productData.status !== 1) {
+                console.warn("Produit non trouvé");
+                setScanned(false);
+                return;
+            }
+
+            router.replace({
+                pathname: "/appPrincipal/missions",
+                params: {
+                    page: "post",
+                    product: JSON.stringify(productData.product),
+                    code: data,
+                },
+            });
+
+        } catch (error) {
+            console.error("Erreur API OpenFoodFacts", error);
+            setScanned(false);
+        }
     };
 
     if (isWeb) {
