@@ -65,6 +65,8 @@ public class SecurityConfig {
                     .authenticated()
                     .requestMatchers("/object/all")
                     .permitAll()
+                    .requestMatchers("/object/pickup/**")
+                    .authenticated()
             )
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(sess ->

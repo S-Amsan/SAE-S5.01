@@ -5,6 +5,7 @@ import com.example.backend.model.http.req.ObjektPostRequest;
 import com.example.backend.model.security.MyUserDetails;
 import com.example.backend.repository.ObjektRepository;
 import com.example.backend.service.ImageUploadService;
+import com.example.backend.service.RewardService;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.List;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +27,9 @@ public class ObjektController {
 
     @Autowired
     private ObjektRepository objektRepository;
+
+    @Autowired
+    private RewardService rewardService;
 
     @PostMapping("/post")
     public ResponseEntity<Objekt> post(
@@ -41,7 +46,7 @@ public class ObjektController {
 
         Objekt object = new Objekt();
 
-        object.setUser(userDetails.getUser());
+        object.setPublishedBy(userDetails.getUser());
         object.setTitle(request.getTitle());
         object.setDescription(request.getDescription());
         object.setAddress(request.getAddress());
@@ -53,6 +58,25 @@ public class ObjektController {
         );
 
         return ResponseEntity.ok(objektRepository.save(object));
+    }
+
+    @PostMapping("/pickup/{objectId}")
+    public ResponseEntity<Void> pickupObject(
+        @PathVariable Long objectId,
+        @AuthenticationPrincipal MyUserDetails userDetails
+    ) {
+        var maybeObject = objektRepository.findById(objectId);
+
+        if (maybeObject.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        var object = maybeObject.get();
+
+        object.setPickedUpBy(userDetails.getUser());
+        rewardService.onObjectPickup(objektRepository.save(object));
+
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/all")
