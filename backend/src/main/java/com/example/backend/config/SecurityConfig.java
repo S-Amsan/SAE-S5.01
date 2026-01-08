@@ -67,6 +67,10 @@ public class SecurityConfig {
                     .permitAll()
                     .requestMatchers("/object/pickup/**")
                     .authenticated()
+                    .requestMatchers("/document/upload")
+                    .authenticated()
+                    .requestMatchers("/document/all")
+                    .permitAll()
             )
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(sess ->
