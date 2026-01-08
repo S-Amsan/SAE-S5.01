@@ -107,6 +107,9 @@ public class UserController {
             .trophies(stats.getTrophies())
             .flames(stats.getFlames())
             .ecoActions(postRepository.countByUserAndValidatedTrue(user))
+            .recoveredObjects(
+                postRepository.countByValidatedTrueAndObjectIsNotNull()
+            )
             .build();
 
         return ResponseEntity.ok(response);

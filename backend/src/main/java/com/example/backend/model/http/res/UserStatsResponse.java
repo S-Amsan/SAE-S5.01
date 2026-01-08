@@ -16,4 +16,5 @@ public class UserStatsResponse {
     private Integer trophies;
     private Integer flames;
     private Long ecoActions;
+    private Long recoveredObjects;
 }
