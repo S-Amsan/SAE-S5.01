@@ -32,7 +32,6 @@ public class UserStats {
     @Id
     private Long userId;
 
-    @JsonBackReference
     @OneToOne(fetch = FetchType.LAZY, optional = false)
     @MapsId
     @JoinColumn(name = "user_id", nullable = false)
