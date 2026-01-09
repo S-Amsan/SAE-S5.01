@@ -32,7 +32,14 @@ export default StyleSheet.create({
         marginRight: 0,
         marginBottom: 12,
     },
+
     flecheMobile : {
-        marginTop: 2,
+        marginBottom: 14,
+        flexDirection : "row",
+        alignItems: "center"
+    },
+
+    iconeChevron: {
+        marginTop: 3.25,
     }
 });

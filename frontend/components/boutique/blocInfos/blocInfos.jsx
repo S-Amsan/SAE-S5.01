@@ -1,6 +1,7 @@
 import { Text, View, Image, Pressable, Animated, Easing, Platform } from "react-native";
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./styles/styles";
+import {Ionicons} from "@expo/vector-icons";
 
 export default function BlocInfos() {
     const [indexActif, setIndexActif] = useState(0);
@@ -106,7 +107,11 @@ export default function BlocInfos() {
             <View style={styles.infos}>
                 {Platform.OS === "web" && (
                     <Pressable onPress={precedent} style={styles.fleche}>
-                        <Text style={styles.flecheTexte}>‹</Text>
+                        <Ionicons
+                            name="chevron-back"
+                            size={41}
+                            style={styles.iconeChevron}
+                        />
                     </Pressable>
                 )}
 
@@ -140,7 +145,11 @@ export default function BlocInfos() {
 
                 {Platform.OS === "web" && (
                     <Pressable onPress={suivant} style={styles.fleche}>
-                        <Text style={styles.flecheTexte}>›</Text>
+                        <Ionicons
+                            name="chevron-forward"
+                            size={41}
+                            style={styles.iconeChevron}
+                        />
                     </Pressable>
                 )}
             </View>

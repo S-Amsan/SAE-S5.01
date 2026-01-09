@@ -19,10 +19,15 @@ export default function SectionProduits({ selected }) {
         <View style={styles.section}>
             {montreCartes && (
                 <>
-                    <View style={{flexDirection : "row", alignItems: "center", marginBottom: 12}}>
+                    <View style={styles.flecheMobile}>
                         <Text style={styles.lien}>Cartes Cadeaux </Text>
-                        <Ionicons name="chevron-forward" size={21} style={styles.flecheMobile} />
+                        <Ionicons
+                            name="chevron-forward"
+                            size={23}
+                            style={styles.iconeChevron}
+                        />
                     </View>
+
 
                     {!estFiltre ? (
                         <ScrollView
@@ -46,9 +51,13 @@ export default function SectionProduits({ selected }) {
 
             {montreCoupons && (
                 <>
-                    <View style={{flexDirection : "row", alignItems: "center", marginBottom: 12}}>
+                    <View style={styles.flecheMobile}>
                         <Text style={styles.lien}>Bons de réduction </Text>
-                        <Ionicons name="chevron-forward" size={21} style={styles.flecheMobile} />
+                        <Ionicons
+                            name="chevron-forward"
+                            size={23}
+                            style={styles.iconeChevron}
+                        />
                     </View>
 
                     {!estFiltre ? (
@@ -65,9 +74,13 @@ export default function SectionProduits({ selected }) {
 
             {montreDons && (
                 <>
-                    <View style={{flexDirection : "row", alignItems: "center", marginBottom: 12}}>
+                    <View style={styles.flecheMobile}>
                         <Text style={styles.lien}>Dons aux associations </Text>
-                        <Ionicons name="chevron-forward" size={21} style={styles.flecheMobile} />
+                        <Ionicons
+                            name="chevron-forward"
+                            size={23}
+                            style={styles.iconeChevron}
+                        />
                     </View>
 
 

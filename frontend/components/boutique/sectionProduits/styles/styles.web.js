@@ -31,5 +31,15 @@ export default StyleSheet.create({
         width: "22.5%",
         marginRight: 0,
         marginBottom: 0,
-    }
+    },
+
+    flecheMobile: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+
+    iconeChevron: {
+        marginTop: -12.25,
+    },
+
 });
