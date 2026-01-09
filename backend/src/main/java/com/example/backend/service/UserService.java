@@ -110,4 +110,9 @@ public class UserService {
 
         return update;
     }
+
+    public User changeBanStatusOf(User user, boolean banned) {
+        user.setBanned(banned);
+        return userRepository.save(user);
+    }
 }

@@ -47,4 +47,26 @@ public class AdminController {
             userDetails.getUser()
         );
     }
+
+    @PostMapping("/ban/{userId}")
+    public ResponseEntity<User> banUser(
+        @PathVariable Long userId,
+        @AuthenticationPrincipal MyUserDetails userDetails
+    ) {
+        return createResponse(
+            () -> adminService.banUser(userId),
+            userDetails.getUser()
+        );
+    }
+
+    @PostMapping("/unban/{userId}")
+    public ResponseEntity<User> unbanUser(
+        @PathVariable Long userId,
+        @AuthenticationPrincipal MyUserDetails userDetails
+    ) {
+        return createResponse(
+            () -> adminService.unbanUser(userId),
+            userDetails.getUser()
+        );
+    }
 }
