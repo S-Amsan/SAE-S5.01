@@ -1,10 +1,12 @@
 package com.example.backend.service;
 
+import com.example.backend.model.Card;
 import com.example.backend.model.Post;
 import com.example.backend.model.Report;
 import com.example.backend.model.User;
 import com.example.backend.model.document.Document;
 import com.example.backend.model.document.DocumentState;
+import com.example.backend.model.http.req.CardPublishRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +24,9 @@ public class AdminService {
 
     @Autowired
     private DocumentService documentService;
+
+    @Autowired
+    private CardService cardService;
 
     public Report checkReport(Long reportId) {
         var maybeReport = reportService.getReportById(reportId);
@@ -80,5 +85,9 @@ public class AdminService {
 
     public Document invalidateDocument(Long documentId) {
         return changeDocumentState(documentId, DocumentState.REJECTED);
+    }
+
+    public Card publishCard(CardPublishRequest request) {
+        return cardService.publish(request);
     }
 }

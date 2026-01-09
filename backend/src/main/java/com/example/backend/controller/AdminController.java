@@ -1,11 +1,11 @@
 package com.example.backend.controller;
 
-import com.example.backend.model.Post;
-import com.example.backend.model.Report;
-import com.example.backend.model.User;
-import com.example.backend.model.document.Document;
+import com.example.backend.model.*;
+import com.example.backend.model.document.*;
+import com.example.backend.model.http.req.CardPublishRequest;
 import com.example.backend.model.security.MyUserDetails;
 import com.example.backend.service.AdminService;
+import jakarta.validation.Valid;
 import java.util.function.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -89,6 +89,17 @@ public class AdminController {
     ) {
         return createResponse(
             () -> adminService.invalidateDocument(documentId),
+            userDetails.getUser()
+        );
+    }
+
+    @PostMapping("/card/publish")
+    public ResponseEntity<Card> publishCard(
+        @Valid CardPublishRequest request,
+        @AuthenticationPrincipal MyUserDetails userDetails
+    ) {
+        return createResponse(
+            () -> adminService.publishCard(request),
             userDetails.getUser()
         );
     }
