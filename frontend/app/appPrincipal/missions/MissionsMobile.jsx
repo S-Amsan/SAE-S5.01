@@ -65,6 +65,8 @@ export default function MissionsMobile() {
                 return "Associer un abonnement";
             case "recupObjet":
                 return "Récupérer un objet";
+            case "recupPhoto":
+                return "Objet récupéré";
             default:
                 return "Missions";
         }

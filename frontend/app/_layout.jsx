@@ -17,7 +17,7 @@ export default function RootLayout() {
             </Stack>
 
             <NotificationDrawer />
-            
+
             <Toast />
         </NotificationProvider>
     );

@@ -1,8 +1,28 @@
 import { View, Text, Image, ScrollView, TouchableOpacity } from "react-native";
 import styles from "./styles/styles";
 import { isWeb } from "../../../../../utils/platform";
+import {useEffect, useState} from "react";
+import {fetchUserById} from "../../../../../services/user.api";
+import {formatRelativeTime} from "../../../../../utils/format";
 
 export default function MissionDetail({ objet, onRecupObjet, onSignal, onBack }) {
+
+    const [pseudo, setPseudo] = useState(null);
+
+    useEffect(() => {
+        if (!objet?.publisher_user_id) return;
+
+        const loadUser = async () => {
+            try {
+                const user = await fetchUserById(objet.publisher_user_id);
+                setPseudo(user.pseudo);
+            } catch (e) {
+                console.error(e);
+            }
+        };
+
+        loadUser();
+    }, [objet?.publisher_user_id]);
 
     const Content = (
         <ScrollView contentContainerStyle={styles.container}>
@@ -12,7 +32,7 @@ export default function MissionDetail({ objet, onRecupObjet, onSignal, onBack })
                     Donnez une seconde vie à cet objet !
                 </Text>
                 <Text style={styles.rewardSub}>
-                    Récompense : +{objet.reward} points
+                    Récompense : +500 points
                 </Text>
             </View>
 
@@ -21,11 +41,11 @@ export default function MissionDetail({ objet, onRecupObjet, onSignal, onBack })
             <Text style={styles.address}>📍 {objet.address}</Text>
 
             {/* IMAGE */}
-            <Image source={{ uri: objet.image }} style={styles.image} />
+            <Image source={{ uri: objet.photoUrl}} style={styles.image} />
 
             {/* META */}
             <Text style={styles.meta}>
-                Posté par <Text style={styles.author}>{objet.author}</Text>, le {objet.date}
+                Posté par <Text style={styles.author}>{pseudo}</Text>, le {formatRelativeTime(objet.creationDate)}
             </Text>
 
             {/* DESCRIPTION */}

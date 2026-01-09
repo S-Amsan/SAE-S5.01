@@ -16,14 +16,6 @@ export default StyleSheet.create({
         margin: 15,
     },
 
-    avatar: {
-        width: 36,
-        height: 36,
-        borderRadius: 18,
-        backgroundColor: "#eee",
-    },
-
-
     infoHeader: {
         backgroundColor: "#0ED49B",
         borderRadius: 12,
@@ -120,72 +112,94 @@ export default StyleSheet.create({
 
     /* ===== LISTE DES CARTES ===== */
     card: {
-        backgroundColor: "#fff",
-        borderRadius: 12,
-        padding: 5,
-        marginHorizontal: 15,
-        marginBottom: 12,
         flexDirection: "row",
-        width: "auto",
+        backgroundColor: "#fff",
+        borderRadius: 18,
+        marginHorizontal: 12,
+        marginBottom: 16,
+        alignItems: "center",
+
+        shadowColor: "#000",
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+        shadowOffset: { width: 0, height: 3 },
+        elevation: 3,
     },
 
     image: {
-        width: 90,
-        height: 90,
-        borderRadius: 8,
+        width: 110,
+        height: 110,
+        borderRadius: 16,
+        backgroundColor: "#eee",
     },
 
-    content: {
+    body: {
         flex: 1,
-        marginLeft: 10,
+        marginLeft: 5,
+    },
+
+    topRow: {
+        flexDirection: "row",
+        alignItems: "center",
     },
 
     title: {
-        fontSize: 14,
-        fontWeight: "600",
-    },
+        fontSize: 18,
+        fontWeight: "700",
+        color: "#111",
 
-    address: {
-        color: "#666",
-        fontSize: 12,
-        marginTop: 2,
-    },
-
-    meta: {
-        color: "#999",
-        fontSize: 12,
-        marginTop: 6,
-    },
-
-    describe: {
-        fontSize: 12,
-        marginTop: 8,
-    },
-
-    right: {
-        justifyContent: "space-between",
-        alignItems: "flex-end",
-        marginLeft: 10,
+        paddingRight:6,
     },
 
     distance: {
-        color: "#666",
+        fontSize: 10,
+        color: "#999",
+        fontWeight: "500",
+
+    },
+
+    userRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginTop: 6,
+        gap: 6,
+    },
+
+    avatar: {
+        width: 26,
+        height: 26,
+        borderRadius: 13,
+    },
+
+    userText: {
+        fontSize: 14,
+        fontWeight: "500",
+        color: "#111",
+    },
+
+    address: {
         fontSize: 12,
+        color: "#333",
+        marginTop: 6,
+
+    },
+
+    right: {
+        justifyContent: "center",
+        alignItems: "center",
+        marginRight:5,
     },
 
     button: {
-        backgroundColor: "#3EDFA4",
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 8,
-        marginTop: 8,
+        backgroundColor: "#1ED08C",
+        paddingVertical: 8,
+        paddingHorizontal: 10,
+        borderRadius: 5,
     },
 
     buttonText: {
         color: "#fff",
-        fontWeight: "600",
         fontSize: 12,
-        textAlign: "center",
+        fontWeight: "700",
     },
-
 });

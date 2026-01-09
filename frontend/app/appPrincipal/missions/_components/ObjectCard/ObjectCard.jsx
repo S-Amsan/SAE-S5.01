@@ -29,56 +29,50 @@ export default function ObjectCard({ item, buttonLabel, onSeeObjet }) {
 
     return (
         <View style={styles.card}>
-            {/* IMAGE OBJET */}
+            {/* IMAGE */}
             <Image
                 source={{ uri: item.photoUrl }}
                 style={styles.image}
-                onError={(e) =>
-                    console.log("IMAGE OBJET ERROR", e.nativeEvent)
-                }
             />
 
-            {/* CONTENU */}
-            <View style={styles.content}>
-                {/* TITRE + ADRESSE */}
+            {/* CONTENU CENTRAL */}
+            <View style={styles.body}>
+                {/* TITRE + DISTANCE */}
                 <View style={styles.topRow}>
-                    <Text style={styles.title}>{item.title}</Text>
-                    <Text style={styles.address}>📍 {item.address}</Text>
+                    <Text style={styles.title}>
+                        {item.title}
+                    </Text>
+                    <Text style={styles.distance}>
+                        • {formatRelativeTime(item.creationDate)}
+                    </Text>
+
                 </View>
 
-                {/* USER + DATE */}
+                {/* USER */}
                 <View style={styles.userRow}>
                     {avatar && (
                         <Image source={{ uri: avatar }} style={styles.avatar} />
                     )}
-
-                    <View>
-                        {pseudo && (
-                            <Text style={styles.name}>@{pseudo}</Text>
-                        )}
-                        <Text style={styles.meta}>
-                            • {formatRelativeTime(item.creationDate)}
-                        </Text>
-                    </View>
+                    <Text style={styles.userText}>
+                        @{pseudo}
+                    </Text>
                 </View>
 
-                {/* DESCRIPTION */}
-                {item.description && (
-                    <Text style={styles.describe}>{item.description}</Text>
-                )}
+                {/* ADRESSE */}
+                <Text style={styles.address}>
+                    📍 {item.address}
+                </Text>
+            </View>
 
-                {/* ACTION */}
-                <View style={styles.actionRow}>
+
+                <View style={styles.right}>
                     <TouchableOpacity
                         style={styles.button}
-                        onPress={() => onSeeObjet()}
-
+                        onPress={() => onSeeObjet(item)}
                     >
                         <Text style={styles.buttonText}>{buttonLabel}</Text>
                     </TouchableOpacity>
-
                 </View>
-            </View>
 
         </View>
     );

@@ -43,36 +43,53 @@ function ObjectCard({ item, onSeeObjet }) {
 
     return (
         <View style={styles.card}>
-            <Image source={{ uri: item.photoUrl }} style={styles.image} />
+            {/* IMAGE */}
+            <Image
+                source={{ uri: item.photoUrl }}
+                style={styles.image}
+            />
 
-            <View style={styles.content}>
-                <Text style={styles.title}>{item.title}</Text>
+            {/* CONTENU CENTRAL */}
+            <View style={styles.body}>
+                {/* TITRE + DISTANCE */}
+                <View style={styles.topRow}>
+                    <Text style={styles.title}>
+                        {item.title}
+                    </Text>
+                    <Text style={styles.distance}>
+                        • {formatRelativeTime(item.creationDate)}
+                    </Text>
 
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-                    {avatar && <Image source={{ uri: avatar }} style={styles.avatar} />}
-                    {pseudo && <Text style={styles.name}>@{pseudo}</Text>}
                 </View>
 
-                <Text style={styles.address}>📍 {item.address}</Text>
+                {/* USER */}
+                <View style={styles.userRow}>
+                    {avatar && (
+                        <Image source={{ uri: avatar }} style={styles.avatar} />
+                    )}
+                    <Text style={styles.userText}>
+                        @{pseudo}
+                    </Text>
+                </View>
 
-                <Text style={styles.meta}>
-                    {formatRelativeTime(item.creationDate)}
+                {/* ADRESSE */}
+                <Text style={styles.address}>
+                    📍 {item.address}
                 </Text>
-
-                {item.description && (
-                    <Text style={styles.describe}>{item.description}</Text>
-                )}
             </View>
 
+            {/* COLONNE DROITE */}
             <View style={styles.right}>
                 <TouchableOpacity
                     style={styles.button}
                     onPress={() => onSeeObjet(item)}
                 >
-                    <Text style={styles.buttonText}>Voir l’objet</Text>
+                    <Text style={styles.buttonText}>Récupérer</Text>
                 </TouchableOpacity>
             </View>
         </View>
+
+
     );
 }
 
