@@ -53,4 +53,11 @@ public class CardService {
         card.setTrophies(request.getTrophies());
         return cardRepository.save(card);
     }
+
+    public Card deleteCardById(Long cardId) {
+        Card card = cardRepository.findById(cardId).orElseThrow();
+
+        cardRepository.delete(card);
+        return card;
+    }
 }

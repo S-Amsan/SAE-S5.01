@@ -103,4 +103,15 @@ public class AdminController {
             userDetails.getUser()
         );
     }
+
+    @DeleteMapping("/card/{cardId}")
+    public ResponseEntity<Card> deleteCard(
+        @PathVariable Long cardId,
+        @AuthenticationPrincipal MyUserDetails userDetails
+    ) {
+        return createResponse(
+            () -> adminService.deleteCard(cardId),
+            userDetails.getUser()
+        );
+    }
 }

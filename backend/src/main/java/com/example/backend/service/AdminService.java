@@ -90,4 +90,8 @@ public class AdminService {
     public Card publishCard(CardPublishRequest request) {
         return cardService.publish(request);
     }
+
+    public Card deleteCard(Long cardId) {
+        return cardService.deleteCardById(cardId);
+    }
 }
