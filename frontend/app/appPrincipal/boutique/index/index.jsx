@@ -54,7 +54,12 @@ export default function Boutique() {
                 >
                     <View style={styles.page}>
                         {filtreActif === null && <BlocInfos />}
-                        <SectionProduits key={filtreActif ?? "all"} selected={filtreActif} />
+                        <SectionProduits
+                            key={filtreActif ?? "all"}
+                            selected={filtreActif}
+                            filtreActif={filtreActif}
+                            setFiltreActif={setFiltreActif}
+                        />
                     </View>
                 </ScrollView>
             </View>

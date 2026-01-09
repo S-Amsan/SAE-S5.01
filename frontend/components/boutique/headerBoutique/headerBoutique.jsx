@@ -11,6 +11,7 @@ export default function HeaderBoutique({ filtreActif, setFiltreActif, mode = "co
     const { nombreProduits } = usePanier();
     const ongletActif = pathname?.includes("historique") ? "achats" : "catalogue";
 
+
     if (Platform.OS !== "web") {
         return (
             <View style={styles.conteneurMobile}>
