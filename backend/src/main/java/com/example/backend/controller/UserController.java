@@ -108,7 +108,7 @@ public class UserController {
             .flames(stats.getFlames())
             .ecoActions(postRepository.countByUserAndValidatedTrue(user))
             .recoveredObjects(
-                postRepository.countByValidatedTrueAndObjectIsNotNull()
+                postRepository.countByUserValidatedTrueAndObjectIsNotNull(user)
             )
             .build();
 
