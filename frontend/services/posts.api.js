@@ -39,49 +39,54 @@ export async function fetchAllPosts() {
  */
 
 export async function postPost(post) {
-    try {
-        const formData = new FormData();
+    const formData = new FormData();
 
-
+    if (post.name) {
         formData.append("name", post.name);
-        formData.append("description", post.description);
-        formData.append("objectId", post.objectId);
-
-        if (Platform.OS === "web") {
-            const blob = await fetch(post.imageUrl).then(r => r.blob());
-            formData.append("image", blob, "photo.jpg");
-        } else {
-            formData.append("image", {
-                uri: post.imageUrl,
-                name: "photo.jpg",
-                type: "image/jpeg",
-            });
-        }
-
-        const token = await AsyncStorage.getItem("@auth_token");
-
-        const response = await fetch(`${API_URL}/post`, {
-            method: "POST",
-            body: formData,
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        });
-
-        if (!response.ok) {
-            const text = await response.text();
-            console.error("API ERROR:", response.status, text);
-            throw new Error("API error");
-        }
-
-        const text = await response.text();
-        return text ? JSON.parse(text) : { success: true };
-
-    } catch (error) {
-        console.error("POST ERROR:", error);
-        throw error;
     }
+
+    if (post.description) {
+        formData.append("description", post.description);
+    }
+
+    // ✅ CRITIQUE
+    if (post.objectId !== undefined && post.objectId !== null) {
+        formData.append("objectId", String(post.objectId));
+    }
+
+    if (!post.imageUrl) {
+        throw new Error("Image manquante");
+    }
+
+    if (Platform.OS === "web") {
+        const blob = await fetch(post.imageUrl).then(r => r.blob());
+        formData.append("image", blob, "photo.jpg");
+    } else {
+        formData.append("image", {
+            uri: post.imageUrl,
+            name: "photo.jpg",
+            type: "image/jpeg",
+        });
+    }
+
+    const token = await AsyncStorage.getItem("@auth_token");
+
+    const response = await fetch(`${API_URL}/post`, {
+        method: "POST",
+        body: formData,
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || "API error");
+    }
+
+    return response.json();
 }
+
 
 export async function likePost(postId) {
     const token = await AsyncStorage.getItem('@auth_token');

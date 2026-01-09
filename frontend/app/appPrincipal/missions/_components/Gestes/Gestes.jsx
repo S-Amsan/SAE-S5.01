@@ -11,35 +11,30 @@ import { isWeb } from "../../../../../utils/platform";
 import Navbar from "../../../../../components/Navbar";
 import ScanActionButton from "../../../../../components/ScanActionButton";
 import {useRouter} from "expo-router";
+import { fetchAllDocuments } from "../../../../../services/documents.api";
+import { useEffect } from "react";
+
 
 export default function Gestes({ onAssociate }) {
 
-    const partenaires = [  // TODO: Besoin de Mettre sa dans la BD?
-        {
-            id: "ratp",
-            name: "RATP",
-            title: "Associer votre abonnement RATP à Ecoception",
-            status: "pending",
-            points: 50000,
-            logo: require("../../../../../assets/icones/missions/ratp.png"),
-        },
-        {
-            id: "velib",
-            name: "Vélib",
-            title: "Associer votre abonnement Vélib à Ecoception",
-            status: "validated",
-            points: 50000,
-            logo: require("../../../../../assets/icones/missions/velib.png"),
-        },
-        {
-            id: "nous",
-            name: "Nous anti-gaspi",
-            title: "Associer votre carte fidélité à Ecoception",
-            status: "start",
-            points: 50000,
-            logo: require("../../../../../assets/icones/missions/gaspi.png"),
-        },
-    ];
+    const [partenaires, setPartenaires] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+
+    useEffect(() => {
+        const loadDocuments = async () => {
+            try {
+                const data = await fetchAllDocuments();
+                setPartenaires(data);
+            } catch (e) {
+                console.error("FETCH DOCUMENTS ERROR", e);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadDocuments();
+    }, []);
 
     const [hoveredId, setHoveredId] = useState(null);
 
@@ -150,7 +145,7 @@ export default function Gestes({ onAssociate }) {
             </ScrollView>
         );
     }
-
+    if (loading) {
     return (
         <View style={{ flex: 1 }}>
             {/* CONTENU SCROLLABLE */}
@@ -249,4 +244,6 @@ export default function Gestes({ onAssociate }) {
             </Animated.View>
         </View>
     );
+    }
+
 }

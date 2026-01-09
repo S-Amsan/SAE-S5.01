@@ -33,104 +33,91 @@ export default StyleSheet.create({
 
     /* ===== CARD ===== */
     card: {
+        position: "relative",
+        padding:30,
         flexDirection: "row",
         backgroundColor: "#fff",
-        borderRadius: 18,
-        padding: 20,
-        width: "80%",
-        marginBottom: 20,
-
-        shadowColor: "#000",
-        shadowOpacity: 0.08,
-        shadowRadius: 12,
-        shadowOffset: { width: 0, height: 4 },
-        elevation: 4,
+        borderRadius: 21,
+        marginBottom: 12,
+        width:"80%",
     },
 
-    /* ===== IMAGE OBJET ===== */
     image: {
-        width: "30%",
-        height: 220,
-        borderRadius: 14,
-        backgroundColor: "#eee",
+        width: "45%",
+        height: 350,
+        borderRadius: 8,
     },
 
-    /* ===== CONTENT ===== */
-    content: {
-        flex: 1,
-        padding: 16,
+    body: {
+        marginLeft: 10,
     },
 
     topRow: {
         flexDirection: "row",
-        alignItems: "flex-start",
-        marginBottom: 12,
-    },
-
-    userRow: {
-        flexDirection: "row",
         alignItems: "center",
-        gap: 10,
-        marginBottom: 12,
-    },
-
-    actionRow: {
-        marginTop: 16,
-        alignItems: "flex-end",
-    },
-
-
-    userInfo: {
-        marginLeft: 10,
     },
 
     title: {
-        fontSize: 26,
-        fontWeight: "600",
+        fontSize: 36,
+        fontWeight: "700",
+        color: "#111",
+        paddingRight:15,
+    },
+
+    userRow: {
+        marginTop:10,
+        padding:12,
+        flexDirection: "row",
+        gap: 6,
+    },
+
+    avatar: {
+        width: 90,
+        height: 90,
+        borderRadius: 13,
+    },
+
+    distance: {
+        fontSize: 16,
+        color: "#999",
+        fontWeight: "500",
+        marginLeft:15,
+        marginTop:12,
+    },
+
+    userText: {
+        fontSize: 20,
+        fontWeight: "500",
         color: "#111",
     },
 
     address: {
-        fontSize: 14,
-        color: "#666",
-        marginVertical:10,
-    },
-
-    avatar: {
-        width: 50,
-        height: 50,
-        borderRadius: 25,
-    },
-
-    name: {
-        fontSize: 20,
-        fontWeight: "500",
-    },
-
-    meta: {
-        fontSize: 14,
-        color: "#999",
-        marginTop: 2,
-    },
-
-    describe: {
-        marginTop: 16,
-        fontSize: 16,
+        fontSize: 25,
         color: "#333",
-        lineHeight: 22,
+        marginTop: 6,
+
     },
+
+    bouttonContainer: {
+        position: "absolute",
+        bottom: 20,
+        right: 20,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+
+
     button: {
-        backgroundColor: "#3EDFA4",
-        paddingHorizontal: 24,
-        paddingVertical: 10,
-        borderRadius: 12,
-        minWidth: 250,
+        backgroundColor: "#1ED08C",
+        paddingVertical: 20,
+        paddingHorizontal: 100,
+        borderRadius: 5,
     },
 
     buttonText: {
         color: "#fff",
-        fontWeight: "600",
-        textAlign: "center",
+        fontSize: 16,
+        fontWeight: "700",
     },
 
 });

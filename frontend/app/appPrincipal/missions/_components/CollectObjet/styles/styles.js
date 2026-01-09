@@ -137,4 +137,25 @@ export default StyleSheet.create({
         fontSize: 18,
         fontWeight: "600",
     },
+
+    descriptionBox: {
+        marginTop: 16,
+    },
+
+    descriptionLabel: {
+        fontSize: 14,
+        fontWeight: "600",
+        marginBottom: 8,
+    },
+
+    descriptionInput: {
+        borderWidth: 1,
+        borderColor: "#ddd",
+        borderRadius: 10,
+        padding: 12,
+        fontSize: 14,
+        minHeight: 100,
+        backgroundColor: "#fff",
+    },
+
 });

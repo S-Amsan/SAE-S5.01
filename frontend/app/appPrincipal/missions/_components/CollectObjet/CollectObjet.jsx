@@ -6,6 +6,7 @@ import {
     ScrollView,
     Image,
     ActivityIndicator,
+    TextInput
 } from "react-native";
 
 import styles from "./styles/styles";
@@ -13,10 +14,12 @@ import { isWeb } from "../../../../../utils/platform";
 import { pickupObject } from "../../../../../services/objects.api";
 import Toast from "react-native-toast-message";
 import * as ImagePicker from "expo-image-picker";
+import {postPost} from "../../../../../services/posts.api";
 
 export default function ObjetRecupPhoto({ objet, onBack, onSubmit }) {
     const [photo, setPhoto] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [description, setDescription] = useState("");
 
     const handleTakePhoto = async () => {
         try {
@@ -56,39 +59,47 @@ export default function ObjetRecupPhoto({ objet, onBack, onSubmit }) {
         try {
             setLoading(true);
 
-            const response = await pickupObject(objet.id);
+            const pickupResponse = await pickupObject(objet.id);
 
-            if (!response.ok) {
-                let message = "Erreur lors de la récupération de l’objet";
-
-                try {
-                    const error = await response.json();
-                    if (error?.message) message = error.message;
-                } catch (_) {}
-
-                throw new Error(message);
+            if (!pickupResponse.ok) {
+                const error = await pickupResponse.json().catch(() => null);
+                throw new Error(error?.message || "Impossible de récupérer l’objet");
             }
+
+            const postResult = await postPost({
+                objectId: objet.id,
+                name: objet.name,
+                description,
+                imageUrl: photo,
+            });
+
+
+            console.log("POST RESULT:", postResult);
+
 
             Toast.show({
                 type: "success",
                 text1: "Objet récupéré",
-                text2: "La photo a été envoyée pour validation",
+                text2: "Photo envoyée pour validation",
             });
 
             onSubmit?.();
 
         } catch (e) {
-            console.error("PICKUP ERROR", e);
+            console.error("PICKUP + POST ERROR", e);
 
             Toast.show({
                 type: "error",
                 text1: "Action impossible",
-                text2: e.message,
+                text2: e?.message ?? "Une erreur est survenue",
             });
+
         } finally {
             setLoading(false);
         }
     };
+
+
 
     const Content = (
         <ScrollView contentContainerStyle={styles.container}>
@@ -122,6 +133,25 @@ export default function ObjetRecupPhoto({ objet, onBack, onSubmit }) {
                 )}
 
             </TouchableOpacity>
+
+            {/* DESCRIPTION */}
+            <View style={styles.descriptionBox}>
+                <Text style={styles.descriptionLabel}>
+                    Description
+                </Text>
+
+                <TextInput
+                    style={styles.descriptionInput}
+                    placeholder="Décrivez brièvement l’objet ou son état"
+                    value={description}
+                    onChangeText={setDescription}
+                    multiline
+                    numberOfLines={4}
+                    editable={!loading}
+                    textAlignVertical="top"
+                />
+            </View>
+
 
             {/* REMINDER */}
             <View style={styles.reminder}>

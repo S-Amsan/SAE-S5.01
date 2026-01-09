@@ -72,7 +72,6 @@ export default StyleSheet.create({
             fontSize: 10,
             color: "#999",
             fontWeight: "500",
-
         },
 
         userRow: {
