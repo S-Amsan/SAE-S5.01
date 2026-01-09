@@ -4,6 +4,7 @@ import com.example.backend.model.Report;
 import com.example.backend.model.User;
 import com.example.backend.model.security.MyUserDetails;
 import com.example.backend.service.AdminService;
+import java.util.function.Supplier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,9 +17,9 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
 
-    private <T> ResponseEntity<T> createResponse(T data, User user) {
+    private <T> ResponseEntity<T> createResponse(Supplier<T> f, User user) {
         if (user.isAdmin()) {
-            return ResponseEntity.ok(data);
+            return ResponseEntity.ok(f.get());
         } else {
             return ResponseEntity.status(403).body(null);
         }
@@ -30,7 +31,7 @@ public class AdminController {
         @AuthenticationPrincipal MyUserDetails userDetails
     ) {
         return createResponse(
-            adminService.checkReport(reportId),
+            () -> adminService.checkReport(reportId),
             userDetails.getUser()
         );
     }
