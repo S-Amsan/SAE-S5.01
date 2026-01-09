@@ -179,7 +179,9 @@ export default function Index() {
                                         </Text>
                                     </View>
 
-                                    <Text style={styles.modalAide}>Comment activer ?</Text>
+                                    <Pressable>
+                                        <Text style={styles.modalAide}>Comment activer ?</Text>
+                                    </Pressable>
                                 </>
                             )}
                         </View>

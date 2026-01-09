@@ -98,7 +98,6 @@ export default StyleSheet.create({
         marginLeft: "auto",
         height: 30,
         paddingHorizontal: 12,
-        borderRadius: 999,
         backgroundColor: "#07D999",
         alignItems: "center",
         justifyContent: "center",
@@ -120,80 +119,77 @@ export default StyleSheet.create({
 
     modalCarte: {
         width: "100%",
-        maxWidth: 360,
+        maxWidth: 400,
         backgroundColor: "#FFFFFF",
-        borderRadius: 18,
-        padding: 16,
+        borderRadius: 21,
+        padding: 22,
         alignItems: "center",
         position: "relative",
     },
 
     modalFermer: {
         position: "absolute",
-        top: 10,
-        right: 10,
-        width: 34,
-        height: 34,
-        borderRadius: 17,
-        backgroundColor: "#FFFFFF",
+        top: 12,
+        right: 12,
+        width: 40,
+        height: 40,
         alignItems: "center",
         justifyContent: "center",
-        elevation: 4,
-        zIndex: 99
+        elevation: 6,
+        zIndex: 99,
     },
 
     modalFermerTexte: {
-        fontSize: 18,
-        fontWeight: "800",
+        fontSize: 22,
+        fontWeight: "900",
         color: "#111",
     },
 
-
     modalImage: {
-        width: "100%",
-        height: 150,
-        borderRadius: 12,
+        width: 300,
+        height: 186,
         resizeMode: "cover",
-        marginBottom: 12,
+        marginBottom: 16,
+        marginTop: 39,
     },
 
     modalTitre: {
-        fontSize: 16,
-        fontWeight: "800",
+        fontSize: 20,
+        fontWeight: "900",
         color: "#111",
         textAlign: "center",
     },
 
     modalSousTitre: {
-        fontSize: 13,
+        fontSize: 16,
         fontWeight: "600",
         color: "#666",
-        marginTop: 6,
-        marginBottom: 12,
+        marginTop: 8,
+        marginBottom: 46,
     },
 
     blocCode: {
         width: "100%",
-        height: 44,
-        borderRadius: 10,
-        backgroundColor: "#111",
+        height: 54,
+        borderRadius: 12,
+        backgroundColor: "#000000",
         alignItems: "center",
         justifyContent: "center",
-        marginBottom: 12,
+        marginBottom: 16,
     },
 
     codeTexte: {
         color: "#FFFFFF",
-        fontWeight: "800",
-        fontSize: 15,
-        letterSpacing: 0.5,
+        fontWeight: "600",
+        fontSize: 16,
+        letterSpacing: 1,
     },
 
     modalAide: {
-        color: "#2B6CFF",
-        textDecorationLine: "underline",
-        fontSize: 13,
-        fontWeight: "700",
+        color: "#4B84FF",
+        fontSize: 15,
+        fontWeight: "600",
+        marginBottom: 14,
     },
 
     headerMobileZone: {
