@@ -25,6 +25,9 @@ public class Report {
     @Column(nullable = false)
     private String reason;
 
+    @Column(nullable = true)
+    private Boolean checked = null;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
 
