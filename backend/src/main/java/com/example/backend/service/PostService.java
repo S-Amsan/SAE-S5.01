@@ -2,10 +2,13 @@ package com.example.backend.service;
 
 import com.example.backend.model.Objekt;
 import com.example.backend.model.Post;
+import com.example.backend.model.Report;
 import com.example.backend.model.User;
 import com.example.backend.model.http.req.PostPublishRequest;
+import com.example.backend.model.http.req.PostReportRequest;
 import com.example.backend.repository.ObjektRepository;
 import com.example.backend.repository.PostRepository;
+import com.example.backend.repository.ReportRepository;
 import java.io.IOException;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -27,6 +30,9 @@ public class PostService {
 
     @Autowired
     private ObjektRepository objektRepository;
+
+    @Autowired
+    private ReportRepository reportRepository;
 
     public Post publish(PostPublishRequest request, User user)
         throws IOException {
@@ -152,5 +158,27 @@ public class PostService {
     private enum ReactionType {
         LIKE,
         DISLIKE,
+    }
+
+    public ResponseEntity<Report> report(
+        Long postId,
+        PostReportRequest request,
+        User user
+    ) {
+        var maybePost = postRepository.findById(postId);
+
+        if (maybePost.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Post post = maybePost.get();
+
+        Report report = new Report();
+
+        report.setPost(post);
+        report.setUser(user);
+        report.setReason(request.getReason());
+
+        return ResponseEntity.ok(reportRepository.save(report));
     }
 }

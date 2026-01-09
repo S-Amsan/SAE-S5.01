@@ -1,7 +1,9 @@
 package com.example.backend.controller;
 
 import com.example.backend.model.Post;
+import com.example.backend.model.Report;
 import com.example.backend.model.http.req.PostPublishRequest;
+import com.example.backend.model.http.req.PostReportRequest;
 import com.example.backend.model.security.MyUserDetails;
 import com.example.backend.repository.PostRepository;
 import com.example.backend.service.PostService;
@@ -38,6 +40,15 @@ public class PostController {
         Post post = postService.publish(request, user.getUser());
 
         return ResponseEntity.ok(post);
+    }
+
+    @PostMapping("/post/{postId}/report")
+    public ResponseEntity<Report> reportPost(
+        @PathVariable Long postId,
+        @Valid PostReportRequest request,
+        @AuthenticationPrincipal MyUserDetails user
+    ) {
+        return postService.report(postId, request, user.getUser());
     }
 
     @PostMapping("/post/{postId}/like")

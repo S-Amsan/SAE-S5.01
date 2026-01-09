@@ -71,6 +71,8 @@ public class SecurityConfig {
                     .authenticated()
                     .requestMatchers("/document/all")
                     .permitAll()
+                    .requestMatchers("/report/all")
+                    .permitAll()
             )
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(sess ->

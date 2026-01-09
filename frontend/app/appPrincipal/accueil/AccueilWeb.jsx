@@ -124,6 +124,7 @@ export default function AccueilWeb() {
                                             <ObjectCard
                                                 key={item.id}
                                                 item={item.data}
+                                                buttonLabel={"Voir l'objet"}
                                                 onSeeObjet={(objet) => {
                                                     setSelectedObjet(objet);
                                                     setShowObjectModal(true);

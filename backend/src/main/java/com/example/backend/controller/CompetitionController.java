@@ -6,7 +6,7 @@ import com.example.backend.model.security.MyUserDetails;
 import com.example.backend.repository.SuccessRepository;
 import com.example.backend.repository.competition.CompetitionParticipantRepository;
 import com.example.backend.repository.competition.CompetitionRepository;
-import java.util.Date;
+import com.example.backend.service.CompetitionService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +22,9 @@ public class CompetitionController {
 
     @Autowired
     private CompetitionParticipantRepository competitionParticipantRepository;
+
+    @Autowired
+    private CompetitionService competitionService;
 
     @Autowired
     private SuccessRepository successRepository;
@@ -42,9 +45,7 @@ public class CompetitionController {
 
     @GetMapping("/latest")
     public Competition getLatestCompetition() {
-        return competitionRepository.findFirstByDeadlineAfterOrderByCreationDate(
-            new Date()
-        );
+        return competitionService.getLatestCompetition();
     }
 
     @GetMapping("/success")

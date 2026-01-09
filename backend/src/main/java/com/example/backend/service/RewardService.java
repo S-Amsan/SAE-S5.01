@@ -14,6 +14,9 @@ public class RewardService {
     @Autowired
     private UserStatsRepository statsRepository;
 
+    @Autowired
+    private EventService eventService;
+
     public void onObjectPickup(Objekt object) {
         incrementUserPoints(object.getPublishedBy(), 500);
         incrementUserPoints(object.getPickedUpBy(), 500);
@@ -46,7 +49,9 @@ public class RewardService {
         UserStats stats = statsRepository.findByUserId(user.getId()).get();
         stats.setPoints(stats.getPoints() + diff);
         stats.setTrophies(stats.getTrophies() + diff);
-        statsRepository.save(stats);
+        stats = statsRepository.save(stats);
+
+        eventService.onUserPointsIncrement(user, diff);
     }
 
     public void on5Likes(User user) {
