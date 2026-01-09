@@ -119,7 +119,7 @@ export default StyleSheet.create({
 
     modalCarte: {
         width: "100%",
-        maxWidth: 400,
+        maxWidth: 350,
         backgroundColor: "#FFFFFF",
         borderRadius: 21,
         padding: 22,
@@ -146,31 +146,31 @@ export default StyleSheet.create({
     },
 
     modalImage: {
-        width: 300,
-        height: 186,
+        width: 260,
+        height: 166,
         resizeMode: "cover",
         marginBottom: 16,
         marginTop: 39,
     },
 
     modalTitre: {
-        fontSize: 20,
+        fontSize: 17,
         fontWeight: "900",
         color: "#111",
         textAlign: "center",
     },
 
     modalSousTitre: {
-        fontSize: 16,
+        fontSize: 15,
         fontWeight: "600",
         color: "#666",
         marginTop: 8,
-        marginBottom: 46,
+        marginBottom: 36,
     },
 
     blocCode: {
         width: "100%",
-        height: 54,
+        height: 48,
         borderRadius: 12,
         backgroundColor: "#000000",
         alignItems: "center",
@@ -181,13 +181,13 @@ export default StyleSheet.create({
     codeTexte: {
         color: "#FFFFFF",
         fontWeight: "600",
-        fontSize: 16,
+        fontSize: 15,
         letterSpacing: 1,
     },
 
     modalAide: {
         color: "#4B84FF",
-        fontSize: 15,
+        fontSize: 14,
         fontWeight: "600",
         marginBottom: 14,
     },

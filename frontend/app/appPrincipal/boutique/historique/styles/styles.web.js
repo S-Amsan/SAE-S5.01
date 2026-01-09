@@ -119,7 +119,7 @@ export default StyleSheet.create({
     },
 
     modalCarte: {
-        width: 500,
+        width: 440,
         backgroundColor: "#FFFFFF",
         borderRadius: 21,
         padding: 26,
@@ -145,11 +145,11 @@ export default StyleSheet.create({
     },
 
     modalImage: {
-        width: 383,
-        height: 246,
+        width: 343,
+        height: 206,
         resizeMode: "cover",
         marginBottom: 18,
-        marginTop: 28,
+        marginTop: 36,
     },
 
     modalTitre: {
