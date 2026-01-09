@@ -55,6 +55,9 @@ public class User {
     @Column(nullable = false)
     private boolean isAdmin;
 
+    @Column(nullable = false)
+    private boolean banned = false;
+
     @JsonIgnore
     @OneToMany(mappedBy = "user")
     @ToString.Exclude
