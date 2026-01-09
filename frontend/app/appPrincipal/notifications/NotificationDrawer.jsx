@@ -1,130 +1,65 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-    Animated,
-    View,
-    Text,
-    Dimensions,
-    TouchableOpacity,
-    ScrollView,
-    Platform,
-} from "react-native";
-import { useNotifications } from "./NotificationContext";
-import NotificationItem from "./NotificationItem";
-import style from "./styles/styleNotificationsDrawer";
+import { View, Text, StyleSheet, Animated, Dimensions, Pressable } from "react-native";
+import { useEffect, useRef } from "react";
+import { useNotification } from "./NotificationContext";
 
-const { width } = Dimensions.get("window");
-const DRAWER_WIDTH = Math.min(420, Math.round(width * 0.92));
+const SCREEN_WIDTH = Dimensions.get("window").width;
+const DRAWER_WIDTH = 300;
 
 export default function NotificationDrawer() {
-    const { open, closeDrawer, notifications, navbarWidth } = useNotifications();
-
-    const translateX = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
-    const [mounted, setMounted] = useState(false);
+    const { isOpen, closeNotifications } = useNotification();
+    const translateX = useRef(new Animated.Value(DRAWER_WIDTH)).current;
 
     useEffect(() => {
-        if (open) {
-            setMounted(true);
-            translateX.setValue(-DRAWER_WIDTH);
+        Animated.timing(translateX, {
+            toValue: isOpen ? 0 : DRAWER_WIDTH,
+            duration: 250,
+            useNativeDriver: true,
+        }).start();
+    }, [isOpen]);
 
-            Animated.timing(translateX, {
-                toValue: 0,
-                duration: 260,
-                useNativeDriver: true,
-            }).start();
-        } else if (mounted) {
-            Animated.timing(translateX, {
-                toValue: -DRAWER_WIDTH,
-                duration: 260,
-                useNativeDriver: true,
-            }).start(() => {
-                setMounted(false);
-            });
-        }
-    }, [open]);
+    if (!isOpen) return null;
 
-    if (!mounted) return null;
-
-    const DrawerContent = (
-        <>
-            {/* BACKDROP (ne couvre PAS la navbar) */}
-            <TouchableOpacity
-                activeOpacity={1}
-                onPress={closeDrawer}
-                style={[
-                    style.backdrop,
-                    { left: navbarWidth }
-                ]}
-            />
-
-            {/* DRAWER */}
+    return (
+        <View style={styles.overlay}>
+            <Pressable style={styles.background} onPress={closeNotifications} />
             <Animated.View
                 style={[
-                    style.drawer,
-                    {
-                        left: navbarWidth,
-                        transform: [{ translateX }],
-                    },
+                    styles.drawer,
+                    { transform: [{ translateX }] },
                 ]}
             >
-                <View style={style.header}>
-                    <Text style={style.title}>Notifications</Text>
-                    <TouchableOpacity onPress={closeDrawer} style={style.closeButton}>
-                        <Text style={style.closeText}>X</Text>
-                    </TouchableOpacity>
-                </View>
-
-                <ScrollView showsVerticalScrollIndicator={false}>
-                    <Text style={{ color: "#666", marginBottom: 12 }}>
-                        Cette semaine
-                    </Text>
-
-                    {notifications && notifications.length > 0 ? (
-                        notifications.map((n) => (
-                            <NotificationItem key={n.id} item={n} />
-                        ))
-                    ) : (
-                        <>
-                            <NotificationItem
-                                item={{
-                                    id: "sample1",
-                                    title: "Votre carte cadeau 🎁",
-                                    text: "Récupérez le code de votre carte cadeau dans l'onglet 'Mes achats'...",
-                                    date: "Aujourd'hui",
-                                    unread: true,
-                                }}
-                            />
-                            <NotificationItem
-                                item={{
-                                    id: "sample2",
-                                    title: "Votre avis compte 💚",
-                                    text: "N'hésitez pas à laisser un avis, c'est très rapide.",
-                                    date: "Aujourd'hui",
-                                    unread: true,
-                                }}
-                            />
-                            <NotificationItem
-                                item={{
-                                    id: "sample3",
-                                    title: "Victoire ! ✌️",
-                                    text: "Vous avez remporté l'événement 'Opération Zéro Déchet'.",
-                                    date: "Hier",
-                                    unread: false,
-                                }}
-                            />
-                        </>
-                    )}
-
-                    <View style={{ height: 20 }} />
-                </ScrollView>
+                <Text style={styles.title}>Notifications</Text>
+                <Text>- Notification 1</Text>
+                <Text>- Notification 2</Text>
+                <Text>- Notification 3</Text>
             </Animated.View>
-        </>
+        </View>
     );
-
-    // 📱 MOBILE → Modal
-    if (Platform.OS !== "web") {
-        return DrawerContent;
-    }
-
-    // 💻 WEB → rendu normal (zIndex respecté)
-    return DrawerContent;
 }
+
+const styles = StyleSheet.create({
+    overlay: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: SCREEN_WIDTH,
+        height: "100%",
+        zIndex: 1000,
+        flexDirection: "row",
+    },
+    background: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.3)",
+    },
+    drawer: {
+        width: DRAWER_WIDTH,
+        backgroundColor: "#fff",
+        padding: 20,
+        elevation: 10,
+    },
+    title: {
+        fontSize: 20,
+        fontWeight: "bold",
+        marginBottom: 10,
+    },
+});

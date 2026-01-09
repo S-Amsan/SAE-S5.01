@@ -11,6 +11,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter, usePathname } from "expo-router";
 import { useWindowDimensions } from "react-native-web";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNotification } from "../app/appPrincipal/notifications/NotificationContext";
 
 import { fetchUserByEmail } from "../services/user.api";
 
@@ -47,6 +48,7 @@ import { isWeb } from "../utils/platform";
 import { getStyles } from "./styles/StyleNavbar.web";
 import { loadUser as loadUserFromStorage, saveUser } from "../services/RegisterStorage";
 
+
 function UserCard({ user }) {
     console.log("USER CARD PHOTO:", user?.photoProfileUrl);
 
@@ -70,6 +72,7 @@ const handleClick = (router, tab, isDashboard, setIsDashboard) => {
 export default function Navbar() {
     const { width, height } = useWindowDimensions();
     const styles = isWeb ? getStyles(width, height) : mobileStyles;
+    const { openNotifications } = useNotification();
 
     const router = useRouter();
     const pathname = usePathname();
@@ -113,7 +116,7 @@ export default function Navbar() {
         { id: "social", label: "Social", Icon: IconTrophy, IconActive: IconTrophyOn },
         { id: "boutique", label: "Boutique", Icon: IconBoutique, IconActive: IconBoutiqueOn },
         { id: "codebar", label: "QR Code", Icon: IconQrCode, IconActive: IconQrCodeOn },
-        { id: "notifications", label: "Notifications", Icon: IconNotif, IconActive: IconNotifOn },
+        { id: "notifications", label: "Noaaatifications", Icon: IconNotif, IconActive: IconNotifOn },
         { id: "dashboard", label: "Dashboard", Icon: IconDashboard, IconActive: IconDashboardOn },
         { id: "parametres", label: "Paramètres", Icon: IconParam, IconActive: IconParamOn },
     ];
@@ -136,6 +139,9 @@ export default function Navbar() {
                         />
                         <Text style={styles.title}>EcoCeption</Text>
                     </View>
+                    <Pressable onPress={openNotifications}>
+                        <Text style={{ fontSize: 20 }}>Notifications</Text>
+                    </Pressable>
 
                     <View style={styles.tabsContainer}>
                         {tabs.map(tab => {
@@ -151,7 +157,13 @@ export default function Navbar() {
                                 <View key={tab.id}>
                                     <TouchableOpacity
                                         style={styles.tabs}
-                                        onPress={() => handleClick(router ,tab, dashboardTabOpen, setDashboardTabOpen)}
+                                        onPress={() => {
+                                            if (tab.id === "notifications") {
+                                                openNotifications();
+                                            } else {
+                                                handleClick(router, tab, dashboardTabOpen, setDashboardTabOpen);
+                                            }
+                                        }}
                                     >
                                         <Image
                                             source={IconComponent}

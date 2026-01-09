@@ -1,21 +1,22 @@
-import React, { createContext, useState, useContext } from "react";
+import { createContext, useContext, useState } from "react";
 
 const NotificationContext = createContext();
 
 export function NotificationProvider({ children }) {
-    const [open, setOpen] = useState(false);
-    const [notifications, setNotifications] = useState([]); // load from API later
-    const [navbarWidth, setNavbarWidth] = useState(0);
-    const openDrawer = () => setOpen(true);
-    const closeDrawer = () => setOpen(false);
+    const [isOpen, setIsOpen] = useState(false);
+
+    const openNotifications = () => setIsOpen(true);
+    const closeNotifications = () => setIsOpen(false);
 
     return (
-        <NotificationContext.Provider value={{ open, openDrawer, closeDrawer, notifications, setNotifications, setNavbarWidth }}>
+        <NotificationContext.Provider
+            value={{ isOpen, openNotifications, closeNotifications }}
+        >
             {children}
         </NotificationContext.Provider>
     );
 }
 
-export function useNotifications() {
+export function useNotification() {
     return useContext(NotificationContext);
 }

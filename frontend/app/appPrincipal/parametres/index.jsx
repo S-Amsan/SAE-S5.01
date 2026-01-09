@@ -75,7 +75,7 @@ export default function Index() {
                         />
                         <SettingItem
                             id="security-password"
-                            title="Changer le mot de passe"
+                            title="Chanaaaaager le mot de passe"
                             desc="Mettez à jour votre mot de passe pour renforcer la sécurité de votre compte."
                         />
                         <SettingItem
