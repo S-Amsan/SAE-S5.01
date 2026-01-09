@@ -134,3 +134,20 @@ export async function didIDislikePost(postId) {
     return await response.json();
 }
 
+export async function reportPost(postId, reason) {
+    const token = await AsyncStorage.getItem('@auth_token');
+
+    const formData = new FormData();
+
+    formData.append('reason', reason);
+
+    const response = await fetch(`${API_URL}/post/${postId}/report`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+        body: formData
+    });
+
+    return await response.json();
+
+}
