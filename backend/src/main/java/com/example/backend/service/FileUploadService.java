@@ -27,6 +27,12 @@ public class FileUploadService {
     }
 
     public FileUploadResponse upload(MultipartFile file) throws IOException {
+
+        // 🔍 LOGS DE DEBUG (ICI ET PAS AILLEURS)
+        System.out.println("ORIGINAL FILENAME = " + file.getOriginalFilename());
+        System.out.println("CONTENT TYPE = " + file.getContentType());
+        System.out.println("FILE SIZE = " + file.getSize());
+
         var request = HttpRequest.newBuilder(endpoint)
             .header("Content-Type", "application/octet-stream")
             .header("X-File-Ext", getFileExtension(file.getOriginalFilename()))
@@ -34,9 +40,25 @@ public class FileUploadService {
             .build();
 
         HttpResponse<String> response = sendRequest(request);
+
+        if (response == null) {
+            throw new RuntimeException("Upload service unreachable");
+        }
+
+        System.out.println("UPLOAD STATUS: " + response.statusCode());
+        System.out.println("UPLOAD BODY: " + response.body());
+
+        if (response.statusCode() != 200) {
+            throw new RuntimeException(
+                "Upload failed: " + response.statusCode() + " " + response.body()
+            );
+        }
+
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(response.body(), FileUploadResponse.class);
     }
+
+
 
     private HttpResponse<String> sendRequest(HttpRequest request)
         throws IOException {
@@ -52,14 +74,19 @@ public class FileUploadService {
     }
 
     private String getFileExtension(String filename) {
-        if (filename == null) {
-            return null;
+        if (filename == null || !filename.contains(".")) {
+            throw new IllegalArgumentException("Missing file extension");
         }
-        int dotIndex = filename.lastIndexOf(".");
-        if (dotIndex >= 0) {
-            return filename.substring(dotIndex + 1);
+
+        String ext = filename.substring(filename.lastIndexOf('.') + 1)
+            .toLowerCase()
+            .trim();
+
+        if (!ext.matches("png|jpg|jpeg|pdf")) {
+            throw new IllegalArgumentException("Unsupported file extension: " + ext);
         }
-        return "";
+
+        return ext;
     }
 
     public HttpResponse<String> delete(String url)

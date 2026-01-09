@@ -14,6 +14,8 @@ import ObjetRecupPhoto from "./_components/CollectObjet/CollectObjet";
 export default function MissionsWeb() {
     /* ===== ONGLET ===== */
     const [ongletActifId, setOngletActifId] = useState("listes");
+    const [selectedCard, setSelectedCard] = useState(null);
+
 
     /* ===== MODALS ===== */
     const [showPostModal, setShowPostModal] = useState(false);
@@ -61,11 +63,13 @@ export default function MissionsWeb() {
 
                     {ongletActifId === "gestes" && (
                         <Gestes
-                            onAssociate={() => {
+                            onAssociate={(card) => {
                                 closeAllModals();
+                                setSelectedCard(card);
                                 setShowAssociateModal(true);
                             }}
                         />
+
                     )}
                 </View>
             </View>
@@ -80,6 +84,7 @@ export default function MissionsWeb() {
             {/* ===== MODAL ASSOCIATE ===== */}
             {showAssociateModal && (
                 <AssociateSubscription
+                    card={selectedCard}
                     onBack={() => setShowAssociateModal(false)}
                 />
             )}

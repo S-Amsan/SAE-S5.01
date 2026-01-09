@@ -51,14 +51,27 @@ export async function fetchUsers() {
 
 export async function fetchMyStats() {
     const token = await AsyncStorage.getItem('@auth_token');
+
     const res = await fetch(`${API_URL}/user/stats/my`, {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
+        headers: { Authorization: `Bearer ${token}` },
     });
-    const stats = await res.json();
-    return stats;
+
+    if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+    }
+
+    const text = await res.text();
+    if (!text) return [];
+
+    const data = JSON.parse(text);
+
+    return [
+        { type: "default", valeur: data.points },
+        { type: "trophees", valeur: data.trophies },
+        { type: "flammes", valeur: data.flames },
+    ];
 }
+
 
 export async function fetchUserStats(userId) {
     const res = await fetch(`${API_URL}/user/stats/${userId}`);

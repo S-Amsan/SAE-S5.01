@@ -49,7 +49,7 @@ export async function postPost(post) {
         formData.append("description", post.description);
     }
 
-    // ✅ CRITIQUE
+
     if (post.objectId !== undefined && post.objectId !== null) {
         formData.append("objectId", String(post.objectId));
     }

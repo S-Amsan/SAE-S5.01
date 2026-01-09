@@ -21,21 +21,40 @@ export default function Gestes({ onAssociate }) {
     const [partenaires, setPartenaires] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    function mergeCardsWithDocuments(cards, documents) {
+        const docByCardId = new Map(
+            documents.map(doc => [doc.card.id, doc])
+        );
+
+        return cards.map(card => ({
+            ...card,
+            document: docByCardId.get(card.id) ?? null,
+        }));
+    }
 
     useEffect(() => {
-        const loadCards = async () => {
+        const loadData = async () => {
             try {
-                const data = await fetchAllCards();
-                console.log("CARDS:", data);
-                setPartenaires(data);
+                const [cards, documents] = await Promise.all([
+                    fetchAllCards(),
+                    fetchAllDocuments(),
+                ]);
+
+                console.log("CARDS:", cards);
+                console.log("DOCUMENTS:", documents);
+
+
+                const merged = mergeCardsWithDocuments(cards, documents);
+
+                setPartenaires(merged);
             } catch (e) {
-                console.error("FETCH CARDS ERROR", e);
+                console.error("LOAD DATA ERROR", e);
             } finally {
                 setLoading(false);
             }
         };
 
-        loadCards();
+        loadData();
     }, []);
 
 
@@ -84,19 +103,25 @@ export default function Gestes({ onAssociate }) {
     };
 
     if (isWeb) {
+
+
         return (
             <ScrollView contentContainerStyle={styles.webContainer}>
-                {partenaires.map((p) => (
-                    <View key={p.id} style={styles.webCard}>
+                {partenaires.map((p) => {
+                    const docState = p.document?.state ?? "NONE";
+
+                    return (
+                        <View key={p.id} style={styles.webCard}>
+
 
                         {/* HEADER */}
                         <View style={styles.webHeader}>
                             <View style={styles.webHeaderLeft}>
                                 <Image
-                                    source={{ uri: p.photo_url }}
+                                    source={{ uri: p.photoUrl }}
                                     style={styles.webSmallLogo}
                                 />
-                                <Text style={styles.title}>{p.title}</Text>
+                                <Text style={styles.webTitle}>{p.title}</Text>
                             </View>
 
                             <View style={styles.webPointsBadge}>
@@ -127,21 +152,26 @@ export default function Gestes({ onAssociate }) {
                                 <View />
 
                                 <Pressable
-                                    disabled={p.status !== "start"}
-                                    onPress={() => p.status === "start" && onAssociate?.(p)}
+                                    disabled={docState === "VALIDATED"}
                                     style={[
                                         styles.webActionButton,
-                                        p.status === "pending" && styles.webButtonPending,
-                                        p.status === "validated" && styles.webButtonValidated,
+                                        docState === "WAITING" && styles.webButtonPending,
+                                        docState === "VALIDATED" && styles.webButtonValidated,
+                                        docState === "REJECTED" && styles.webButtonRejected,
                                     ]}
+                                    onPress={() => {
+                                        if (!p.document) {
+                                            onAssociate?.(p);
+                                        }
+                                    }}
                                 >
                                     <Text style={styles.webActionText}>
-                                        {p.status === "start" && "Importer mon justificatif"}
-                                        {p.status === "pending" && "En attente"}
-                                        {p.status === "validated" && "✓ Validé"}
+                                        {docState === "NONE" && "Importer mon justificatif"}
+                                        {docState === "WAITING" && "En attente"}
+                                        {docState === "VALIDATED" && "✓ Validé"}
+                                        {docState === "REJECTED" && "Refusé"}
                                     </Text>
                                 </Pressable>
-
                             </View>
 
                             <Text style={styles.webFooterText}>
@@ -149,7 +179,8 @@ export default function Gestes({ onAssociate }) {
                             </Text>
                         </View>
                     </View>
-                ))}
+                    )
+                })}
             </ScrollView>
         );
     }

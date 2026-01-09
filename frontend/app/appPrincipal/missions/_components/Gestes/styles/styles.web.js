@@ -117,6 +117,12 @@ export default StyleSheet.create({
         cursor: "default",
     },
 
+    webButtonRejected: {
+        backgroundColor: "#E74C3C",
+        cursor: "not-allowed",
+    },
+
+
     /* ===== FOOTER ===== */
     webFooterText: {
         fontSize: 12,

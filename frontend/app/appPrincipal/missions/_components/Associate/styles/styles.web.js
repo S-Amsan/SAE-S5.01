@@ -163,4 +163,51 @@ export default StyleSheet.create({
         backgroundColor: "#e5e5e5",
         marginLeft: 56,
     },
+
+    previewBox: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#f6f6f6",
+        borderRadius: 12,
+        padding: 14,
+        gap: 12,
+    },
+
+    previewImage: {
+        width: 56,
+        height: 56,
+        borderRadius: 8,
+    },
+
+    previewPdfIcon: {
+        width: 56,
+        height: 56,
+        borderRadius: 8,
+        backgroundColor: "#eaeaea",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+
+    previewFileName: {
+        flex: 1,
+        fontSize: 15,
+        fontWeight: "500",
+        color: "#111",
+    },
+
+    previewActions: {
+        flexDirection: "row",
+        gap: 12,
+    },
+
+    previewEdit: {
+        fontSize: 18,
+        color: "#555",
+    },
+
+    previewDelete: {
+        fontSize: 18,
+        color: "#E74C3C",
+    },
+
 });
