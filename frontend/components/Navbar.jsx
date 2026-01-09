@@ -21,6 +21,12 @@ import IconBoutique from "../assets/icones/Navbar/Boutique.png";
 import IconParam from "../assets/icones/Navbar/Parametres.png";
 import IconQrCode from "../assets/icones/Navbar/QrCode.png";
 import IconTrophy from "../assets/icones/Navbar/Social.png";
+import IconDashboard from "../assets/icones/Navbar/Dashboard.png";
+import IconGerer from "../assets/icones/Navbar/Gerer.png";
+import IconStatistiques from "../assets/icones/Navbar/Statistiques.png";
+import IconArrowRight from "../assets/icones/Navbar/ArrowRight.png";
+import IconArrowDown from "../assets/icones/Navbar/ArrowDown.png";
+
 
 import IconAccueilOn from "../assets/icones/Navbar/AccueilOn.png";
 import IconMissionOn from "../assets/icones/Navbar/MissionOn.png";
@@ -29,6 +35,11 @@ import IconBoutiqueOn from "../assets/icones/Navbar/BoutiqueOn.png";
 import IconParamOn from "../assets/icones/Navbar/ParametresOn.png";
 import IconQrCodeOn from "../assets/icones/Navbar/QrCodeOn.png";
 import IconTrophyOn from "../assets/icones/Navbar/SocialOn.png";
+import IconDashboardOn from "../assets/icones/Navbar/DashboardOn.png";
+import IconGererOn from "../assets/icones/Navbar/GererOn.png";
+import IconStatistiquesOn from "../assets/icones/Navbar/StatistiquesOn.png";
+import IconArrowRightOn from "../assets/icones/Navbar/ArrowRightOn.png";
+import IconArrowDownOn from "../assets/icones/Navbar/ArrowDownOn.png";
 
 import ProfilCard from "./ProfilCard";
 import mobileStyles from "./styles/StyleNavbar.native";
@@ -48,6 +59,14 @@ function UserCard({ user }) {
     );
 }
 
+const handleClick = (router, tab, isDashboard, setIsDashboard) => {
+    if (tab.id === "dashboard"){
+        setIsDashboard(!isDashboard)
+    }else{
+        router.push(`/appPrincipal/${tab.id}`)
+    }
+}
+
 export default function Navbar() {
     const { width, height } = useWindowDimensions();
     const styles = isWeb ? getStyles(width, height) : mobileStyles;
@@ -56,6 +75,8 @@ export default function Navbar() {
     const pathname = usePathname();
 
     const [user, setUser] = useState(null);
+    const [dashboardTabOpen, setDashboardTabOpen] = useState(pathname.startsWith("/appPrincipal/dashboard") );
+
 
     useEffect(() => {
         async function loadUser() {
@@ -93,8 +114,14 @@ export default function Navbar() {
         { id: "boutique", label: "Boutique", Icon: IconBoutique, IconActive: IconBoutiqueOn },
         { id: "codebar", label: "QR Code", Icon: IconQrCode, IconActive: IconQrCodeOn },
         { id: "notifications", label: "Notifications", Icon: IconNotif, IconActive: IconNotifOn },
-        { id: "parametres", label: "Paramètres", Icon: IconParam, IconActive: IconParamOn }
+        { id: "dashboard", label: "Dashboard", Icon: IconDashboard, IconActive: IconDashboardOn },
+        { id: "parametres", label: "Paramètres", Icon: IconParam, IconActive: IconParamOn },
     ];
+
+    const tabsDashboard = [
+        { id: "statistiques", label: "Statistiques", Icon: IconStatistiques, IconActive: IconStatistiquesOn },
+        { id: "gerer", label: "Gerer", Icon: IconGerer, IconActive: IconGererOn },
+    ]
 
     // ---------------- WEB ----------------
     if (isWeb) {
@@ -114,28 +141,63 @@ export default function Navbar() {
                         {tabs.map(tab => {
                             const isActive = pathname.startsWith(`/appPrincipal/${tab.id}`);
                             const IconComponent = isActive ? tab.IconActive : tab.Icon;
+                            const isDashboard = tab.id === "dashboard"
+
+                            const IconArrow = dashboardTabOpen
+                                ? (isActive ? IconArrowDownOn : IconArrowDown)
+                                : (isActive ? IconArrowRightOn : IconArrowRight);
 
                             return (
-                                <TouchableOpacity
-                                    key={tab.id}
-                                    style={styles.tabs}
-                                    onPress={() => router.push(`/appPrincipal/${tab.id}`)}
-                                >
-                                    <Image
-                                        source={IconComponent}
-                                        style={[styles.Icon, !isActive && { opacity: 0.45 }]}
-                                    />
-                                    <Text
-                                        style={[
-                                            styles.IconText,
-                                            isActive
-                                                ? { color: "#FFF", fontWeight: "600" }
-                                                : { color: "#107956" }
-                                        ]}
+                                <View key={tab.id}>
+                                    <TouchableOpacity
+                                        style={styles.tabs}
+                                        onPress={() => handleClick(router ,tab, dashboardTabOpen, setDashboardTabOpen)}
                                     >
-                                        {tab.label}
-                                    </Text>
-                                </TouchableOpacity>
+                                        <Image
+                                            source={IconComponent}
+                                            style={[styles.Icon, !isActive && { opacity: 0.45 }]}
+                                        />
+                                        <Text style={[styles.IconText, isActive ? { color: "#FFF", fontWeight: "600" } : { color: "#107956" }]}>
+                                            {tab.label}
+                                        </Text>
+                                        {
+                                            isDashboard &&
+                                            <Image
+                                                source={IconArrow}
+                                                style={[styles.Icon, !isActive && { opacity: 0.45 }]}
+                                            />
+                                        }
+                                    </TouchableOpacity>
+                                    {
+                                        isDashboard && dashboardTabOpen &&
+                                        <View  style={styles.tabsDashbordContainer}>
+
+                                            {tabsDashboard.map(t => {
+                                                const isActive = pathname.startsWith(`/appPrincipal/dashboard/${t.id}`);
+                                                const IconComponent = isActive ? t.IconActive : t.Icon;
+
+                                                return (
+                                                    <TouchableOpacity
+                                                        key={t.id}
+                                                        style={styles.tabsDashbord}
+                                                        onPress={() => !isActive && router.push(`/appPrincipal/dashboard/${t.id}`)}
+                                                    >
+                                                        <Image
+                                                            source={IconComponent}
+                                                            style={[styles.IconDashbord, !isActive && {opacity: 0.45}]}
+                                                        />
+                                                        <Text style={[styles.IconDashbordText, isActive ? {
+                                                            color: "#FFF",
+                                                        } : {color: "#107956"}]}>
+                                                            {t.label}
+                                                        </Text>
+                                                    </TouchableOpacity>
+                                                )
+                                            })}
+                                        </View>
+
+                                    }
+                                </View>
                             );
                         })}
                     </View>

@@ -75,6 +75,28 @@ export const getStyles = (width) => {
             marginLeft: 16,
             color: "#fff",
         },
+        tabsDashbordContainer : {
+            marginTop : -15,
+            gap : 10,
+            marginBottom : 15,
+        },
+        tabsDashbord: {
+            flexDirection: "row",
+            alignItems: "center",
+            cursor: "pointer",
+            marginLeft: 40,
+        },
 
+        IconDashbord: {
+            width: isSmall ? 20 : 28,
+            height: isSmall ? 20 : 28,
+        },
+
+        IconDashbordText: {
+            fontSize: isSmall ? 10 : 14,
+            fontWeight : "400",
+            marginLeft: 5,
+            color: "#fff",
+        },
     });
 };
