@@ -16,7 +16,7 @@ const SCREEN_WIDTH = Dimensions.get("window").width;
 const DRAWER_WIDTH = SCREEN_WIDTH*0.25;
 
 export default function NotificationDrawer() {
-    const { isOpen, closeNotifications, notifications } = useNotification();
+    const { isOpen, closeNotifications,     notifications = []} = useNotification();
     const translateX = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
     const [visible, setVisible] = useState(false);
 
@@ -99,6 +99,9 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         padding: 20,
         elevation: 10,
+        borderTopRightRadius: 20,
+        borderBottomRightRadius: 20,
+
     },
     title: {
         fontSize: 20,
