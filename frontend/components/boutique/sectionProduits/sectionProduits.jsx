@@ -6,14 +6,18 @@ import { DONS } from "../../../utils/data/association";
 import styles from "./styles/styles";
 import {Ionicons} from "@expo/vector-icons";
 import React from "react";
+import { usePanier } from "../../../context/PanierContext";
+
 
 export default function SectionProduits({ selected, filtreActif, setFiltreActif, recherche, setRecherche }) {
     const estFiltre = selected !== null;
     const montreTout = selected === null;
+    const { favoris } = usePanier();
+    const montreFavoris = selected === "favoris";
 
-    const montreCartes = !selected || selected === "cartes";
-    const montreCoupons = !selected || selected === "coupons";
-    const montreDons = !selected || selected === "dons";
+    const montreCartes = (!selected || selected === "cartes") && !montreFavoris;
+    const montreCoupons = (!selected || selected === "coupons") && !montreFavoris;
+    const montreDons = (!selected || selected === "dons") && !montreFavoris;
 
     const r = (recherche ?? "").trim().toLowerCase();
 
@@ -35,6 +39,26 @@ export default function SectionProduits({ selected, filtreActif, setFiltreActif,
 
     return (
         <View style={styles.section}>
+
+            {montreFavoris && (
+                <>
+                    <View style={styles.flecheMobile}>
+                        <Text style={styles.lien}>Favoris</Text>
+                    </View>
+
+                    {favoris.length === 0 ? (
+                        <Text style={styles.videFavoris}>Aucun favori pour l’instant.</Text>
+                    ) : (
+                        <View style={styles.grid}>
+                            {favoris.map((p, i) => (
+                                <BlocProduit key={`${p.id}-${i}`} {...p} style={styles.gridItem} />
+                            ))}
+                        </View>
+                    )}
+                </>
+            )}
+
+
             {montreCartes && (
                 <>
                     <View style={styles.flecheMobile}>

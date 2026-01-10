@@ -1,12 +1,25 @@
-import { View, Text, Image, TouchableOpacity, StyleSheet, Platform } from "react-native";
-import {useRouter} from "expo-router";
+import { View, Text, Image, TouchableOpacity, Platform } from "react-native";
+import { useRouter } from "expo-router";
 import styles from "./styles/styles";
-
 import point from "../../../assets/icones/point.png";
+import { usePanier } from "../../../context/PanierContext";
 
-export default function BlocProduit({ id, titre, titreComplet, description, descriptionLongue, points, imageCarte, banniere, type, style }) {
-
+export default function BlocProduit({
+                                        id,
+                                        titre,
+                                        titreComplet,
+                                        description,
+                                        descriptionLongue,
+                                        points,
+                                        imageCarte,
+                                        banniere,
+                                        type,
+                                        style
+                                    }) {
     const router = useRouter();
+    const { estFavori } = usePanier();
+
+    const favori = typeof estFavori === "function" ? estFavori(id) : false;
 
     const ouvrirDetails = () => {
         router.push({
@@ -25,7 +38,6 @@ export default function BlocProduit({ id, titre, titreComplet, description, desc
         });
     };
 
-
     return (
         <View style={[styles.carte, style]}>
             <TouchableOpacity onPress={ouvrirDetails}>
@@ -34,7 +46,9 @@ export default function BlocProduit({ id, titre, titreComplet, description, desc
                 {Platform.OS !== "web" ? (
                     <View style={styles.contenu}>
                         <View>
-                            <Text style={styles.titre}>{titre}</Text>
+                            <Text style={styles.titre}>
+                                {titre}{favori ? " ❤️" : ""}
+                            </Text>
                             <Text style={styles.description}>{description}</Text>
                         </View>
 
@@ -46,7 +60,9 @@ export default function BlocProduit({ id, titre, titreComplet, description, desc
                 ) : (
                     <View style={styles.contenu}>
                         <View style={styles.ligneTitre}>
-                            <Text style={styles.titre}>{titre}</Text>
+                            <Text style={styles.titre}>
+                                {titre}{favori ? " ❤️" : ""}
+                            </Text>
 
                             <View style={styles.pointsWrapper}>
                                 <Text style={styles.points}>{points}</Text>
@@ -57,14 +73,7 @@ export default function BlocProduit({ id, titre, titreComplet, description, desc
                         <Text style={styles.description}>{description}</Text>
                     </View>
                 )}
-
             </TouchableOpacity>
         </View>
-
     );
 }
-
-
-
-
-

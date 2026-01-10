@@ -74,4 +74,12 @@ export default StyleSheet.create({
         zIndex: 2,
     },
 
+    videFavoris: {
+        fontSize: 16,
+        color: "#666",
+        marginTop: 12,
+        marginBottom: 600,
+    },
+
+
 });

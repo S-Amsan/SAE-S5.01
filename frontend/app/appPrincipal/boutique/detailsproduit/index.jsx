@@ -19,7 +19,7 @@ import {Ionicons} from "@expo/vector-icons";
 export default function DetailProduit() {
     const router = useRouter();
     const params = useLocalSearchParams();
-    const { ajouterAuPanier, acheterOffre } = usePanier();
+
 
     const id = params.id ?? "";
     const titreCourt = params.titre ?? "Produit";
@@ -29,6 +29,9 @@ export default function DetailProduit() {
     const imageCarte = params.imageCarte ?? params.image ?? "";
     const imageBanniere = params.banniere ?? params.image ?? "";
     const type = params.type ?? "cartes";
+    const { ajouterAuPanier, acheterOffre } = usePanier();
+    const { toggleFavori, estFavori } = usePanier();
+    const favori = estFavori(id);
 
     const handleAddToCartWeb = useCallback(() => {
         ajouterAuPanier({
@@ -266,7 +269,17 @@ export default function DetailProduit() {
                                                 <Image source={partage} style={styles.boutonSecondaireIcon} resizeMode="contain" />
                                             </Pressable>
 
-                                            <Pressable style={styles.boutonSecondaire}>
+                                            <Pressable style={styles.boutonSecondaire} onPress={() => toggleFavori({
+                                                id,
+                                                titre: titreCourt,
+                                                titreComplet,
+                                                description: params.description ?? "",
+                                                descriptionLongue: description,
+                                                points,
+                                                imageCarte,
+                                                banniere: imageBanniere,
+                                                type,
+                                            })}>
                                                 <LinearGradient
                                                     colors={["#00DB83", "#0CD8A9"]}
                                                     start={{ x: 0, y: 0 }}
@@ -274,8 +287,13 @@ export default function DetailProduit() {
                                                     style={styles.boutonGradient}
                                                     pointerEvents="none"
                                                 />
-                                                <Image source={coeur} style={styles.boutonSecondaireIcon} resizeMode="contain" />
+                                                <Image
+                                                    source={coeur}
+                                                    style={[styles.boutonSecondaireIcon, favori && { tintColor: "red" }]}
+                                                    resizeMode="contain"
+                                                />
                                             </Pressable>
+
 
                                             <Pressable
                                                 style={[styles.boutonPrincipal, webNoSelect.noSelect]}

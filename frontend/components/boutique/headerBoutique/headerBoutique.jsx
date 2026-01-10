@@ -1,16 +1,15 @@
-import {Pressable, View, Text, Image, Platform, TextInput, ScrollView} from "react-native";
+import { Pressable, View, Text, Image, Platform, ScrollView } from "react-native";
 import { useRouter, usePathname } from "expo-router";
 import point from "../../../assets/icones/point.png";
 import { usePanier } from "../../../context/PanierContext";
 import styles from "./styles/styles";
 
 export default function HeaderBoutique({ filtreActif, setFiltreActif, mode = "complet" }) {
-
     const router = useRouter();
     const pathname = usePathname();
     const { nombreProduits } = usePanier();
-    const ongletActif = pathname?.includes("historique") ? "achats" : "catalogue";
 
+    const ongletActif = pathname?.includes("historique") ? "achats" : "catalogue";
 
     if (Platform.OS !== "web") {
         return (
@@ -67,6 +66,15 @@ export default function HeaderBoutique({ filtreActif, setFiltreActif, mode = "co
                                 Dons aux assos
                             </Text>
                         </Pressable>
+
+                        <Pressable
+                            style={[styles.chip, filtreActif === "favoris" && styles.chipActif]}
+                            onPress={() => setFiltreActif(filtreActif === "favoris" ? null : "favoris")}
+                        >
+                            <Text style={[styles.texteChip, filtreActif === "favoris" && styles.texteChipActif]}>
+                                Favoris
+                            </Text>
+                        </Pressable>
                     </ScrollView>
                 )}
             </View>
@@ -103,6 +111,15 @@ export default function HeaderBoutique({ filtreActif, setFiltreActif, mode = "co
                             Dons aux associations
                         </Text>
                     </Pressable>
+
+                    <Pressable
+                        style={[styles.boutonFiltre, filtreActif === "favoris" && styles.boutonFiltreActif]}
+                        onPress={() => setFiltreActif(filtreActif === "favoris" ? null : "favoris")}
+                    >
+                        <Text style={[styles.texteFiltre, filtreActif === "favoris" && styles.texteFiltreActif]}>
+                            Favoris
+                        </Text>
+                    </Pressable>
                 </View>
             )}
 
@@ -114,7 +131,9 @@ export default function HeaderBoutique({ filtreActif, setFiltreActif, mode = "co
                     />
                     {nombreProduits > 0 && (
                         <View style={styles.badgePanier}>
-                            <Text style={styles.badgePanierTexte}>{nombreProduits > 99 ? "99+" : String(nombreProduits)}</Text>
+                            <Text style={styles.badgePanierTexte}>
+                                {nombreProduits > 99 ? "99+" : String(nombreProduits)}
+                            </Text>
                         </View>
                     )}
                 </Pressable>

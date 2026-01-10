@@ -16,6 +16,7 @@ const genererCodeFictif = () => {
 export function PanierProvider({ children }) {
     const [articles, setArticles] = useState([]);
     const [achats, setAchats] = useState([]);
+    const [favoris, setFavoris] = useState([]);
 
     const [afficherTitreAjoute, setAfficherTitreAjoute] = useState(false);
 
@@ -126,9 +127,7 @@ export function PanierProvider({ children }) {
                     quantity: 1,
                     dateAchatISO,
                     code: genererCodeFictif(),
-                    idLigneAchat: `${String(article.id)}-${dateAchatISO}-${i}-${Math.random()
-                        .toString(16)
-                        .slice(2)}`,
+                    idLigneAchat: `${String(article.id)}-${dateAchatISO}-${i}-${Math.random().toString(16).slice(2)}`,
                 });
             }
 
@@ -136,11 +135,42 @@ export function PanierProvider({ children }) {
         });
     }, []);
 
+    const estFavori = useCallback(
+        (id) => {
+            return favoris.some((x) => String(x.id) === String(id));
+        },
+        [favoris]
+    );
+
+    const toggleFavori = useCallback((article) => {
+        const id = String(article.id);
+
+        setFavoris((prev) => {
+            const existe = prev.some((x) => String(x.id) === id);
+            if (existe) return prev.filter((x) => String(x.id) !== id);
+
+            return [
+                ...prev,
+                {
+                    id,
+                    titre: String(article.titre ?? ""),
+                    titreComplet: String(article.titreComplet ?? ""),
+                    description: String(article.description ?? ""),
+                    descriptionLongue: String(article.descriptionLongue ?? ""),
+                    points: Number(article.points) || 0,
+                    imageCarte: String(article.imageCarte ?? ""),
+                    banniere: String(article.banniere ?? ""),
+                    type: String(article.type ?? ""),
+                },
+            ];
+        });
+    }, []);
 
     const value = useMemo(
         () => ({
             articles,
             achats,
+            favoris,
             nombreProduits,
             totalPoints,
             afficherTitreAjoute,
@@ -150,10 +180,13 @@ export function PanierProvider({ children }) {
             viderPanier,
             passerCommande,
             acheterOffre,
+            estFavori,
+            toggleFavori,
         }),
         [
             articles,
             achats,
+            favoris,
             nombreProduits,
             totalPoints,
             afficherTitreAjoute,
@@ -162,6 +195,8 @@ export function PanierProvider({ children }) {
             viderPanier,
             passerCommande,
             acheterOffre,
+            estFavori,
+            toggleFavori,
         ]
     );
 
