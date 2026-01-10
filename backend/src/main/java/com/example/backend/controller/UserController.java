@@ -1,7 +1,6 @@
 package com.example.backend.controller;
 
-import com.example.backend.model.Notification;
-import com.example.backend.model.User;
+import com.example.backend.model.*;
 import com.example.backend.model.action.Action;
 import com.example.backend.model.http.req.AccountUpdateRequest;
 import com.example.backend.model.http.res.UserStatsResponse;
@@ -19,11 +18,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
@@ -103,14 +98,12 @@ public class UserController {
     }
 
     @GetMapping("/notifications")
-    public ResponseEntity<List<Notification>> getMyNotifications(
+    public List<Notification> getMyNotifications(
         @AuthenticationPrincipal MyUserDetails userDetails
     ) {
-        return ResponseEntity.ok(
-            notificationService.getNotificationsForUser(
-                userDetails.getUser().getId()
-            )
-        );
+        return
+            notificationService.getNotificationsForUser(userDetails.getUser())
+        ;
     }
 
     @PostMapping("/update")
