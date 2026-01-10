@@ -129,3 +129,44 @@ export async function deleteCard(cardId) {
     const data = await response.json();
     return data;
 }
+
+export async function addPartner(name, type, image) {
+    const token = await AsyncStorage.getItem("@auth_token");
+    const formData = new FormData();
+
+    formData.append("name", name);
+    formData.append("type", type);
+    if (Platform.OS === "web") {
+        formData.append("image", image); // File natif
+    } else {
+        formData.append("image", {
+            uri: image.uri,
+            name: image.name ?? "document.jpg",
+            type: image.type ?? "image/jpeg",
+        });
+    }
+
+    const response = await fetch(`${API_URL}/admin/partner/add`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
+        body: formData
+    });
+
+    const data = await response.json();
+    return data;
+}
+
+export async function getAllPartners() {
+    const token = await AsyncStorage.getItem("@auth_token");
+
+    const response = await fetch(`${API_URL}/admin/partner/all`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
+    });
+
+    const data = await response.json();
+    return data;
+}
