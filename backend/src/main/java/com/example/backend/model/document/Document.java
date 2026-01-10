@@ -3,7 +3,9 @@ package com.example.backend.model.document;
 import com.example.backend.model.Card;
 import com.example.backend.model.User;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Data
 @Entity
@@ -28,6 +30,10 @@ public class Document {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private DocumentState state = DocumentState.WAITING;
+
+    @CreationTimestamp
+    @Column(nullable = false)
+    private LocalDateTime date;
 
     public Document() {}
 }
