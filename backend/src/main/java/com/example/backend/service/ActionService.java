@@ -33,16 +33,16 @@ public class ActionService {
 
     public void onPostReaction(Post post) {
         if (post.getLikes().size() == 5) {
-            ActionType actionType = actionTypeRepository
-                .findById(ActionTypes.VOTE_5_POSTS.getId())
-                .get();
-
             rewardService.on5Likes(post.getUser());
-            giveActionTo(post.getUser(), actionType);
+            giveActionTo(post.getUser(), ActionTypes.VOTE_5_POSTS);
         }
     }
 
-    private void giveActionTo(User user, ActionType actionType) {
+    private void giveActionTo(User user, ActionTypes type) {
+        ActionType actionType = actionTypeRepository
+            .findById(type.getId())
+            .get();
+
         Action action = new Action();
 
         action.setUser(user);
