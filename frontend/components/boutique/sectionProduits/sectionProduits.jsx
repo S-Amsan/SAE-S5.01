@@ -1,4 +1,4 @@
-import {View, Text, ScrollView, StyleSheet, Pressable} from "react-native";
+import {View, Text, ScrollView, StyleSheet, Pressable, TextInput} from "react-native";
 import BlocProduit from "../blocProduit/blocProduit";
 import { PRODUITS } from "../../../utils/data/produit";
 import { COUPONS } from "../../../utils/data/couponReduction";
@@ -7,7 +7,7 @@ import styles from "./styles/styles";
 import {Ionicons} from "@expo/vector-icons";
 import React from "react";
 
-export default function SectionProduits({ selected, filtreActif, setFiltreActif  }) {
+export default function SectionProduits({ selected, filtreActif, setFiltreActif, recherche, setRecherche }) {
     const estFiltre = selected !== null;
     const montreTout = selected === null;
 
@@ -15,11 +15,21 @@ export default function SectionProduits({ selected, filtreActif, setFiltreActif 
     const montreCoupons = !selected || selected === "coupons";
     const montreDons = !selected || selected === "dons";
 
-    const LIMITE = 4;
+    const r = (recherche ?? "").trim().toLowerCase();
 
-    const produitsAffiches = estFiltre ? PRODUITS : PRODUITS.slice(0, LIMITE);
-    const couponsAffiches = estFiltre ? COUPONS : COUPONS.slice(0, LIMITE);
-    const donsAffiches = estFiltre ? DONS : DONS.slice(0, LIMITE);
+    const filtrerParNom = (liste) => {
+        if (!r) return liste;
+        return liste.filter((p) => {
+            const t1 = String(p.titre ?? "").toLowerCase();
+            const t2 = String(p.titreComplet ?? "").toLowerCase();
+            return t1.includes(r) || t2.includes(r);
+        });
+    };
+
+    const produitsAffiches = estFiltre ? filtrerParNom(PRODUITS) : PRODUITS.slice(0, 4);
+    const couponsAffiches  = estFiltre ? filtrerParNom(COUPONS)  : COUPONS.slice(0, 4);
+    const donsAffiches     = estFiltre ? filtrerParNom(DONS)     : DONS.slice(0, 4);
+
 
     const toggleFiltre = (val) => setFiltreActif(filtreActif === val ? null : val);
 
@@ -35,6 +45,24 @@ export default function SectionProduits({ selected, filtreActif, setFiltreActif 
                         </Pressable>
                     </View>
 
+                    {estFiltre && (
+                        <View style={styles.rechercheWrapper}>
+                            <Ionicons
+                                name="search"
+                                size={20}
+                                color="#8E8E93"
+                                style={styles.iconeRecherche}
+                            />
+
+                            <TextInput
+                                value={recherche}
+                                onChangeText={setRecherche}
+                                placeholder="Rechercher un produit"
+                                placeholderTextColor="#8E8E93"
+                                style={styles.rechercheInput}
+                            />
+                        </View>
+                    )}
 
                     {!estFiltre ? (
                         <ScrollView
@@ -48,8 +76,8 @@ export default function SectionProduits({ selected, filtreActif, setFiltreActif 
                         </ScrollView>
                     ) : (
                         <View style={styles.grid}>
-                            {PRODUITS.map((p) => (
-                                <BlocProduit key={p.id} {...p} style={styles.gridItem} />
+                            {produitsAffiches.map((p, i) => (
+                                <BlocProduit key={`${p.id}-${i}`} {...p} style={styles.gridItem} />
                             ))}
                         </View>
                     )}
@@ -66,6 +94,25 @@ export default function SectionProduits({ selected, filtreActif, setFiltreActif 
                         </Pressable>
                     </View>
 
+                    {estFiltre && (
+                        <View style={styles.rechercheWrapper}>
+                            <Ionicons
+                                name="search"
+                                size={20}
+                                color="#8E8E93"
+                                style={styles.iconeRecherche}
+                            />
+
+                            <TextInput
+                                value={recherche}
+                                onChangeText={setRecherche}
+                                placeholder="Rechercher un bon de réduction"
+                                placeholderTextColor="#8E8E93"
+                                style={styles.rechercheInput}
+                            />
+                        </View>
+                    )}
+
 
                     {!estFiltre ? (
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scroller}>
@@ -75,7 +122,9 @@ export default function SectionProduits({ selected, filtreActif, setFiltreActif 
                         </ScrollView>
                     ) : (
                         <View style={styles.grid}>
-                            {COUPONS.map((p) => <BlocProduit key={p.id} {...p} style={styles.gridItem} />)}
+                            {couponsAffiches.map((p, i) => (
+                                <BlocProduit key={`${p.id}-${i}`} {...p} style={styles.gridItem} />
+                            ))}
                         </View>
                     )}
                 </>
@@ -91,7 +140,24 @@ export default function SectionProduits({ selected, filtreActif, setFiltreActif 
                         </Pressable>
                     </View>
 
+                    {estFiltre && (
+                        <View style={styles.rechercheWrapper}>
+                            <Ionicons
+                                name="search"
+                                size={20}
+                                color="#8E8E93"
+                                style={styles.iconeRecherche}
+                            />
 
+                            <TextInput
+                                value={recherche}
+                                onChangeText={setRecherche}
+                                placeholder="Rechercher une association"
+                                placeholderTextColor="#8E8E93"
+                                style={styles.rechercheInput}
+                            />
+                        </View>
+                    )}
 
                     {!estFiltre ? (
                         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.scroller}>
@@ -101,7 +167,9 @@ export default function SectionProduits({ selected, filtreActif, setFiltreActif 
                         </ScrollView>
                     ) : (
                         <View style={styles.grid}>
-                            {DONS.map((p) => <BlocProduit key={p.id} {...p} style={styles.gridItem} />)}
+                            {donsAffiches.map((p, i) => (
+                                <BlocProduit key={`${p.id}-${i}`} {...p} style={styles.gridItem} />
+                            ))}
                         </View>
                     )}
                 </>

@@ -42,4 +42,36 @@ export default StyleSheet.create({
         marginTop: -12.25,
     },
 
+    rechercheWrapper: {
+        marginTop: 8,
+        marginBottom: 20,
+        maxWidth: 520,
+        paddingLeft: 16,
+    },
+
+    rechercheInput: {
+        height: 46,
+        borderRadius: 999,
+        backgroundColor: "#ffffff",
+        paddingLeft: 46,
+        paddingRight: 18,
+        fontSize: 17,
+        color: "#000000",
+        shadowColor: "#000",
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+        shadowOffset: { width: 0, height: 3 },
+
+        borderWidth: 1,
+        borderColor: "#EFEFEF",
+    },
+
+    iconeRecherche: {
+        position: "absolute",
+        left: 33,
+        top: "49.5%",
+        transform: [{ translateY: -10 }],
+        zIndex: 2,
+    },
+
 });

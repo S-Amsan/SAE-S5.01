@@ -23,6 +23,10 @@ export default function Boutique() {
         console.log("Filtres :", filtres);
     }, [recherche, filtres]);
 
+    useEffect(() => {
+        setRecherche("");
+    }, [filtreActif]);
+
     const isWeb = Platform.OS === "web";
 
     return (
@@ -59,6 +63,8 @@ export default function Boutique() {
                             selected={filtreActif}
                             filtreActif={filtreActif}
                             setFiltreActif={setFiltreActif}
+                            recherche={recherche}
+                            setRecherche={setRecherche}
                         />
                     </View>
                 </ScrollView>
