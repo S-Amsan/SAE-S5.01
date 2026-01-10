@@ -1,12 +1,12 @@
-package com.example.backend.model;
+package com.example.backend.model.success;
 
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "success")
-public class Success {
+@Table(name = "success_types")
+public class SuccessType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,5 +21,5 @@ public class Success {
     @Column(nullable = false)
     private String imageUrl;
 
-    public Success() {}
+    public SuccessType() {}
 }

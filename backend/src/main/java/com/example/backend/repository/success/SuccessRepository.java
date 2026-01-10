@@ -1,6 +1,6 @@
-package com.example.backend.repository;
+package com.example.backend.repository.success;
 
-import com.example.backend.model.Success;
+import com.example.backend.model.success.Success;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

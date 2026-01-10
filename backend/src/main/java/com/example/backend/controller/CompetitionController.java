@@ -1,11 +1,11 @@
 package com.example.backend.controller;
 
-import com.example.backend.model.Success;
 import com.example.backend.model.competition.Competition;
 import com.example.backend.model.security.MyUserDetails;
-import com.example.backend.repository.SuccessRepository;
+import com.example.backend.model.success.SuccessType;
 import com.example.backend.repository.competition.CompetitionParticipantRepository;
 import com.example.backend.repository.competition.CompetitionRepository;
+import com.example.backend.repository.success.SuccessTypeRepository;
 import com.example.backend.service.CompetitionService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +27,7 @@ public class CompetitionController {
     private CompetitionService competitionService;
 
     @Autowired
-    private SuccessRepository successRepository;
+    private SuccessTypeRepository successTypeRepository;
 
     @GetMapping("/all")
     public List<Competition> getAllCompetitions() {
@@ -48,9 +48,9 @@ public class CompetitionController {
         return competitionService.getLatestCompetition();
     }
 
-    @GetMapping("/success")
-    public List<Success> getAllSuccess() {
-        return successRepository.findAll();
+    @GetMapping("/success_types")
+    public List<SuccessType> getAllSuccessTypes() {
+        return successTypeRepository.findAll();
     }
 
     @GetMapping("/{competitionId}/participantsCount")

@@ -6,6 +6,7 @@ import com.example.backend.model.security.MyUserDetails;
 import com.example.backend.repository.ObjektRepository;
 import com.example.backend.service.FileUploadService;
 import com.example.backend.service.RewardService;
+import com.example.backend.service.SuccessService;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import java.util.List;
@@ -30,6 +31,9 @@ public class ObjektController {
 
     @Autowired
     private RewardService rewardService;
+
+    @Autowired
+    private SuccessService successService;
 
     @PostMapping("/post")
     public ResponseEntity<Objekt> post(
@@ -87,6 +91,7 @@ public class ObjektController {
 
         object.setPickedUpBy(userDetails.getUser());
         rewardService.onObjectPickup(objektRepository.save(object));
+        successService.onObjectPickup(userDetails.getUser());
 
         return ResponseEntity.ok().build();
     }
