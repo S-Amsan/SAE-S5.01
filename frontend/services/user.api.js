@@ -130,12 +130,20 @@ export async function fetchUserPointsForEvent(eventId) {
  * ]
  * ```
 */
-export async function fetchActions() {
+export async function fetchMyActions() {
     const token = await AsyncStorage.getItem('@auth_token');
-    const res = await fetch(`${API_URL}/user/actions`, {
+    const res = await fetch(`${API_URL}/user/actions/my`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
+    });
+
+    const actions = await res.json();
+    return actions;
+}
+
+export async function fetchUserActions(userId) {
+    const res = await fetch(`${API_URL}/user/actions/${userId}`, {
     });
 
     const actions = await res.json();
