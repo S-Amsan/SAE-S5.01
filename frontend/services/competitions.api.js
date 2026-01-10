@@ -38,7 +38,7 @@ export async function fetchSuccess() {
     //     "imageUrl": "http://82.66.240.161:8090/files/files/7339a1ade4a5497f3cc1be5392c4d0a01687d41a239cf1b28054d1e998205373.png"
     //   }
     // ]
-    const res = await fetch(`${API_URL}/competition/success`);
+    const res = await fetch(`${API_URL}/competition/success_types`);
     const success = await res.json();
 
     const mappedSuccess = success.map((s) => ({
