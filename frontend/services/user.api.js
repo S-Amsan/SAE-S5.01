@@ -149,3 +149,22 @@ export async function fetchUserActions(userId) {
     const actions = await res.json();
     return actions;
 }
+
+export async function fetchMySuccess() {
+    const token = await AsyncStorage.getItem('@auth_token');
+    const res = await fetch(`${API_URL}/user/success/my`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    const actions = await res.json();
+    return actions;
+}
+
+export async function fetchSuccessForUser(userId) {
+    const res = await fetch(`${API_URL}/user/success/${userId}`);
+
+    const actions = await res.json();
+    return actions;
+}
