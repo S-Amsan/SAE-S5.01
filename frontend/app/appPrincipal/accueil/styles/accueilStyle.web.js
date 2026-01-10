@@ -189,4 +189,69 @@ export default StyleSheet.create({
         right: 12,
         zIndex: 10,
     },
+
+    /* ============================
+   SOUS-CARTE OBJET (PICKUP)
+============================ */
+
+    quoteCard: {
+        marginTop: 12,
+        padding: 12,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: "#E6E6E6",
+        backgroundColor: "#FFFFFF",
+    },
+
+    quoteHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 10,
+    },
+
+    quoteAvatar: {
+        width: 34,
+        height: 34,
+        borderRadius: 17,
+        marginRight: 10,
+        backgroundColor: "#EAEAEA",
+    },
+
+    quoteName: {
+        fontSize: 15,
+        fontWeight: "700",
+        color: "#111111",
+    },
+
+    quoteText: {
+        marginTop: 2,
+        fontSize: 14,
+        color: "#333333",
+    },
+
+    quoteBody: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+
+    quoteImage: {
+        width: 110,
+        height: 80,
+        borderRadius: 12,
+        marginRight: 12,
+        backgroundColor: "#F2F2F2",
+    },
+
+    quoteTitle: {
+        fontSize: 15,
+        fontWeight: "600",
+        color: "#111111",
+    },
+
+    pickupLabel: {
+        fontWeight: "700",
+        color: "#2ECC71",
+    }
+
+
 });

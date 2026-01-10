@@ -54,8 +54,14 @@ export default function AccueilMobile() {
                     getAllObjects(),
                 ]);
 
+                const availableObjects = Array.isArray(objectsData)
+                    ? objectsData.filter(
+                        o => o.picked_up_user_id === null
+                    )
+                    : [];
+
                 setPosts(Array.isArray(postsData) ? postsData : []);
-                setObjects(Array.isArray(objectsData) ? objectsData : []);
+                setObjects(availableObjects);
             } catch (e) {
                 console.error("Erreur chargement feed", e);
             } finally {
@@ -65,6 +71,7 @@ export default function AccueilMobile() {
 
         loadFeed();
     }, []);
+
 
     /* ===========================
        FEED UNIFIÉ

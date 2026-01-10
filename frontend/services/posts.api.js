@@ -84,7 +84,9 @@ export async function postPost(post) {
         throw new Error(text || "API error");
     }
 
-    return response.json();
+    const text = await response.text();
+    return text ? JSON.parse(text) : null;
+
 }
 
 

@@ -1,39 +1,60 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { View, Text, Image, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { isWeb } from "../../../../utils/platform";
 import styles from "../styles/accueilStyle";
-import {fetchUserById} from "../../../../services/user.api";
-import {formatRelativeTime} from "../../../../utils/format";
+import { fetchUserById } from "../../../../services/user.api";
+import { formatRelativeTime } from "../../../../utils/format";
 import {
     likePost,
     dislikePost,
     didILikePost,
     didIDislikePost
 } from "../../../../services/posts.api";
-
-
+import { fetchObjectById } from "../../../../services/objects.api";
 
 export default function PostCard({ post, onSignaler }) {
-    const [showMenu, setShowMenu] = useState(false);
     const router = useRouter();
+
+    const [showMenu, setShowMenu] = useState(false);
     const [loadingLike, setLoadingLike] = useState(false);
     const [reaction, setReaction] = useState(null);
 
+    const [avatar, setAvatar] = useState(null);
+    const [pseudo, setPseudo] = useState(null);
+
+    // Pour la sous-card objet
+    const [originalObject, setOriginalObject] = useState(null);
+    const [objectAuthor, setObjectAuthor] = useState(null);
+
+    const isPickupPost = useMemo(() => post.object_id != null, [post.object_id]);
+
+    /* ============================
+       REACTION (posts normaux)
+    ============================ */
     useEffect(() => {
+        if (isPickupPost) return;
+
+        let cancelled = false;
+
         const loadReaction = async () => {
             try {
                 const liked = await didILikePost(post.id);
+                if (cancelled) return;
 
-                if (liked === true) {
+                if (liked) {
                     setReaction("like");
                     return;
                 }
 
                 const disliked = await didIDislikePost(post.id);
-                if (disliked === true) {
+                if (cancelled) return;
+
+                if (disliked) {
                     setReaction("dislike");
+                } else {
+                    setReaction(null);
                 }
             } catch (e) {
                 console.error("Erreur chargement réaction", e);
@@ -41,31 +62,22 @@ export default function PostCard({ post, onSignaler }) {
         };
 
         loadReaction();
-    }, [post.id]);
 
+        return () => {
+            cancelled = true;
+        };
+    }, [post.id, isPickupPost]);
 
-
-    const handleSignaler = () => {
-        setShowMenu(false);
-
-        if (isWeb) {
-
-            onSignaler?.(post.id);
-        } else {
-            router.push({
-                pathname: "/appPrincipal/accueil/PostAction/signalement",
-                params: { postId: post.id },
-            });
-        }
-    };
-
-    const [avatar, setAvatar] = useState(null);
-    const [pseudo, setPseudo] = useState(null);
-
+    /* ============================
+       AUTEUR DU POST
+    ============================ */
     useEffect(() => {
+        let cancelled = false;
+
         const loadUser = async () => {
             try {
                 const user = await fetchUserById(post.user_id);
+                if (cancelled) return;
                 setAvatar(user.photoProfileUrl);
                 setPseudo(user.pseudo);
             } catch (e) {
@@ -74,10 +86,61 @@ export default function PostCard({ post, onSignaler }) {
         };
 
         loadUser();
+
+        return () => {
+            cancelled = true;
+        };
     }, [post.user_id]);
 
+    /* ============================
+       FETCH OBJET (pickup)
+    ============================ */
+    useEffect(() => {
+        let cancelled = false;
+
+        const loadObject = async () => {
+            try {
+                if (!isPickupPost) {
+                    setOriginalObject(null);
+                    setObjectAuthor(null);
+                    return;
+                }
+
+                // 1) Récupérer l’objet
+                const obj = await fetchObjectById(post.object_id);
+                if (cancelled) return;
+
+                setOriginalObject(obj);
+
+                // 2) Récupérer l’auteur de l’objet (publisher)
+                if (obj?.publisher_user_id) {
+                    const user = await fetchUserById(obj.publisher_user_id);
+                    if (cancelled) return;
+                    setObjectAuthor(user);
+                } else {
+                    setObjectAuthor(null);
+                }
+            } catch (e) {
+                console.error("Erreur chargement objet pickup", e);
+                if (!cancelled) {
+                    setOriginalObject(null);
+                    setObjectAuthor(null);
+                }
+            }
+        };
+
+        loadObject();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [isPickupPost, post.object_id]);
+
+    /* ============================
+       ACTIONS
+    ============================ */
     const handleLike = async () => {
-        if (reaction === "like" || loadingLike) return;
+        if (isPickupPost || reaction === "like" || loadingLike) return;
 
         try {
             setLoadingLike(true);
@@ -91,7 +154,7 @@ export default function PostCard({ post, onSignaler }) {
     };
 
     const handleDislike = async () => {
-        if (reaction === "dislike" || loadingLike) return;
+        if (isPickupPost || reaction === "dislike" || loadingLike) return;
 
         try {
             setLoadingLike(true);
@@ -104,38 +167,51 @@ export default function PostCard({ post, onSignaler }) {
         }
     };
 
+    const handleSignaler = () => {
+        setShowMenu(false);
 
+        if (isWeb) {
+            onSignaler?.(post.id);
+        } else {
+            router.push({
+                pathname: "/appPrincipal/accueil/PostAction/signalement",
+                params: { postId: post.id },
+            });
+        }
+    };
 
-    /**
-     * Example response:
-     * ```json
-     * {
-     *   "id": 3,
-     *   "name": "Test post",
-     *   "description": "Test description",
-     *   "address": "Test address",
-     *   "imageUrl": "http://82.66.240.161:8090/files/abf24cb4cb7bb1cde11769b75196f111a38644d64d41c1dc84197708ed7ad6c0.png",
-     *   "createdAt": "2026-01-05T23:44:43.305624",
-     *   "user_id": 1
-     * }
-     * ```
-     */
-
+    /* ============================
+       RENDER
+    ============================ */
     return (
         <View style={styles.card}>
-            {/* Header */}
+            {/* HEADER */}
             <View style={styles.header}>
-                <Image source={{ uri: avatar}} style={styles.avatar} />
+                <Image source={{ uri: avatar }} style={styles.avatar} />
 
                 <View style={{ flex: 1 }}>
                     <View style={styles.nameRow}>
                         <Text style={styles.name}>@{pseudo}</Text>
-                        <Text style={styles.time}> {" · "}{formatRelativeTime(post.createdAt)}</Text>
+                        <Text style={styles.time}>
+                            {" · "}{formatRelativeTime(post.createdAt)}
+                        </Text>
                     </View>
 
-                    <Text style={styles.text}>
-                        {post.description}
-                    </Text>
+                    <View>
+                        {isPickupPost && (
+                            <Text style={[styles.text, styles.pickupLabel]}>
+                                a récupéré un objet abandonné !
+                            </Text>
+                        )}
+
+                        {!!post.description && (
+                            <Text style={styles.text}>
+                                {post.description}
+                            </Text>
+                        )}
+                    </View>
+
+
                 </View>
 
                 <TouchableOpacity onPress={() => setShowMenu(v => !v)}>
@@ -148,10 +224,7 @@ export default function PostCard({ post, onSignaler }) {
                 <View style={styles.postMenu}>
                     <TouchableOpacity
                         style={styles.postMenuRow}
-                        onPress={() => {
-                            setShowMenu(false);
-                            console.log("Voir profil");
-                        }}
+                        onPress={() => setShowMenu(false)}
                     >
                         <Text style={styles.postMenuText}>Voir le profil</Text>
                         <Image
@@ -162,10 +235,7 @@ export default function PostCard({ post, onSignaler }) {
 
                     <View style={styles.postMenuSeparator} />
 
-                    <TouchableOpacity
-                        style={styles.postMenuRow}
-                        onPress={handleSignaler}
-                    >
+                    <TouchableOpacity style={styles.postMenuRow} onPress={handleSignaler}>
                         <Text style={styles.postMenuDanger}>Signaler le post</Text>
                         <Image
                             style={styles.signal}
@@ -175,34 +245,82 @@ export default function PostCard({ post, onSignaler }) {
                 </View>
             )}
 
-            {/* Image */}
+            {/* IMAGE DU POST */}
             <Image source={{ uri: post.imageUrl }} style={styles.image} />
 
-            {/* Actions */}
-            <View style={styles.actions}>
-                <TouchableOpacity onPress={handleLike}>
-                    <Image
-                        source={
-                            reaction === "like"
-                                ? require("../../../../assets/icones/accueil/like.png")
-                                : require("../../../../assets/icones/accueil/likeNone.png")
-                        }
-                        style={styles.icon}
-                    />
-                </TouchableOpacity>
+            {/* SOUS-CARD : OBJET D’ORIGINE (pickup uniquement) */}
+            {isPickupPost && originalObject && (
+                <View style={styles.quoteCard}>
+                    <View style={styles.quoteHeader}>
+                        <Image
+                            source={{ uri: objectAuthor?.photoProfileUrl }}
+                            style={styles.quoteAvatar}
+                        />
 
-                <TouchableOpacity onPress={handleDislike}>
-                    <Image
-                        source={
-                            reaction === "dislike"
-                                ? require("../../../../assets/icones/accueil/dislike.png")
-                                : require("../../../../assets/icones/accueil/dislikeNone.png")
-                        }
-                        style={styles.icon}
-                    />
-                </TouchableOpacity>
+                        <View style={{ flex: 1 }}>
+                            <View style={styles.nameRow}>
+                                <Text style={styles.quoteName}>
+                                    @{objectAuthor?.pseudo ?? "utilisateur"}
+                                </Text>
+                                <Text style={styles.time}>
+                                    {" · "}{formatRelativeTime(
+                                    originalObject.creationDate ?? originalObject.creation_date
+                                )}
+                                </Text>
+                            </View>
 
-            </View>
+                            <Text style={styles.quoteText}>
+                                a trouvé un objet abandonné !
+                            </Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.quoteBody}>
+                        <Image
+                            source={{
+                                uri:
+                                    originalObject.photoUrl ??
+                                    originalObject.photo_url ??
+                                    originalObject.photo,
+                            }}
+                            style={styles.quoteImage}
+                        />
+
+                        <View style={{ flex: 1 }}>
+                            <Text style={styles.quoteTitle}>
+                                {originalObject.title ?? "Objet"}
+                            </Text>
+                        </View>
+                    </View>
+                </View>
+            )}
+
+            {/* ACTIONS (posts normaux uniquement) */}
+            {!isPickupPost && (
+                <View style={styles.actions}>
+                    <TouchableOpacity onPress={handleLike}>
+                        <Image
+                            source={
+                                reaction === "like"
+                                    ? require("../../../../assets/icones/accueil/like.png")
+                                    : require("../../../../assets/icones/accueil/likeNone.png")
+                            }
+                            style={styles.icon}
+                        />
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={handleDislike}>
+                        <Image
+                            source={
+                                reaction === "dislike"
+                                    ? require("../../../../assets/icones/accueil/dislike.png")
+                                    : require("../../../../assets/icones/accueil/dislikeNone.png")
+                            }
+                            style={styles.icon}
+                        />
+                    </TouchableOpacity>
+                </View>
+            )}
         </View>
     );
 }

@@ -84,27 +84,45 @@ export async function getAllObjects() {
 }
 
 
-export async function pickupObject(object_id) {
+export async function pickupObject(objectId) {
+    console.log("pickupObject called with", objectId);
+
     const token = await AsyncStorage.getItem("@auth_token");
 
-    const response = await fetch(`${API_URL}/object/pickup/${object_id}`, {
+    const response = await fetch(`${API_URL}/object/pickup/${objectId}`, {
         method: "POST",
         headers: {
             Authorization: `Bearer ${token}`,
         },
     });
 
-    return response.json();
+    console.log("pickupObject response status", response.status);
+
+    if (!response.ok) {
+        const text = await response.text();
+        console.error("pickupObject error body", text);
+        throw new Error(text || "Pickup failed");
+    }
+
+    const text = await response.text();
+    console.log("pickupObject response text", text);
+
+    return text ? JSON.parse(text) : null;
 }
+
 
 export async function fetchObjectById(object_id) {
     const token = await AsyncStorage.getItem("@auth_token");
 
     const response = await fetch(`${API_URL}/object/id/${object_id}`, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
     });
+
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || "fetchObjectById failed");
+    }
 
     return response.json();
 }
+

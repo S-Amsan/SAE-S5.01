@@ -39,7 +39,17 @@ export default function MissionsMobile() {
 
         const load = async () => {
             const objects = await getAllObjects();
-            const found = objects.find(o => o.id === numericId);
+
+            const availableObjects = Array.isArray(objects)
+                ? objects.filter(
+                    o => o.picked_up_user_id === null
+                )
+                : [];
+
+            const found = availableObjects.find(
+                o => o.id === numericId
+            );
+
             if (!found) return;
 
             setSelectedObjet(found);
@@ -47,8 +57,6 @@ export default function MissionsMobile() {
 
         load();
     }, [id]);
-
-
 
     const onglets = [
         { id: "listes", label: "Régulières" },

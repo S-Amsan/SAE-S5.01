@@ -129,7 +129,16 @@ export default function MissionsPage({ onPostObjet, onSeeObjet }) {
         const loadObjects = async () => {
             try {
                 const data = await getAllObjects();
-                setItems(Array.isArray(data) ? data : []);
+
+                const availableObjects = Array.isArray(data)
+                    ? data.filter(
+                        o => o.picked_up_user_id === null
+                    )
+                    : [];
+
+                console.log("AVAILABLE OBJECTS:", availableObjects);
+
+                setItems(availableObjects);
             } catch (e) {
                 console.error("Erreur chargement objets", e);
             }
@@ -137,6 +146,9 @@ export default function MissionsPage({ onPostObjet, onSeeObjet }) {
 
         loadObjects();
     }, []);
+
+
+
 
     /* ===== ANIMATIONS MOBILE ===== */
     const navbarTranslateY = useRef(new Animated.Value(0)).current;

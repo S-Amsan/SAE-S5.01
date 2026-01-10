@@ -17,6 +17,7 @@ import * as ImagePicker from "expo-image-picker";
 import {postPost} from "../../../../../services/posts.api";
 
 export default function ObjetRecupPhoto({ objet, onBack, onSubmit }) {
+    console.log("TEST WEB - ObjetRecupPhoto render", objet);
     const [photo, setPhoto] = useState(null);
     const [loading, setLoading] = useState(false);
     const [description, setDescription] = useState("");
@@ -56,26 +57,23 @@ export default function ObjetRecupPhoto({ objet, onBack, onSubmit }) {
     const handleSubmit = async () => {
         if (!photo || loading) return;
 
+        console.log("SUBMIT CLICKED");
+
         try {
             setLoading(true);
 
-            const pickupResponse = await pickupObject(objet.id);
+            console.log("BEFORE pickupObject");
+            const pickupResult = await pickupObject(objet.id);
+            console.log("AFTER pickupObject", pickupResult);
 
-            if (!pickupResponse.ok) {
-                const error = await pickupResponse.json().catch(() => null);
-                throw new Error(error?.message || "Impossible de récupérer l’objet");
-            }
-
+            console.log("BEFORE postPost");
             const postResult = await postPost({
                 objectId: objet.id,
-                name: objet.name,
+                name: objet.title,
                 description,
                 imageUrl: photo,
             });
-
-
-            console.log("POST RESULT:", postResult);
-
+            console.log("AFTER postPost", postResult);
 
             Toast.show({
                 type: "success",
@@ -86,18 +84,20 @@ export default function ObjetRecupPhoto({ objet, onBack, onSubmit }) {
             onSubmit?.();
 
         } catch (e) {
-            console.error("PICKUP + POST ERROR", e);
+            console.error("ERROR IN handleSubmit", e);
 
             Toast.show({
                 type: "error",
                 text1: "Action impossible",
                 text2: e?.message ?? "Une erreur est survenue",
             });
-
         } finally {
             setLoading(false);
         }
     };
+
+
+
 
 
 
