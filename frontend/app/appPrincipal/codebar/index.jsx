@@ -18,6 +18,15 @@ export default function ScanPage() {
 
     const [scanned, setScanned] = useState(false);
     const [permission, requestPermission] = useCameraPermissions();
+    const [notPartnerModal, setNotPartnerModal] = useState(false);
+    const [ineligibleReason, setIneligibleReason] = useState(null);
+
+
+    const INELIGIBLE_REASON = {
+        UNKNOWN: "UNKNOWN",
+        NOT_PLASTIC: "NOT_PLASTIC",
+        INCOMPLETE: "INCOMPLETE",
+    };
 
     useEffect(() => {
         if (!isWeb && !permission) {
@@ -36,8 +45,22 @@ export default function ScanPage() {
             console.log("PRODUCT ONLY:", productData.product);
 
             if (productData.status !== 1) {
-                console.warn("Produit non trouvé");
-                setScanned(false);
+                setIneligibleReason(INELIGIBLE_REASON.UNKNOWN);
+                setNotPartnerModal(true);
+                return;
+            }
+
+            const { product } = productData;
+
+            if (!product.product_name || !product.brands) {
+                setIneligibleReason(INELIGIBLE_REASON.INCOMPLETE);
+                setNotPartnerModal(true);
+                return;
+            }
+
+            if (product.plastic === false) {
+                setIneligibleReason(INELIGIBLE_REASON.NOT_PLASTIC);
+                setNotPartnerModal(true);
                 return;
             }
 
@@ -134,6 +157,46 @@ export default function ScanPage() {
                     Le scan se fera automatiquement
                 </Text>
             </View>
+
+            <Modal
+                transparent
+                animationType="fade"
+                visible={notPartnerModal}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalTitle}>
+                            Produit non partenaire
+                        </Text>
+
+                        <Text style={styles.modalText}>
+                            {ineligibleReason === INELIGIBLE_REASON.UNKNOWN &&
+                                "Ce produit n’est pas référencé chez nos partenaires."}
+
+                            {ineligibleReason === INELIGIBLE_REASON.NOT_PLASTIC &&
+                                "Ce produit n’est pas conditionné en plastique."}
+
+                            {ineligibleReason === INELIGIBLE_REASON.INCOMPLETE &&
+                                "Les informations de ce produit sont incomplètes."}
+                        </Text>
+
+
+                        <TouchableOpacity
+                            style={styles.modalButton}
+                            onPress={() => {
+                                setNotPartnerModal(false);
+                                setIneligibleReason(null);
+                                router.back();
+                            }}
+                        >
+                            <Text style={styles.modalButtonText}>
+                                Fermer
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+
         </View>
     );
 }
