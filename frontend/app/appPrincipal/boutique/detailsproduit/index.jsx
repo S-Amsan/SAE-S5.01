@@ -1,9 +1,10 @@
 import React, { useCallback } from "react";
-import {Platform, View, Text, Image, Pressable, StyleSheet, ScrollView, ImageBackground} from "react-native";
+import {Platform, View, Text, Image, Pressable, StyleSheet, ScrollView, ImageBackground, Alert, ToastAndroid} from "react-native";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { LinearGradient } from "expo-linear-gradient";
 import { BlurView } from "expo-blur";
 import { usePanier } from "../../../../context/PanierContext.js";
+import * as Clipboard from "expo-clipboard";
 
 import Navbar from "../../../../components/Navbar";
 import Header from "../../../../components/Header";
@@ -31,6 +32,35 @@ export default function DetailProduit() {
     const { ajouterAuPanier, acheterOffre } = usePanier();
     const { toggleFavori, estFavori } = usePanier();
     const favori = estFavori(id);
+    const lienfictif = "https://ecoception.fr/boutique";
+
+    const handlePartager = async () => {
+        const texte = `Découvre cette offre : ${titreComplet}\n${lienfictif}`;
+
+        try {
+            if (Platform.OS === "web") {
+                await navigator.clipboard.writeText(texte);
+                window.alert("Copié dans le presse-papier ✅");
+                return;
+            }
+
+            await Clipboard.setStringAsync(texte);
+
+            if (Platform.OS === "android") {
+                ToastAndroid.show("Copié dans le presse-papier ✅", ToastAndroid.SHORT);
+            } else {
+                Alert.alert("Copié ✅", "Copié dans le presse-papier");
+            }
+        } catch (e) {
+            console.log("Erreur partage:", e);
+
+            if (Platform.OS === "web") {
+                window.alert("Impossible de copier ❌");
+            } else {
+                Alert.alert("Erreur", "Impossible de copier ❌");
+            }
+        }
+    };
 
     const articleCourant = {
         id: String(id),
@@ -132,10 +162,7 @@ export default function DetailProduit() {
                                 </Pressable>
 
                                 <View style={styles.actionsDroite}>
-                                    <Pressable
-                                        style={styles.boutonIcone}
-                                        onPress={() => {/* jvais faire presse papier ici */}}
-                                    >
+                                    <Pressable style={styles.boutonIcone} onPress={handlePartager}>
                                         <Image source={partage} style={styles.iconeAction} />
                                     </Pressable>
 
@@ -282,7 +309,7 @@ export default function DetailProduit() {
                                         </View>
 
                                         <View style={styles.ligneActions}>
-                                            <Pressable style={styles.boutonSecondaire}>
+                                            <Pressable style={styles.boutonSecondaire} onPress={handlePartager}>
                                                 <LinearGradient
                                                     colors={["#00DB83", "#0CD8A9"]}
                                                     start={{ x: 0, y: 0 }}
@@ -290,8 +317,13 @@ export default function DetailProduit() {
                                                     style={styles.boutonGradient}
                                                     pointerEvents="none"
                                                 />
-                                                <Image source={partage} style={styles.boutonSecondaireIcon} resizeMode="contain" />
+                                                <Image
+                                                    source={partage}
+                                                    style={[styles.boutonSecondaireIcon, { zIndex: 2 }]}
+                                                    resizeMode="contain"
+                                                />
                                             </Pressable>
+
 
                                             <Pressable
                                                 style={styles.boutonSecondaire}
