@@ -94,5 +94,17 @@ export async function pickupObject(object_id) {
         },
     });
 
-    return response;
+    return response.json();
+}
+
+export async function fetchObjectById(object_id) {
+    const token = await AsyncStorage.getItem("@auth_token");
+
+    const response = await fetch(`${API_URL}/object/${object_id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+
+    return response.json();
 }
