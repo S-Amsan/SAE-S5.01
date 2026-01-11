@@ -124,10 +124,15 @@ const EventCarte = ({type, onPress, event_DATA, user_stats}) => {
     let accessible = false;
     if (config.lockable) {
         const tropheesMin = getRequiredTrophiesByRankName(RANG_MINIMUM_EVENEMENT);
-        if (user_stats) {
-            const userTrophees = user_stats.find(item => item.type === 'trophees')?.valeur || 0
-            accessible = userTrophees >= tropheesMin;
-        }
+        const statsArray = Array.isArray(user_stats)
+            ? user_stats
+            : (user_stats?.stats ?? user_stats?.items ?? []);
+
+        const userTrophees =
+            statsArray.find(item => item.type === "trophees")?.valeur ?? 0;
+
+        accessible = userTrophees >= tropheesMin;
+
     }else{
         accessible = true;
     }
@@ -334,7 +339,7 @@ const Place = ({user_DATA}) => {
     )
 }
 
-export default function Social(){
+export default function Social() {
     const router = useRouter();
 
     const [concours_DATA, setConcoursData] = useState(null);
@@ -342,90 +347,123 @@ export default function Social(){
 
     const [user_DATA, setUserDATA] = useState(null);
     const [user_stats, setUserStats] = useState(null);
-    const [users_DATA, setUsersDATA] = React.useState(null);
-    const [podium_DATA, setPodiumDATA] = React.useState(null);
+    const [users_DATA, setUsersDATA] = useState(null);
+    const [podium_DATA, setPodiumDATA] = useState(null);
 
+    /* ===============================
+       CHARGEMENT INITIAL (indépendant)
+    =============================== */
     React.useEffect(() => {
-        fetchLatestCompetition().then(setConcoursData);
-        fetchLatestEvent().then(setEvenementsData);
-        loadUser().then(setUserDATA)
-        fetchUserStats().then(setUserStats)
-        fetchUsers().then(setUsersDATA);
+        fetchLatestCompetition().then(setConcoursData).catch(console.error);
+        fetchLatestEvent().then(setEvenementsData).catch(console.error);
+        loadUser().then(setUserDATA).catch(console.error);
+        fetchUsers().then(setUsersDATA).catch(console.error);
     }, []);
 
-    // Concours
+    /* ===============================
+       STATS USER (dépend de user.id)
+    =============================== */
+    React.useEffect(() => {
+        if (!user_DATA?.id) return;
+
+        fetchUserStats(user_DATA.id)
+            .then(setUserStats)
+            .catch(console.error);
+    }, [user_DATA?.id]);
+
+    /* ===============================
+       POINTS CONCOURS
+    =============================== */
     React.useEffect(() => {
         if (!concours_DATA?.id) return;
 
-        fetchUserPointsForCompetition(concours_DATA.id).then((collectedPoints) => {
-            setConcoursData((prev) => ({...prev, collectedPoints}));
-        })
+        fetchUserPointsForCompetition(concours_DATA.id)
+            .then(collectedPoints => {
+                setConcoursData(prev => ({
+                    ...prev,
+                    collectedPoints
+                }));
+            })
+            .catch(console.error);
     }, [concours_DATA?.id]);
 
-    // Evenements
+    /* ===============================
+       POINTS EVENEMENTS
+    =============================== */
     React.useEffect(() => {
         if (!evenements_DATA?.id) return;
-        fetchUserPointsForEvent(evenements_DATA.id).then((collectedPoints) => {
-            setEvenementsData((prev) => ({...prev, collectedPoints}));
-        })
+
+        fetchUserPointsForEvent(evenements_DATA.id)
+            .then(collectedPoints => {
+                setEvenementsData(prev => ({
+                    ...prev,
+                    collectedPoints
+                }));
+            })
+            .catch(console.error);
     }, [evenements_DATA?.id]);
 
-    // Classement
+    /* ===============================
+       CLASSEMENT / PODIUM
+    =============================== */
     React.useEffect(() => {
-        if (!users_DATA || !user_DATA) return;
+        if (!users_DATA || !user_DATA?.id) return;
 
-        const normalizedUsers = users_DATA.map(user => ({
-            ...user,
-            stats: user.stats || {
+        const normalizedUsers = users_DATA.map(u => ({
+            ...u,
+            stats: u.stats || {
                 trophies: 0,
                 flames: 0,
                 points: 0,
-                userId: user.id
+                userId: u.id
             }
         }));
 
         const usersSortedByRank = [...normalizedUsers]
-            .sort((a, b) => b.stats.trophies - a.stats.trophies)
+            .sort((a, b) => (b.stats.trophies ?? 0) - (a.stats.trophies ?? 0))
             .map((u, i) => ({ ...u, classement: i + 1 }));
 
-        setPodiumDATA(usersSortedByRank.slice(0,3))
+        setPodiumDATA(usersSortedByRank.slice(0, 3));
 
         const userClassement =
-            usersSortedByRank.findIndex(u => u.Id === user_DATA.Id) + 1;
+            usersSortedByRank.findIndex(u => u.id === user_DATA.id) + 1;
 
+        setUserDATA(prev =>
+            prev ? { ...prev, classement: userClassement } : prev
+        );
+    }, [users_DATA, user_DATA?.id]);
 
-        setUserDATA((prev) => {
-            if (!prev) return prev;
-            return { ...prev, classement: userClassement };
-        });
-
-    }, [users_DATA,user_DATA?.id])
-
-
-    return(
+    /* ===============================
+       RENDER
+    =============================== */
+    return (
         <View style={styles.container}>
-            {
-                isWeb ?
-                    <View style={{ width: "15%" }}>
-                        <Navbar/>
-                    </View>
-                    :
-                    <Navbar/>
-            }
-            <View style={{ flex: 1}}>
-                <Header boutonNotification={true} userDetails={true} userProfil={true} user={user_DATA}/>
+            {isWeb ? (
+                <View style={{ width: "15%" }}>
+                    <Navbar />
+                </View>
+            ) : (
+                <Navbar />
+            )}
+
+            <View style={{ flex: 1 }}>
+                <Header
+                    boutonNotification
+                    userDetails
+                    userProfil
+                    user={user_DATA}
+                />
 
                 <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-                    {!isWeb &&
+                    {!isWeb && (
                         <ProfilCarte
                             onPress={() => router.push("./votreProfil")}
                             user_DATA={user_DATA}
                         />
-                    }
+                    )}
 
                     <View style={styles.cartesWrapper}>
                         <View style={styles.eventContainer}>
-
                             <ConcoursCarte
                                 onPress={() => router.push("./concours")}
                                 concours_DATA={concours_DATA}
@@ -436,8 +474,8 @@ export default function Social(){
                                 evenements_DATA={evenements_DATA}
                                 user_stats={user_stats}
                             />
-
                         </View>
+
                         <View style={styles.classementContainer}>
                             <ClassementCarte
                                 onPress={() => router.push("./classement")}
@@ -446,9 +484,9 @@ export default function Social(){
                             />
                         </View>
                     </View>
-
                 </ScrollView>
             </View>
         </View>
     );
-};
+}
+

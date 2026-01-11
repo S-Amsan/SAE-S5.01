@@ -32,22 +32,48 @@ export async function fetchUserByEmail(email) {
 }
 
 export async function fetchUserById(id) {
-    const res = await fetch(`${API_URL}/user/id/${id}`);
-    const user = await res.json();
+    const token = await AsyncStorage.getItem('@auth_token');
 
-    if (!user) {
-        throw new Error("Utilisateur introuvable");
+    if (!token) {
+        throw new Error("Token d'authentification manquant");
     }
 
-    return user;
+    const res = await fetch(`${API_URL}/user/id/${id}`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        }
+    });
+
+    if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`HTTP ${res.status} - ${text}`);
+    }
+
+    return await res.json();
 }
+
+
+
 
 export async function fetchUsers() {
-    const res = await fetch(`${API_URL}/user/all`);
-    const users = await res.json();
+    const token = await AsyncStorage.getItem('@auth_token');
 
-    return users;
+    const res = await fetch(`${API_URL}/user/all`, {
+        headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+        }
+    });
+
+    if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`HTTP ${res.status} - ${text}`);
+    }
+
+    return await res.json();
 }
+
 
 export async function fetchMyStats() {
     const token = await AsyncStorage.getItem('@auth_token');
@@ -74,11 +100,26 @@ export async function fetchMyStats() {
 
 
 export async function fetchUserStats(userId) {
-    const res = await fetch(`${API_URL}/user/stats/${userId}`);
+    if (!userId) {
+        throw new Error("userId manquant pour fetchUserStats");
+    }
 
-    const stats = await res.json();
-    return stats;
+    const token = await AsyncStorage.getItem('@auth_token');
+
+    const res = await fetch(`${API_URL}/user/stats/${userId}`, {
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`HTTP ${res.status} - ${text}`);
+    }
+
+    return await res.json();
 }
+
 
 export async function fetchUserPointsForCompetition(competitionId) {
     const token = await AsyncStorage.getItem('@auth_token');

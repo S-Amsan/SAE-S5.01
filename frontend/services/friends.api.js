@@ -41,17 +41,6 @@ export async function sendFriendRequestTo(userId) {
     });
 }
 
-export async function acceptFriendRequest(requestId) {
-    const token = await AsyncStorage.getItem('@auth_token');
-
-    const res = await fetch(`${API_URL}/friends/requests/${requestId}/accept`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
-    });
-}
-
 export async function rejectFriendRequest(requestId) {
     const token = await AsyncStorage.getItem('@auth_token');
 
@@ -72,19 +61,6 @@ export async function fetchIncomingRequests(requestId) {
             'Authorization': `Bearer ${token}`
         },
     });
-}
-
-export async function fetchIncomingRequests() {
-    const token = await AsyncStorage.getItem('@auth_token');
-
-    const res = await fetch(`${API_URL}/friends/requests/incoming`, {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
-    });
-
-    const requests = await res.json();
-    return requests;
 }
 
 export async function fetchOutgoingRequests() {
