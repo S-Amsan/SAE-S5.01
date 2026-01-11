@@ -261,3 +261,29 @@ export async function publishDonation(
     const data = await response.json();
     return data;
 }
+
+export async function publishCompetition(
+    name,
+    deadline,
+    goalPoints,
+    inscriptionCost
+) {
+    const token = await AsyncStorage.getItem("@auth_token");
+    const formData = new FormData();
+
+    formData.append("name", name);
+    formData.append("deadline", deadline);
+    formData.append("goalPoints", goalPoints);
+    formData.append("inscriptionCost", inscriptionCost);
+
+    const response = await fetch(`${API_URL}/admin/competition`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
+        body: formData
+    });
+
+    const data = await response.json();
+    return data;
+}
