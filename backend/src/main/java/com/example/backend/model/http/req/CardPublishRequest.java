@@ -15,6 +15,8 @@ public class CardPublishRequest {
     @NotBlank
     private String description;
 
+    private Long partnerId;
+
     @NotNull
     private MultipartFile photo;
 

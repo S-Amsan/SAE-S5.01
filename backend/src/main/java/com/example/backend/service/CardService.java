@@ -3,6 +3,7 @@ package com.example.backend.service;
 import com.example.backend.model.Card;
 import com.example.backend.model.http.req.CardPublishRequest;
 import com.example.backend.model.http.res.FileUploadResponse;
+import com.example.backend.model.partner.Partner;
 import com.example.backend.repository.CardRepository;
 import java.io.IOException;
 import java.util.List;
@@ -14,6 +15,9 @@ public class CardService {
 
     @Autowired
     private CardRepository cardRepository;
+
+    @Autowired
+    private PartnerService partnerService;
 
     @Autowired
     private FileUploadService fileUploadService;
@@ -35,6 +39,13 @@ public class CardService {
     public Card publish(CardPublishRequest request) {
         Card card = new Card();
         card.setTitle(request.getTitle());
+
+        if (request.getPartnerId() != null) {
+            long partnerId = request.getPartnerId();
+            Partner partner = partnerService.getById(partnerId).orElseThrow();
+            card.setPartner(partner);
+        }
+
         card.setDescription(request.getDescription());
 
         FileUploadResponse fileUploadResponse;

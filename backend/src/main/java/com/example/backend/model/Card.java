@@ -25,5 +25,9 @@ public class Card {
     @Column(nullable = false)
     private Integer points;
 
+    @ManyToOne(optional = true)
+    @JoinColumn(name = "partner_id", nullable = true)
+    private Partner partner = null;
+
     public Card() {}
 }
