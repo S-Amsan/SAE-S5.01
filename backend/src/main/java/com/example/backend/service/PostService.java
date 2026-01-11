@@ -191,6 +191,13 @@ public class PostService {
         return postRepository.findById(postId);
     }
 
+    public long getVotesCountByUser(User user) {
+        return postRepository.countByLikesContainsOrDislikesContains(
+            Set.of(user),
+            Set.of(user)
+        );
+    }
+
     public Post invalidatePost(Post post) {
         post.setValidated(false);
         return postRepository.save(post);

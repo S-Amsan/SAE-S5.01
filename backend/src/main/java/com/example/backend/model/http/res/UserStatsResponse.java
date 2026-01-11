@@ -1,5 +1,6 @@
 package com.example.backend.model.http.res;
 
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,4 +18,6 @@ public class UserStatsResponse {
     private Integer flames;
     private Long ecoActions;
     private Long recoveredObjects;
+    private LocalDate lastActionDate;
+    private Long votes;
 }

@@ -6,6 +6,7 @@ import com.example.backend.model.http.res.UserStatsResponse;
 import com.example.backend.repository.PostRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.repository.UserStatsRepository;
+import com.example.backend.service.PostService;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,9 @@ public class UserStatsService {
 
     @Autowired
     private PostRepository postRepository;
+
+    @Autowired
+    private PostService postService;
 
     /**
      * Builds the stats response for a user id.
@@ -61,6 +65,8 @@ public class UserStatsService {
             .trophies(stats.getTrophies())
             .flames(stats.getFlames())
             .ecoActions(postRepository.countByUserAndValidatedTrue(user))
+            .lastActionDate(stats.getLastActionDate())
+            .votes(postService.getVotesCountByUser(user))
             .recoveredObjects(
                 postRepository.countByUserAndValidatedTrueAndObjectIsNotNull(
                     user
