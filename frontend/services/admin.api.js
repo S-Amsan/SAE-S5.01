@@ -287,3 +287,17 @@ export async function publishCompetition(
     const data = await response.json();
     return data;
 }
+
+export async function deleteCompetition(id) {
+    const token = await AsyncStorage.getItem("@auth_token");
+
+    const response = await fetch(`${API_URL}/admin/competition/${id}`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token}`
+        }
+    });
+
+    const data = await response.json();
+    return data;
+}
