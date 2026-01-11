@@ -25,3 +25,88 @@ export async function getFriends() {
     const friends = await res.json();
     return friends;
 }
+
+export async function sendFriendRequestTo(userId) {
+    const token = await AsyncStorage.getItem('@auth_token');
+    const formData = new FormData();
+
+    formData.append("toUserId", userId);
+
+    const res = await fetch(`${API_URL}/friends/requests`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+        body: formData
+    });
+}
+
+export async function acceptFriendRequest(requestId) {
+    const token = await AsyncStorage.getItem('@auth_token');
+
+    const res = await fetch(`${API_URL}/friends/requests/${requestId}/accept`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+    });
+}
+
+export async function rejectFriendRequest(requestId) {
+    const token = await AsyncStorage.getItem('@auth_token');
+
+    const res = await fetch(`${API_URL}/friends/requests/${requestId}/reject`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+    });
+}
+
+export async function fetchIncomingRequests(requestId) {
+    const token = await AsyncStorage.getItem('@auth_token');
+
+    const res = await fetch(`${API_URL}/friends/requests/${requestId}/cancel`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+    });
+}
+
+export async function fetchIncomingRequests() {
+    const token = await AsyncStorage.getItem('@auth_token');
+
+    const res = await fetch(`${API_URL}/friends/requests/incoming`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+    });
+
+    const requests = await res.json();
+    return requests;
+}
+
+export async function fetchOutgoingRequests() {
+    const token = await AsyncStorage.getItem('@auth_token');
+
+    const res = await fetch(`${API_URL}/friends/requests/outgoing`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+    });
+
+    const requests = await res.json();
+    return requests;
+}
+
+export async function deleteFriend(userId) {
+    const token = await AsyncStorage.getItem('@auth_token');
+
+    const res = await fetch(`${API_URL}/friends/${userId}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        },
+    });
+}
