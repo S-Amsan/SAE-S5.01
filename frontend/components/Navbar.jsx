@@ -156,10 +156,13 @@ export default function Navbar() {
                                     <TouchableOpacity
                                         style={styles.tabs}
                                         onPress={() => {
-                                            handleClick(router, tab, dashboardTabOpen, setDashboardTabOpen);
                                             if (tab.id === "notifications") {
                                                 openNotifications();
                                             }
+                                            else {
+                                                handleClick(router, tab, dashboardTabOpen, setDashboardTabOpen);
+                                            }
+
                                         }}
                                     >
                                         <Image
