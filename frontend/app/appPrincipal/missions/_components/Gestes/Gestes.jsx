@@ -126,7 +126,7 @@ export default function Gestes({ onAssociate }) {
 
                             <View style={styles.webPointsBadge}>
                                 <Text style={styles.webPointsText}>
-                                    +{p.trophies.toLocaleString()}
+                                    +{p.points.toLocaleString()}
                                 </Text>
                                 <Image
                                     source={require("../../../../../assets/icones/point.png")}
