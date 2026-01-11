@@ -170,3 +170,17 @@ export async function getAllPartners() {
     const data = await response.json();
     return data;
 }
+
+export async function deletePartner(partnerId) {
+    const token = await AsyncStorage.getItem("@auth_token");
+
+    const response = await fetch(`${API_URL}/admin/partner/${partnerId}`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token}`
+        },
+    });
+
+    const data = await response.json();
+    return data;
+}
