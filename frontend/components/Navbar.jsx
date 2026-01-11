@@ -20,7 +20,7 @@ import IconMission from "../assets/icones/Navbar/Mission.png";
 import IconNotif from "../assets/icones/Navbar/Notification.png";
 import IconBoutique from "../assets/icones/Navbar/Boutique.png";
 import IconParam from "../assets/icones/Navbar/Parametres.png";
-import IconQrCode from "../assets/icones/Navbar/QrCode.png";
+import IconCodeBarres from "../assets/icones/Navbar/CodeBarres.png";
 import IconTrophy from "../assets/icones/Navbar/Social.png";
 import IconDashboard from "../assets/icones/Navbar/Dashboard.png";
 import IconGerer from "../assets/icones/Navbar/Gerer.png";
@@ -34,7 +34,6 @@ import IconMissionOn from "../assets/icones/Navbar/MissionOn.png";
 import IconNotifOn from "../assets/icones/Navbar/NotificationOn.png";
 import IconBoutiqueOn from "../assets/icones/Navbar/BoutiqueOn.png";
 import IconParamOn from "../assets/icones/Navbar/ParametresOn.png";
-import IconQrCodeOn from "../assets/icones/Navbar/QrCodeOn.png";
 import IconTrophyOn from "../assets/icones/Navbar/SocialOn.png";
 import IconDashboardOn from "../assets/icones/Navbar/DashboardOn.png";
 import IconGererOn from "../assets/icones/Navbar/GererOn.png";
@@ -107,15 +106,15 @@ export default function Navbar() {
     }, []);
 
 
-    console.log("RENDER USER:", user);
-    console.log("RENDER PHOTO URL:", user?.photoProfileUrl);
+    // console.log("RENDER USER:", user);
+    // console.log("RENDER PHOTO URL:", user?.photoProfileUrl);
 
     const tabs = [
         { id: "accueil", label: "Accueil", Icon: IconAccueil, IconActive: IconAccueilOn },
         { id: "missions", label: "Missions", Icon: IconMission, IconActive: IconMissionOn },
         { id: "social", label: "Social", Icon: IconTrophy, IconActive: IconTrophyOn },
         { id: "boutique", label: "Boutique", Icon: IconBoutique, IconActive: IconBoutiqueOn },
-        { id: "codebar", label: "QR Code", Icon: IconQrCode, IconActive: IconQrCodeOn },
+        { id: "codebar", label: "Code Barres", Icon: IconCodeBarres },
         { id: "notifications", label: "Notifications", Icon: IconNotif, IconActive: IconNotifOn },
         { id: "dashboard", label: "Dashboard", Icon: IconDashboard, IconActive: IconDashboardOn },
         { id: "parametres", label: "Paramètres", Icon: IconParam, IconActive: IconParamOn },
@@ -146,6 +145,8 @@ export default function Navbar() {
                             const IconComponent = isActive ? tab.IconActive : tab.Icon;
                             const isDashboard = tab.id === "dashboard"
 
+                            if (isDashboard && !user?.admin) return null // accésible que pour les admin
+
                             const IconArrow = dashboardTabOpen
                                 ? (isActive ? IconArrowDownOn : IconArrowDown)
                                 : (isActive ? IconArrowRightOn : IconArrowRight);
@@ -155,10 +156,9 @@ export default function Navbar() {
                                     <TouchableOpacity
                                         style={styles.tabs}
                                         onPress={() => {
+                                            handleClick(router, tab, dashboardTabOpen, setDashboardTabOpen);
                                             if (tab.id === "notifications") {
                                                 openNotifications();
-                                            } else {
-                                                handleClick(router, tab, dashboardTabOpen, setDashboardTabOpen);
                                             }
                                         }}
                                     >

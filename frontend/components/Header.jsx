@@ -335,7 +335,7 @@ export default function Header({
         {userProfil && (
             <TouchableOpacity
                 style={styles.photoProfilContainer}
-                onPress={() => router.push(`/appPrincipal/social/votreProfil`)}
+                onPress={() => router.push(`/appPrincipal/social/profil`)}
             >
                 <Image
                     source={

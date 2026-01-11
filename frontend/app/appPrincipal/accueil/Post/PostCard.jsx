@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import {View, Text, Image, TouchableOpacity, Pressable, StyleSheet} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { isWeb } from "../../../../utils/platform";
@@ -13,6 +13,8 @@ import {
     didIDislikePost
 } from "../../../../services/posts.api";
 import { fetchObjectById } from "../../../../services/objects.api";
+import {loadUser} from "../../../../services/RegisterStorage";
+import PopUp from "../../../../components/PopUp";
 
 export default function PostCard({ post, onSignaler }) {
     const router = useRouter();
@@ -23,6 +25,8 @@ export default function PostCard({ post, onSignaler }) {
 
     const [avatar, setAvatar] = useState(null);
     const [pseudo, setPseudo] = useState(null);
+
+    const [userActuel, setUserActuel] = useState(null);
 
     // Pour la sous-card objet
     const [originalObject, setOriginalObject] = useState(null);
@@ -137,6 +141,13 @@ export default function PostCard({ post, onSignaler }) {
     }, [isPickupPost, post.object_id]);
 
     /* ============================
+        FETCH User connecté
+    ============================ */
+    useEffect(() => {
+        loadUser().then(setUserActuel);
+    },[])
+
+    /* ============================
        ACTIONS
     ============================ */
     const handleLike = async () => {
@@ -180,6 +191,20 @@ export default function PostCard({ post, onSignaler }) {
         }
     };
 
+    const handleVoirLeProfil = () => {
+        setShowMenu(false);
+
+        if(post?.user_id){
+            router.push({pathname: "./social/profil", params: { id: post?.user_id }})
+        }
+    };
+    const handleSupprimer = () => {
+        setShowMenu(false);
+
+    };
+
+    const postUserActuel = userActuel?.id === post?.user_id
+
     /* ============================
        RENDER
     ============================ */
@@ -219,30 +244,47 @@ export default function PostCard({ post, onSignaler }) {
                 </TouchableOpacity>
             </View>
 
+
+            {/* OVERLAY (clic dehors => ferme) */}
+            {showMenu && (
+                <Pressable
+                    style={StyleSheet.absoluteFill}
+                    onPress={() => setShowMenu(false)}
+                />
+            )}
+
             {/* MENU */}
             {showMenu && (
-                <View style={styles.postMenu}>
-                    <TouchableOpacity
-                        style={styles.postMenuRow}
-                        onPress={() => setShowMenu(false)}
-                    >
-                        <Text style={styles.postMenuText}>Voir le profil</Text>
-                        <Image
-                            style={styles.profil}
-                            source={require("../../../../assets/icones/accueil/profil.png")}
-                        />
-                    </TouchableOpacity>
+                postUserActuel ?
+                    <View style={[styles.postMenu, {width : 220}]}>
+                        <TouchableOpacity style={styles.postMenuRow} onPress={handleSupprimer}>
+                            <Text style={styles.postMenuDanger}>Supprimer mon post</Text>
+                            <Ionicons name="trash-outline" size={19} color="#FF5858" />
+                        </TouchableOpacity>
+                    </View>
+                    :
+                    <View style={styles.postMenu}>
+                        <TouchableOpacity
+                            style={styles.postMenuRow}
+                            onPress={handleVoirLeProfil}
+                        >
+                            <Text style={styles.postMenuText}>Voir le profil</Text>
+                            <Image
+                                style={styles.profil}
+                                source={require("../../../../assets/icones/accueil/profil.png")}
+                            />
+                        </TouchableOpacity>
 
-                    <View style={styles.postMenuSeparator} />
+                        <View style={styles.postMenuSeparator} />
 
-                    <TouchableOpacity style={styles.postMenuRow} onPress={handleSignaler}>
-                        <Text style={styles.postMenuDanger}>Signaler le post</Text>
-                        <Image
-                            style={styles.signal}
-                            source={require("../../../../assets/icones/accueil/signal.png")}
-                        />
-                    </TouchableOpacity>
-                </View>
+                        <TouchableOpacity style={styles.postMenuRow} onPress={handleSignaler}>
+                            <Text style={styles.postMenuDanger}>Signaler le post</Text>
+                            <Image
+                                style={styles.signal}
+                                source={require("../../../../assets/icones/accueil/signal.png")}
+                            />
+                        </TouchableOpacity>
+                    </View>
             )}
 
             {/* IMAGE DU POST */}
@@ -295,8 +337,8 @@ export default function PostCard({ post, onSignaler }) {
                 </View>
             )}
 
-            {/* ACTIONS (posts normaux uniquement) */}
-            {!isPickupPost && (
+            {/* ACTIONS (posts normaux uniquement et pas celui du user actuel) */}
+            {!isPickupPost && !postUserActuel && (
                 <View style={styles.actions}>
                     <TouchableOpacity onPress={handleLike}>
                         <Image

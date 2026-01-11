@@ -14,20 +14,24 @@ import flamme from "../../../../assets/icones/flamme.png";
 import trophee from "../../../../assets/icones/trophee.png";
 import hastag from "../../../../assets/icones/social/hastag.png";
 import cadeau from "../../../../assets/icones/social/cadeau.png";
-import badge from "../../../../assets/icones/social/badge_exemple.png";
-import activite from "../../../../assets/icones/social/activite_exemple.png";
 
 import styles from "./styles/styles";
 import {getCurrentRank} from "../../../../constants/rank";
 import {formatNombreEspace} from "../../../../utils/format";
-import {useLocalSearchParams, useNavigation, useRouter} from "expo-router";
+import {useLocalSearchParams, useRouter} from "expo-router";
 import { fetchSuccess } from "../../../../services/competitions.api";
 import { getFriends } from "../../../../services/friends.api";
 import OverlaySombre from "../../../../components/OverlaySombre";
 import {loadUser} from "../../../../services/RegisterStorage";
-import {fetchUsers} from "../../../../services/user.api";
+import {
+    fetchActions,
+    fetchSuccessForUser, fetchUserActions,
+    fetchUserById,
+    fetchUsers,
+    fetchUserStats
+} from "../../../../services/user.api";
 
-const Profil = ({user_DATA, user_amis_DATA, router}) => {
+const ProfilSection = ({user_DATA, user_amis_DATA, userActuel, router}) => {
     return (
         <View>
             <View style={styles.userWrapper}>
@@ -67,10 +71,18 @@ const Profil = ({user_DATA, user_amis_DATA, router}) => {
 
             {/** Boutons (Ajouter des amis, partager le profil) **/}
             <View style={styles.boutonsContainer}>
-                <TouchableOpacity style={styles.boutonAmisContainer}>
-                    <Ionicons name="add" size={24} color="#04D992" />
-                    <Text style={styles.boutonAmisText}>Amis</Text>
-                </TouchableOpacity>
+                {
+                    userActuel ?
+                        <TouchableOpacity style={styles.boutonAmisContainer}>
+                            <Text style={styles.boutonAmisText}>Modifier</Text>
+                        </TouchableOpacity>
+                        :
+                        <TouchableOpacity style={styles.boutonAmisContainer}>
+                            <Ionicons name="add" size={24} color="#04D992" />
+                            <Text style={styles.boutonAmisText}>Amis</Text>
+                        </TouchableOpacity>
+                }
+
                 <TouchableOpacity style={styles.boutonShareContainer}>
                     <Ionicons name="share-outline" size={24} color="#04D992"/>
                 </TouchableOpacity>
@@ -137,14 +149,7 @@ const MesRecompenses = () => {
     )
 }
 
-const Realisations = ({succes_DATA}) => {
-    // Badge TODO récupere les badges gagné par l'utilisateur connecté (Table Evenement si type = "Evenement competitif" et si Date_fin < ajd et si Points_objectif <= Points_recolte , null si aucun
-    const user_Badge_DATA = [
-        {Nom : "Événements Hiver Durable ❄️", Img_url : badge},
-    ]
-    // Succes de l'utilisateur TODO récupere les succes de l'utilisateur connecte (table User_Succes, récuperer que les id des succes qu'il a), null si aucun
-    const user_succes_DATA = null
-
+const Realisations = ({succes_DATA, user_succes_DATA}) => {
 
     const userSucces = user_succes_DATA ? succes_DATA
             .map(s => ({
@@ -189,49 +194,13 @@ const Realisations = ({succes_DATA}) => {
                 )}
             </View>
 
-            <View style={styles.realisationsSection}>
-                <Text style={styles.titre}>
-                    Badge <Text style={styles.titreInfo}>{user_Badge_DATA?.length || 0}</Text>
-                </Text>
-
-                {user_Badge_DATA ? (
-                    isWeb ? (
-                        <View style={styles.realisationsWebContainer}>
-                            {user_Badge_DATA.map((item, index) => (
-                                <TouchableOpacity key={index}>
-                                    <Image source={item.Img_url} style={styles.realisationIcon} />
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-                    ) : (
-                        <FlatList
-                            horizontal
-                            data={user_Badge_DATA}
-                            keyExtractor={(_, index) => index.toString()}
-                            showsHorizontalScrollIndicator={false}
-                            contentContainerStyle={styles.realisationsContainer}
-                            style={styles.realisationsList}
-                            renderItem={({ item }) => (
-                                <TouchableOpacity>
-                                    <Image source={item.Img_url} style={styles.realisationIcon} />
-                                </TouchableOpacity>
-                            )}
-                        />
-                    )
-                ) : (
-                    <Text style={styles.message}>
-                        Qualifiez-vous lors d&#39;événements pour obtenir leurs badges.
-                    </Text>
-                )}
-            </View>
-
         </View>
     )
 }
 
 const RealisationItem = ({ item }) => {
     const image = (
-        <Image source={item.Img_url} style={styles.realisationIcon} />
+        <Image source={{uri : item.Img_url}} style={styles.realisationIcon} />
     );
 
     return (
@@ -268,96 +237,138 @@ const UserStatistiques = ({user_statistique_DATA}) => {
     )
 }
 
-const UserActivites = ({user_activite_DATA}) => {
+const UserActivites = ({user_activite_DATA, userActuel}) => {
 
     return (
         <View style={styles.activiteSection}>
             <Text style={styles.titre}>Activité récente</Text>
-            {user_activite_DATA ?
+            {user_activite_DATA?.length > 0 ?
                 <View style={styles.activitesContainer}>
                     {
                         user_activite_DATA.map((activite, index) =>
                             <View key={index} style={styles.activiteContainer}>
-                                <Image source={activite.Img_url} style={styles.activiteImage}/>
-                                <Text style={styles.activiteText}>{activite.Description}</Text>
+                                <Image source={{uri : activite.image_url}} style={styles.activiteImage}/>
+                                <Text style={styles.activiteText}>{activite.description}</Text>
                             </View>
                         )
 
                     }
                 </View>
                 :
-                <Text style={styles.message}>Aucune activité récente😭… et si vous commenciez maintenant😏 ?</Text>
+                <Text style={styles.message}>Aucune activité récente😭… {userActuel && "et si vous commenciez maintenant😏 ?"}</Text>
             }
         </View>
     )
 }
 
-export default function VotreProfil(){
+export default function Profil(){
     const router = useRouter();
 
     const onglets = [
-        {id: "profil",label : "Votre profil", page : "social/votreProfil"},
+        {id: "profil",label : "Votre profil", page : "social/profil"},
         {id: "flamme",label : "Votre Série", page : "social/votreSerie"},
     ];
 
+    const { id } = useLocalSearchParams();
+    const userActuel = !id;
+
     const [ongletActifId, setOngletActif] = React.useState("profil");
-    const [succes_DATA, setSuccesData] = React.useState([]);
-    const [user_amis_DATA, setUserAmisData] = React.useState(null);
+
     const [user_DATA, setUserDATA] = useState(null);
     const [users_DATA, setUsersDATA] = React.useState(null);
 
+    const [user_amis_DATA, setUserAmisData] = React.useState(null);
+    const [succes_DATA, setSuccesData] = React.useState([]);
+    const [user_succes_DATA, setUserSuccesData] = React.useState(null);
+    const [user_statistique_DATA, setUserStatistiqueDATA] = React.useState(null);
+    const [user_activite_DATA, setuserActiviteDATA] = React.useState(null);
+
+    useEffect(() => {
+        if(userActuel){
+            loadUser().then(setUserDATA)
+        }else{
+            fetchUserById(id).then(setUserDATA)
+        }
+        fetchUsers().then(setUsersDATA);
+    }, []);
 
     useEffect(()=> {
         if(ongletActifId === "flamme"){
             router.push("./votreSerie")
         }
-        fetchSuccess().then(setSuccesData);
-        getFriends().then((friends) => setUserAmisData(friends.length));
-
-        loadUser().then(setUserDATA)
-        fetchUsers().then(setUsersDATA);
 
     },[ongletActifId])
 
-    React.useEffect(() => {
-        if (!users_DATA || !user_DATA) return;
+    useEffect(()=> {
+        if(!user_DATA?.id) return;
 
-        const normalizedUsers = users_DATA.map(user => ({
-            ...user,
-            stats: user.stats || {
-                trophies: 0,
-                flames: 0,
-                points: 0,
-                userId: user.id
+        getFriends().then((friends) => setUserAmisData(friends.length));
+        fetchSuccess().then(setSuccesData);
+        fetchSuccessForUser(user_DATA?.id).then(setUserSuccesData)
+        fetchUserActions(user_DATA?.id).then(setuserActiviteDATA)
+
+    },[user_DATA?.id])
+
+
+
+    // Classement
+    useEffect(() => {
+        let cancelled = false;
+
+        const loadAndRank = async () => {
+            if (!users_DATA?.length || !user_DATA?.id) return;
+
+            // Récupérer les stats pour tous les users
+            const usersWithStats = await Promise.all(
+                users_DATA.map(async (u) => {
+                    const stats = await fetchUserStats(u.id);
+                    return { ...u, stats: stats ?? { trophies: 0 } };
+                })
+            );
+
+            if (cancelled) return;
+
+            // Trier + ajouter classement
+            const usersSortedByRank = [...usersWithStats]
+                .sort((a, b) => (b.stats?.trophies ?? 0) - (a.stats?.trophies ?? 0))
+                .map((u, i) => ({ ...u, classement: i + 1 }));
+
+            // Classement + stats du user connecté
+            const userIndex = usersSortedByRank.findIndex((u) => u.id === user_DATA.id);
+
+            const userClassement = userIndex + 1;
+            const userFromRank = userIndex >= 0 ? usersSortedByRank[userIndex] : null;
+
+            setUserDATA((prev) => {
+                if (!prev) return prev;
+
+                return {
+                    ...prev,
+                    // on prend les infos à jour (stats + classement) si on l'a trouvé
+                    ...(userFromRank ? { stats: userFromRank.stats, classement: userFromRank.classement } : { classement: userClassement }),
+                };
+            });
+
+        };
+
+        loadAndRank();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [users_DATA, user_DATA?.id]);
+
+    useEffect(()=> {
+        if (!user_DATA?.stats) return;
+        setUserStatistiqueDATA(
+            {
+                Action_eco : user_DATA?.stats?.ecoActions ?? 0,
+                Votes_effectues : 0, // TODO changer
+                Objets_Recup : user_DATA?.stats?.recoveredObjects ?? 0
             }
-        }));
+        )
 
-        const usersSortedByRank = [...normalizedUsers]
-            .sort((a, b) => b.stats.trophies - a.stats.trophies)
-            .map((u, i) => ({ ...u, classement: i + 1 }));
-
-        const userClassement = usersSortedByRank.findIndex(u => u.Id === user_DATA.Id) + 1;
-
-        setUserDATA((prev) => {
-            if (!prev) return prev;
-            return { ...prev, classement: userClassement };
-        });
-
-    }, [users_DATA,user_DATA?.id])
-
-    // les stats de l'utilisateur TODO récupere les statistiques de l'utilisateur connecte
-    const user_statistique_DATA = {
-        Action_eco : 2560, // TODO (de l'utilisateur) : Nombre de post avec status validé (dans la Table PostAction) + Nombre de documents avec status validé (dans la Table User_Documents)
-        Votes_effectues : 5448, // TODO (de l'utilisateur) : nombre de vote qu'il a fait dans la table Post_Validation, nombre de lignes avec le id_user
-        Objets_Recup : 21 // TODO (de l'utilisateur) : Nombre de post avec status validé (dans la Table PostAction) et avec pour id_Action qui a pour type "Objet récupéré"
-    }
-
-    // les activité récent de l'utilisateur TODO récupere les activité récent de l'utilisateur connecte (Table User_Activite, récuperer que les 3 dernier, prendre la clé #Id_Activite et dans la table Activite prendre l'activité correspondant), null si aucun
-    const user_activite_DATA = [
-        {Description : "A recyclé une bouteille plastique", Img_url : activite},
-        {Description : "A recyclé une bouteille plastique", Img_url : activite},
-        {Description : "A recyclé une bouteille plastique", Img_url : activite},
-    ]
+    },[user_DATA?.stats])
 
     if (!user_DATA) return null;
 
@@ -375,7 +386,11 @@ export default function VotreProfil(){
                 {
                     isWeb ?
                         <>
-                            <Header onglets={onglets} ongletActifId={ongletActifId} setOngletActif={setOngletActif}/>
+                            {userActuel ?
+                                <Header onglets={onglets} ongletActifId={ongletActifId} setOngletActif={setOngletActif}/>
+                                :
+                                <Header />
+                            }
 
                             <View style={{flex : 1}}>
                                 <Image
@@ -387,20 +402,20 @@ export default function VotreProfil(){
                                     style={styles.banner}
                                 />
                                 <View style={{paddingLeft : "7.5%", paddingRight : "2.5%",flex : 1}}>
-                                    <Profil user_DATA={user_DATA} user_amis_DATA={user_amis_DATA} router={router}/>
+                                    <ProfilSection user_DATA={user_DATA} user_amis_DATA={user_amis_DATA} router={router} userActuel={userActuel}/>
                                     <View style={{flex : 1, flexDirection: "row", marginTop : 200,}}>
                                         <View style={styles.contenuPrincipal}>
                                             <View>
                                                 <Cartes user_DATA={user_DATA} router={router}/>
-                                                <MesRecompenses/>
+                                                {userActuel && <MesRecompenses/>}
                                             </View>
                                             <View style={{flexDirection: "row"}}>
                                                 <UserStatistiques user_statistique_DATA={user_statistique_DATA}/>
-                                                <UserActivites user_activite_DATA={user_activite_DATA}/>
+                                                <UserActivites user_activite_DATA={user_activite_DATA} userActuel={userActuel}/>
                                             </View>
                                         </View>
                                         <View style={styles.contenuSecondaire}>
-                                            <Realisations succes_DATA={succes_DATA}/>
+                                            <Realisations succes_DATA={succes_DATA} user_succes_DATA={user_succes_DATA}/>
                                         </View>
                                     </View>
                                 </View>
@@ -408,16 +423,16 @@ export default function VotreProfil(){
                         </>
                         :
                         <>
-                            <Header titre={"Mon profil"} boutonRetour={true} boutonParametres={true}/>
+                            <Header titre={userActuel ? "Mon profil" : "" } boutonRetour={true} boutonParametres={userActuel}/>
 
                             <ScrollView>
                                 <Image source={DEFAULT_BANNER} style={styles.banner} />
-                                <Profil user_DATA={user_DATA} user_amis_DATA={user_amis_DATA} router={router}/>
+                                <ProfilSection user_DATA={user_DATA} user_amis_DATA={user_amis_DATA} router={router} userActuel={userActuel}/>
                                 <Cartes user_DATA={user_DATA} router={router}/>
-                                <MesRecompenses/>
-                                <Realisations succes_DATA={succes_DATA}/>
+                                {userActuel && <MesRecompenses/>}
+                                <Realisations succes_DATA={succes_DATA} user_succes_DATA={user_succes_DATA}/>
                                 <UserStatistiques user_statistique_DATA={user_statistique_DATA}/>
-                                <UserActivites user_activite_DATA={user_activite_DATA}/>
+                                <UserActivites user_activite_DATA={user_activite_DATA} userActuel={userActuel}/>
                                 <View style={{ paddingBottom: 75 }}/>
                             </ScrollView>
                         </>

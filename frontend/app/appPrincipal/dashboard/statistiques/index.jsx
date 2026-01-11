@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {View, Text, Image, ScrollView} from "react-native";
 
 
@@ -18,8 +18,15 @@ import RecompensesParCategorieChart from "./_graph/RecompensesParCategorieChart"
 import GesteEcoHebdomadaire from "./_graph/GesteEcoHebdomadaire";
 import PostsRepartitionChart from "./_graph/PostsRepartitionChart";
 import ObjetsAbandonneesChart from "./_graph/ObjetsAbandonneesChart";
+import {loadUser} from "../../../../services/RegisterStorage";
+import AccesReserveAdmin from "../_component/AccesReserveAdmin";
 
 export default function Statistiques() {
+    const [user, setUser] = React.useState(null);
+
+    useEffect(() => {
+        loadUser().then(setUser);
+    }, []);
 
     const statistiques_Data = {
         compteCree : 100,
@@ -35,7 +42,7 @@ export default function Statistiques() {
     const cartesTab = [
         {titre : "COMPTES CRÉES", icon : utilisateur,couleur : "#4293E5", data : statistiques_Data.compteCree},
         {titre : "UTILISATEURS BANNIS", icon : utilisateur,couleur : "#EB5254", data : statistiques_Data.userBan},
-        {titre : "SIGNALEMENTS", icon : signalement,couleur : "#FBD036", data : statistiques_Data.signalement},
+        {titre : "SIGNALEMENTS EN ATTENTE", icon : signalement,couleur : "#FBD036", data : statistiques_Data.signalement},
         {titre : "JUSTIFICATIFS EN ATTENTE", icon : document,couleur : "#79C360", data : statistiques_Data.justificatifs},
         {titre : "PARTENAIRES", icon : partenaire,couleur : "#7E58CF", data : statistiques_Data.partenaires},
         {titre : "RÉCOMPENSES", icon : recompense,couleur : "#2DBEBB", data : statistiques_Data.recompenses},
@@ -51,6 +58,10 @@ export default function Statistiques() {
     ]
 
 
+    if (!user?.admin) {
+        return <AccesReserveAdmin/>
+    }
+
     return (
         <View style={styles.container}>
             <View style={{ width: "15%" }}>
@@ -58,7 +69,7 @@ export default function Statistiques() {
             </View>
             <View style={{ flex: 1}}>
                 <Header/>
-                <ScrollView style={styles.contenuContainer} contentContainerStyle={{flex : 1}}>
+                <ScrollView style={styles.contenuContainer} contentContainerStyle={{flexGrow : 1}}>
                     <View style={styles.cartesContainer}>
                         {
                             cartesTab.map((tab, index) => {

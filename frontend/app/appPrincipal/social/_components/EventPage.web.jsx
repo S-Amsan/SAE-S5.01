@@ -199,6 +199,7 @@ const CarteEvent = ({event_DATA,setEventClique, id}) => {
     const pourcentageDAvancement = Math.min((event_DATA?.collectedPoints ?? 0) / event_DATA.goalPoints, 1);
 
     const eventTermine = tempsRestant(event_DATA.deadline) === "Terminé"
+    const qualifieALEvent = pourcentageDAvancement !== 1
 
     return (
         <TouchableOpacity style={styles.carteEvent} onPress={() => eventTermine && setEventClique({ ...event_DATA, id })}>
@@ -208,16 +209,17 @@ const CarteEvent = ({event_DATA,setEventClique, id}) => {
                 <Text style={styles.infoTemps}>{eventTermine ? ("Il y a " + tempsEcoule(event_DATA.deadline)): ("Fin dans " + tempsRestant(event_DATA.deadline))}</Text>
                 <View style={styles.infoEvent}>
                     <Text style={styles.progressionText}>{pointsRecolte} / {pointsObjectif} ({(pourcentageDAvancement * 100).toFixed(1)}%)</Text>
-                    { pourcentageDAvancement !== 1 ?
-                        eventTermine ?
-                            <Text style={[styles.infoEtat, styles.defaite]}>Non qualifié</Text>
-                            :
+                    {
+                        !eventTermine ?
                             <Text style={styles.infoEtat}>En cours</Text>
-                        :
-                        event_DATA.recompense ?
-                            <Text style={[styles.infoEtat, styles.victoire]}>Gagné</Text>
                             :
-                            <Text style={[styles.infoEtat, styles.defaite]}>Perdu</Text>
+                            qualifieALEvent ?
+                                <Text style={[styles.infoEtat, styles.defaite]}>Non qualifié</Text>
+                                :
+                                event_DATA.recompense ?
+                                    <Text style={[styles.infoEtat, styles.victoire]}>Gagné</Text>
+                                    :
+                                    <Text style={[styles.infoEtat, styles.defaite]}>Perdu</Text>
                     }
                 </View>
             </View>
@@ -262,10 +264,10 @@ const EventPopup = ({event_DATA, setEventClique, config}) => {
                 <Text style={styles.eventProgression}>{pointsRecolte} pts / {pointsObjectif} pts</Text>
                 <View style={styles.eventResultat}>
                     {pourcentageDAvancement === 1 ?
-                        event_DATA.Recompense ?
+                        event_DATA.recompense ?
                             (<>
                                 <Text style={styles.eventResultatTitre}>🏆 Vous avez gagné : </Text>
-                                <Text style={styles.eventResultatSousTitre}>{event_DATA.Recompense.Nom}</Text>
+                                <Text style={styles.eventResultatSousTitre}>{event_DATA.recompense.Nom}</Text>
                                 <Text style={styles.eventResultatInfo}><Text style={styles.gras}>Récompense disponible</Text> dans votre profil</Text>
                             </>):
                             (<>
@@ -294,7 +296,7 @@ const EventPopup = ({event_DATA, setEventClique, config}) => {
     )
 }
 
-export default function EventPage({type, event_DATA,user_event_DATA}) {
+export default function EventPage({type, event_DATA, user_event_DATA}) {
     const ongletsWeb = [
         { id: "classement", label: "Classement", page: "social/classement" },
         { id: "concours", label: "Concours", page: "social/concours" },

@@ -8,5 +8,13 @@ export default StyleSheet.create({
     },
     contenuContainer : {
         flex: 1,
-    }
+        padding : 50,
+    },
+    cartesContainer : {
+        flexDirection : "row",
+        flexWrap : "wrap",
+        gap : 50,
+        alignItems : "center",
+        justifyContent : "space-evenly",
+    },
 });

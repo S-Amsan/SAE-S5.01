@@ -140,14 +140,14 @@ export default function VotreSerie(){
     const router = useRouter();
 
     const onglets = [
-        {id: "profil",label : "Votre profil", page : "social/votreProfil"},
+        {id: "profil",label : "Votre profil", page : "social/profil"},
         {id: "flamme",label : "Votre Série", page : "social/votreSerie"},
     ];
     const [ongletActifId, setOngletActif] = useState("flamme");
 
     useEffect(()=> {
         if(ongletActifId === "profil"){
-            router.push("./votreProfil")
+            router.push("./profil")
         }
     },[ongletActifId])
 

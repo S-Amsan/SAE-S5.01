@@ -124,12 +124,8 @@ const EventCarte = ({type, onPress, event_DATA, user_stats}) => {
     let accessible = false;
     if (config.lockable) {
         const tropheesMin = getRequiredTrophiesByRankName(RANG_MINIMUM_EVENEMENT);
-        const statsArray = Array.isArray(user_stats)
-            ? user_stats
-            : (user_stats?.stats ?? user_stats?.items ?? []);
 
-        const userTrophees =
-            statsArray.find(item => item.type === "trophees")?.valeur ?? 0;
+        const userTrophees = user_stats?.trophies ?? 0
 
         accessible = userTrophees >= tropheesMin;
 
@@ -225,15 +221,15 @@ const ConcoursCarte = ({onPress, concours_DATA}) => {
     )
 }
 
-const EvenementsCarte = ({onPress, evenements_DATA, user_stats}) => {
-    if (!user_stats) return null;
+const EvenementsCarte = ({onPress, evenements_DATA, user_DATA}) => {
+    if (!user_DATA?.stats) return null;
 
     return (
         <EventCarte
             type="evenement"
             onPress={onPress}
             event_DATA={evenements_DATA}
-            user_stats={user_stats}
+            user_stats={user_DATA?.stats}
         />
     )
 }
@@ -346,7 +342,6 @@ export default function Social() {
     const [evenements_DATA, setEvenementsData] = useState(null);
 
     const [user_DATA, setUserDATA] = useState(null);
-    const [user_stats, setUserStats] = useState(null);
     const [users_DATA, setUsersDATA] = useState(null);
     const [podium_DATA, setPodiumDATA] = useState(null);
 
@@ -359,17 +354,6 @@ export default function Social() {
         loadUser().then(setUserDATA).catch(console.error);
         fetchUsers().then(setUsersDATA).catch(console.error);
     }, []);
-
-    /* ===============================
-       STATS USER (dépend de user.id)
-    =============================== */
-    React.useEffect(() => {
-        if (!user_DATA?.id) return;
-
-        fetchUserStats(user_DATA.id)
-            .then(setUserStats)
-            .catch(console.error);
-    }, [user_DATA?.id]);
 
     /* ===============================
        POINTS CONCOURS
@@ -406,31 +390,53 @@ export default function Social() {
     /* ===============================
        CLASSEMENT / PODIUM
     =============================== */
+
     React.useEffect(() => {
-        if (!users_DATA || !user_DATA?.id) return;
+        let cancelled = false;
 
-        const normalizedUsers = users_DATA.map(u => ({
-            ...u,
-            stats: u.stats || {
-                trophies: 0,
-                flames: 0,
-                points: 0,
-                userId: u.id
-            }
-        }));
+        const loadAndRank = async () => {
+            if (!users_DATA?.length || !user_DATA?.id) return;
 
-        const usersSortedByRank = [...normalizedUsers]
-            .sort((a, b) => (b.stats.trophies ?? 0) - (a.stats.trophies ?? 0))
-            .map((u, i) => ({ ...u, classement: i + 1 }));
+            // Récupérer les stats pour tous les users
+            const usersWithStats = await Promise.all(
+                users_DATA.map(async (u) => {
+                    const stats = await fetchUserStats(u.id);
+                    return { ...u, stats: stats ?? { trophies: 0 } };
+                })
+            );
 
-        setPodiumDATA(usersSortedByRank.slice(0, 3));
+            if (cancelled) return;
 
-        const userClassement =
-            usersSortedByRank.findIndex(u => u.id === user_DATA.id) + 1;
+            // Trier + ajouter classement
+            const usersSortedByRank = [...usersWithStats]
+                .sort((a, b) => (b.stats?.trophies ?? 0) - (a.stats?.trophies ?? 0))
+                .map((u, i) => ({ ...u, classement: i + 1 }));
 
-        setUserDATA(prev =>
-            prev ? { ...prev, classement: userClassement } : prev
-        );
+            // PodiumD
+            setPodiumDATA(usersSortedByRank)
+
+            // Classement + stats du user connecté
+            const userIndex = usersSortedByRank.findIndex((u) => u.id === user_DATA.id);
+
+            const userClassement = userIndex + 1;
+            const userFromRank = userIndex >= 0 ? usersSortedByRank[userIndex] : null;
+
+            setUserDATA((prev) => {
+                if (!prev) return prev;
+
+                return {
+                    ...prev,
+                    // on prend les infos à jour (stats + classement) si on l'a trouvé
+                    ...(userFromRank ? { stats: userFromRank.stats, classement: userFromRank.classement } : { classement: userClassement }),
+                };
+            });
+        };
+
+        loadAndRank();
+
+        return () => {
+            cancelled = true;
+        };
     }, [users_DATA, user_DATA?.id]);
 
     /* ===============================
@@ -457,7 +463,7 @@ export default function Social() {
                 <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
                     {!isWeb && (
                         <ProfilCarte
-                            onPress={() => router.push("./votreProfil")}
+                            onPress={() => router.push("./profil")}
                             user_DATA={user_DATA}
                         />
                     )}
@@ -472,7 +478,7 @@ export default function Social() {
                             <EvenementsCarte
                                 onPress={() => router.push("./evenements")}
                                 evenements_DATA={evenements_DATA}
-                                user_stats={user_stats}
+                                user_DATA={user_DATA}
                             />
                         </View>
 

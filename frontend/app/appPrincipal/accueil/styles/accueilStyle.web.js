@@ -59,6 +59,7 @@ export default StyleSheet.create({
         shadowOpacity: 0.08,
         shadowRadius: 10,
         elevation: 4,
+        paddingBottom : 15,
     },
 
     avatar: {
@@ -132,7 +133,7 @@ export default StyleSheet.create({
     postMenu: {
         position: "absolute",
         top: 80,
-        right: 2,
+        right: 20,
         width: 225,
         backgroundColor: "rgba(60,60,60,0.95)",
         borderRadius: 18,

@@ -10,17 +10,18 @@ import tropheeIcon from "../../../../assets/icones/trophee.png";
 import medaille from "../../../../assets/icones/social/medailleClassement.png";
 
 import { loadUser } from "../../../../services/RegisterStorage";
-import {fetchUsers} from "../../../../services/user.api";
+import {fetchUsers, fetchUserStats} from "../../../../services/user.api";
 
 import {getCarriere} from "../../../../constants/rank";
 import {formatNombreCourt, formatNombreEspace} from "../../../../utils/format";
 import Navbar from "../../../../components/Navbar";
 import TabNavbarWeb from "../../../../components/TabNavbarWeb";
 import OverlaySombre from "../../../../components/OverlaySombre";
+import {useRouter} from "expo-router";
 
 // ---------------- LEADERBOARD ----------------
 
-const Leaderboard = ({leaderboard_DATA, user_DATA}) => {
+const Leaderboard = ({leaderboard_DATA, user_DATA, router}) => {
     if (!leaderboard_DATA || !user_DATA) return null
     const podium_users = leaderboard_DATA.slice(0,3);
     const users_hors_podium = leaderboard_DATA.slice(3);
@@ -30,21 +31,21 @@ const Leaderboard = ({leaderboard_DATA, user_DATA}) => {
             <Text style={styles.leaderboardTitre}>Leaderboard</Text>
             <View style={styles.podiumContainer}>
                 {
-                    PODIUM_ORDRE.map((index) => (<Place key={index} user_DATA={podium_users[index]}/>))
+                    PODIUM_ORDRE.map((index) => (<Place key={index} user_DATA={podium_users[index]} router={router} userActuel={user_DATA.id === podium_users[index].id}/>))
                 }
             </View>
             <View style={styles.classementTableauContainer}>
                 <ScrollView contentContainerStyle={{ paddingBottom: 20, flexGrow: 1 }}>
                     <View style={{flex : 1, gap : 10}}>
                         {
-                            users_hors_podium.map((user, index) => (<UserCarte key={index} user_DATA={user} userActuel={user_DATA.id === user.id}/>))
+                            users_hors_podium.map((user, index) => (<UserCarte key={index} user_DATA={user} router={router} userActuel={user_DATA.id === user.id}/>))
                         }
                     </View>
 
                     <Text style={styles.finText}>Seul le Top 100 est affiché</Text>
                 </ScrollView>
                 <View style={styles.userActuelCarte}>
-                    <UserCarte user_DATA={user_DATA} userActuel={true}/>
+                    <UserCarte user_DATA={user_DATA} router={router} userActuel={true}/>
                 </View>
             </View>
         </View>
@@ -82,7 +83,7 @@ const podiumStyle = [0, 1, 2].map((index) => ({
     },
 }));
 
-const Place = ({user_DATA}) => {
+const Place = ({user_DATA, userActuel, router}) => {
     if (!user_DATA || !user_DATA.classement) return null;
 
     const classement = user_DATA.classement;
@@ -91,10 +92,17 @@ const Place = ({user_DATA}) => {
 
     return (
         <View style={styles.placeContainer}>
-            <Image
-                source={user_DATA?.photoProfileUrl || DEFAULT_PICTURE}
-                style={[styles.placePicture, style.picture]}
-            />
+            <TouchableOpacity
+                onPress={() => {
+                    router.push(userActuel ? "./profil" : {pathname: "./profil", params: { id: user_DATA.id }})
+                }}
+            >
+                <Image
+                    source={user_DATA?.photoProfileUrl || DEFAULT_PICTURE}
+                    style={[styles.placePicture, style.picture]}
+                />
+            </TouchableOpacity>
+
             <Text style={styles.placeNomText}>{user_DATA?.name || "USER_NOM"}</Text>
             <View style={styles.placeTropheesContainer}>
                 <Text style={styles.placeTropheesText}>{formatNombreCourt(trophees)}</Text>
@@ -107,24 +115,29 @@ const Place = ({user_DATA}) => {
     )
 }
 
-const UserCarte = ({user_DATA, userActuel = false}) => {
+const UserCarte = ({user_DATA, router, userActuel = false}) => {
     if (!user_DATA || !user_DATA.classement) return null;
 
     const classement = user_DATA.classement;
     const trophees = user_DATA?.stats?.trophies ?? 0;
 
     return (
-        <View style={[styles.userTopContainer, userActuel && styles.userActuelTopContainer]}>
+        <TouchableOpacity
+            style={[styles.userTopContainer, userActuel && styles.userActuelTopContainer]}
+            onPress={() => {
+                router.push(userActuel ? "./profil" : {pathname: "./profil", params: { id: user_DATA.id }})
+            }}
+        >
             <Text style={styles.userTopText}>{formatNombreCourt(classement)}</Text>
             <View style={styles.userInfoContainer}>
                 <Image source={user_DATA?.photoProfileUrl || DEFAULT_PICTURE} style={styles.userTopPicture}/>
-                <Text style={styles.userTopName}>{user_DATA?.name || "USER_NOM"} {userActuel && "(Vous)"}</Text>{/* TODO Mettre (Vous quand c'est le user Actuel)*/}
+                <Text style={styles.userTopName}>{user_DATA?.name || "USER_NOM"} {userActuel && "(Vous)"}</Text>
             </View>
             <View style={styles.userTropheesContainer}>
                 <Text style={styles.userTropheesText}>{formatNombreCourt(trophees)}</Text>
                 <Image source={tropheeIcon} style={styles.TropheesIcon}/>
             </View>
-        </View>
+        </TouchableOpacity>
     )
 }
 
@@ -211,6 +224,8 @@ export default function Classement(){
         {id: "evenements",label : "Événements", page : "social/evenements"},
     ];
 
+    const router = useRouter();
+
     const [user_DATA, setUserDATA] = useState(null);
     const [users_DATA, setUsersDATA] = React.useState(null);
     const [leaderboard_DATA, setLeaderboardDATA] = React.useState(null);
@@ -220,34 +235,55 @@ export default function Classement(){
         fetchUsers().then(setUsersDATA);
     }, []);
 
+    // Classement
     React.useEffect(() => {
-        if (!users_DATA || !user_DATA) return;
+        let cancelled = false;
 
-        const normalizedUsers = users_DATA.map(user => ({
-            ...user,
-            stats: user.stats || {
-                trophies: 0,
-                flames: 0,
-                points: 0,
-                userId: user.id
-            }
-        }));
+        const loadAndRank = async () => {
+            if (!users_DATA?.length || !user_DATA?.id) return;
 
-        const usersSortedByRank = [...normalizedUsers]
-            .sort((a, b) => b.stats.trophies - a.stats.trophies)
-            .map((u, i) => ({ ...u, classement: i + 1 }));
+            // 1) Récupérer les stats pour tous les users
+            const usersWithStats = await Promise.all(
+                users_DATA.map(async (u) => {
+                    const stats = await fetchUserStats(u.id);
+                    return { ...u, stats: stats ?? { trophies: 0 } };
+                })
+            );
 
-        setLeaderboardDATA(usersSortedByRank.slice(0,100))
+            if (cancelled) return;
 
-        const userClassement = usersSortedByRank.findIndex(u => u.Id === user_DATA.Id) + 1;
+            // 2) Trier + ajouter classement
+            const usersSortedByRank = [...usersWithStats]
+                .sort((a, b) => (b.stats?.trophies ?? 0) - (a.stats?.trophies ?? 0))
+                .map((u, i) => ({ ...u, classement: i + 1 }));
 
+            // 3) Leaderboard que les 100 premiers
+            setLeaderboardDATA(usersSortedByRank.slice(0,100))
 
-        setUserDATA((prev) => {
-            if (!prev) return prev;
-            return { ...prev, classement: userClassement };
-        });
+            // 4) Classement + stats du user connecté
+            const userIndex = usersSortedByRank.findIndex((u) => u.id === user_DATA.id);
 
-    }, [users_DATA,user_DATA?.id])
+            const userClassement = userIndex + 1;
+            const userFromRank = userIndex >= 0 ? usersSortedByRank[userIndex] : null;
+
+            setUserDATA((prev) => {
+                if (!prev) return prev;
+
+                return {
+                    ...prev,
+                    // on prend les infos à jour (stats + classement) si on l'a trouvé
+                    ...(userFromRank ? { stats: userFromRank.stats, classement: userFromRank.classement } : { classement: userClassement }),
+                };
+            });
+
+        };
+
+        loadAndRank();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [users_DATA, user_DATA?.id]);
 
     return(
         <View style={styles.container}>
@@ -264,7 +300,7 @@ export default function Classement(){
 
                     <View style={{ flex: 1, flexDirection : "row"}}>
                         <MaCarriere user_DATA={user_DATA}/>
-                        <Leaderboard user_DATA={user_DATA} leaderboard_DATA={leaderboard_DATA}/>
+                        <Leaderboard user_DATA={user_DATA} leaderboard_DATA={leaderboard_DATA} router={router}/>
                     </View>
 
                 </View>

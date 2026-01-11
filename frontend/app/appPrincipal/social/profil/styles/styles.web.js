@@ -198,7 +198,7 @@ export default StyleSheet.create({
         resizeMode: "contain",
     },
     message : {
-        textAlign : "center",
+        textAlign : "left",
         marginTop : 30,
         fontSize : 14,
         fontWeight : "bold",

@@ -25,7 +25,7 @@ const EVENT_CONFIG = {
     },
 }
 
-const EnCours = ({isActive, config, event_DATA, user_event_DATA}) => {
+const EnCours = ({isActive, config, event_DATA}) => {
 
     if (!event_DATA) {
         return (
@@ -36,27 +36,20 @@ const EnCours = ({isActive, config, event_DATA, user_event_DATA}) => {
             </View>
         )
     }
-    const now = new Date();
 
-    const event_user_DATA = user_event_DATA ?
-        user_event_DATA
-            .filter(e => new Date(e.Date_fin) > now) // dates non passées
-            .sort((a, b) => new Date(a.Date_fin) - new Date(b.Date_fin))[0]
-        || null
-        : null;
+    const event_user_DATA = event_DATA.collectedPoints
 
+    const pointsObjectif = formatNombreEspace(event_DATA.goalPoints);
+    const pointsRecolte = formatNombreEspace(event_user_DATA ?? 0);
+    const pourcentageDAvancement = Math.min((event_user_DATA ?? 0) / event_DATA.goalPoints, 1);
 
-    const pointsObjectif = formatNombreEspace(event_DATA.Points_objectif);
-    const pointsRecolte = formatNombreEspace(event_user_DATA?.Points_recolte ?? 0);
-    const pourcentageDAvancement = Math.min((event_user_DATA?.Points_recolte ?? 0) / event_DATA.Points_objectif, 1);
+    const eventNom = event_DATA.name
+    const eventFin = tempsRestant(event_DATA.deadline)
 
-    const eventNom = event_DATA.Nom
-    const eventFin = tempsRestant(event_DATA.Date_fin)
-
-    const participants = event_DATA.Participants
-    const qualifies = event_DATA.Qualifies
-    const coutInscriptionEvent = formatNombreEspace(event_DATA.Cout_inscription)
-    const pointsARedistribuer = formatNombreEspace(participants * event_DATA.Cout_inscription)
+    const participants = event_DATA.participants
+    const qualifies = event_DATA.qualified
+    const coutInscriptionEvent = formatNombreEspace(event_DATA.inscriptionCost)
+    const pointsARedistribuer = formatNombreEspace(participants * event_DATA.inscriptionCost)
 
     return (
         <View style={[styles.enCoursContainer, {display: isActive ? "flex" : "none"}]}>
@@ -157,8 +150,8 @@ const Statistiques = ({isActive, config, user_event_DATA, setOngletActifId}) => 
     }
 
     const nbParticipations = user_event_DATA.length;
-    const nbQualifications = user_event_DATA.filter(e => e.Points_recolte > e.Points_objectif).length;
-    const nbConcoursGagnes = user_event_DATA.filter(e => e.Recompense !== null).length;
+    const nbQualifications = user_event_DATA.filter(e => e.collectedPoints > e.goalPoints).length;
+    const nbConcoursGagnes = user_event_DATA.filter(e => e.recompense !== null).length;
     const efficacite = nbParticipations > 0 ? Math.round((nbQualifications / nbParticipations) * 100) : 0;
 
     return (
@@ -198,30 +191,32 @@ const CarteEvent = ({event_DATA,setEventClique, setOngletActifId, id}) => {
     }
 
 
-    const pointsObjectif = formatNombreEspace(event_DATA.Points_objectif);
-    const pointsRecolte = formatNombreEspace(event_DATA?.Points_recolte ?? 0);
-    const pourcentageDAvancement = Math.min((event_DATA?.Points_recolte ?? 0) / event_DATA.Points_objectif, 1);
+    const pointsObjectif = formatNombreEspace(event_DATA.goalPoints);
+    const pointsRecolte = formatNombreEspace(event_DATA?.collectedPoints ?? 0);
+    const pourcentageDAvancement = Math.min((event_DATA?.collectedPoints ?? 0) / event_DATA.goalPoints, 1);
 
-    const eventTermine = tempsRestant(event_DATA.Date_fin) === "Terminé"
+    const eventTermine = tempsRestant(event_DATA.deadline) === "Terminé"
+    const qualifieALEvent = pourcentageDAvancement !== 1
 
     return (
         <TouchableOpacity style={styles.carteEvent} onPress={() => eventTermine ? setEventClique({ ...event_DATA, id }) : setOngletActifId("encours")}>
             <Text style={styles.numText}>#{id || -1}</Text>
             <View style={styles.carteContenu}>
-                    <Text style={styles.infoNom}>{event_DATA.Nom}</Text>
-                    <Text style={styles.infoTemps}>{eventTermine ? ("Il y a " + tempsEcoule(event_DATA.Date_fin)): ("Fin dans " + tempsRestant(event_DATA.Date_fin))}</Text>
+                <Text style={styles.infoNom}>{event_DATA.name}</Text>
+                <Text style={styles.infoTemps}>{eventTermine ? ("Il y a " + tempsEcoule(event_DATA.deadline)): ("Fin dans " + tempsRestant(event_DATA.deadline))}</Text>
                 <View style={styles.infoEvent}>
                     <Text style={styles.progressionText}>{pointsRecolte} / {pointsObjectif} ({(pourcentageDAvancement * 100).toFixed(1)}%)</Text>
-                    { pourcentageDAvancement !== 1 ?
-                        eventTermine ?
-                            <Text style={[styles.infoEtat, styles.defaite]}>Non qualifié</Text>
-                            :
+                    {
+                        !eventTermine ?
                             <Text style={styles.infoEtat}>En cours</Text>
-                        :
-                        event_DATA.Recompense ?
-                            <Text style={[styles.infoEtat, styles.victoire]}>Gagné</Text>
                             :
-                            <Text style={[styles.infoEtat, styles.defaite]}>Perdu</Text>
+                            qualifieALEvent ?
+                                <Text style={[styles.infoEtat, styles.defaite]}>Non qualifié</Text>
+                                :
+                                event_DATA.recompense ?
+                                    <Text style={[styles.infoEtat, styles.victoire]}>Gagné</Text>
+                                    :
+                                    <Text style={[styles.infoEtat, styles.defaite]}>Perdu</Text>
                     }
                 </View>
             </View>
@@ -233,16 +228,16 @@ const EventPopup = ({event_DATA, setEventClique, config}) => {
     if (!event_DATA) {
         return null;
     }
-    const eventNom = event_DATA.Nom
-    const eventFin = tempsEcoule(event_DATA.Date_fin)
+    const eventNom = event_DATA.name
+    const eventFin = tempsEcoule(event_DATA.deadline)
 
-    const pointsObjectif = formatNombreEspace(event_DATA.Points_objectif);
-    const pointsRecolte = formatNombreEspace(event_DATA?.Points_recolte ?? 0);
-    const pourcentageDAvancement = Math.min((event_DATA?.Points_recolte ?? 0) / event_DATA.Points_objectif, 1);
+    const pointsObjectif = formatNombreEspace(event_DATA.goalPoints);
+    const pointsRecolte = formatNombreEspace(event_DATA?.collectedPoints ?? 0);
+    const pourcentageDAvancement = Math.min((event_DATA?.collectedPoints ?? 0) / event_DATA.goalPoints, 1);
 
-    const participants = event_DATA.Participants
-    const qualifies = event_DATA.Qualifies
-    const pointsARedistribuer = formatNombreEspace(participants * event_DATA.Cout_inscription)
+    const participants = event_DATA.participants
+    const qualifies = event_DATA.qualified
+    const pointsARedistribuer = formatNombreEspace(participants * event_DATA.inscriptionCost)
 
     return (
         <View style={styles.popupContainer}>
@@ -267,10 +262,10 @@ const EventPopup = ({event_DATA, setEventClique, config}) => {
                 <Text style={styles.eventProgression}>{pointsRecolte} pts / {pointsObjectif} pts</Text>
                 <View style={styles.eventResultat}>
                     {pourcentageDAvancement === 1 ?
-                        event_DATA.Recompense ?
+                        event_DATA.recompense ?
                             (<>
                                 <Text style={styles.eventResultatTitre}>🏆 Vous avez gagné : </Text>
-                                <Text style={styles.eventResultatSousTitre}>{event_DATA.Recompense.Nom}</Text>
+                                <Text style={styles.eventResultatSousTitre}>{event_DATA.recompense.Nom}</Text>
                                 <Text style={styles.eventResultatInfo}><Text style={styles.gras}>Récompense disponible</Text> dans votre profil</Text>
                             </>):
                             (<>
@@ -300,7 +295,7 @@ const EventPopup = ({event_DATA, setEventClique, config}) => {
     )
 }
 
-export default function EventPage({type, event_DATA,user_event_DATA}) {
+export default function EventPage({type, event_DATA, user_event_DATA}) {
 
     const ongletsMobile = [
         {id: "encours", label: "En cours", component: EnCours},

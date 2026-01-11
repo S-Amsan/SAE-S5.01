@@ -13,14 +13,15 @@ export default StyleSheet.create({
     cartesContainer : {
         flexDirection : "row",
         flexWrap : "wrap",
-        justifyContent : "space-between",
-        gap : 50,
+        justifyContent : "space-evenly",
+        rowGap : 30,
+        columnGap : 50,
         width : "90%",
         alignSelf : "center",
         marginBottom : 40,
     },
     carte : {
-        width: "20%",
+        width: "18%",
         borderRadius : 15,
         alignItems : "center",
         justifyContent : "center",
@@ -54,7 +55,6 @@ export default StyleSheet.create({
     },
     graphContainer : {
         width: "45%",
-        height : "45%",
         borderRadius : 15,
         justifyContent : "flex-end",
         boxShadow : "0px 1px 4px rgba(0, 0, 0, 0.25)",
