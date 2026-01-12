@@ -4,6 +4,7 @@ import com.example.backend.model.*;
 import com.example.backend.model.competition.Competition;
 import com.example.backend.model.document.Document;
 import com.example.backend.model.document.DocumentState;
+import com.example.backend.model.donation.Donation;
 import com.example.backend.model.http.req.*;
 import com.example.backend.model.partner.Partner;
 import java.util.List;

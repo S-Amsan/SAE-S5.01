@@ -1,6 +1,6 @@
 package com.example.backend.service;
 
-import com.example.backend.model.Donation;
+import com.example.backend.model.donation.Donation;
 import com.example.backend.model.http.req.DonationPublishRequest;
 import com.example.backend.model.http.res.FileUploadResponse;
 import com.example.backend.model.partner.Partner;

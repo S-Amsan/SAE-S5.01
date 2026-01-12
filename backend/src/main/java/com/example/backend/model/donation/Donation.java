@@ -1,4 +1,4 @@
-package com.example.backend.model;
+package com.example.backend.model.donation;
 
 import com.example.backend.model.partner.Partner;
 import jakarta.persistence.*;
