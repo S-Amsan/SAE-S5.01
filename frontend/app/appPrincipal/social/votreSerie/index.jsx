@@ -18,7 +18,7 @@ import Calendrier from "../_components/Calendrier";
 import PopUp from "../../../../components/PopUp";
 import {Ionicons} from "@expo/vector-icons";
 import {loadUser} from "../../../../services/RegisterStorage";
-import {fetchUsers} from "../../../../services/user.api";
+import {fetchUserById, fetchUsers, fetchUserStats} from "../../../../services/user.api";
 import {getFriends} from "../../../../services/friends.api";
 import DEFAULT_PICTURE from "../../../../assets/icones/default_picture.jpg";
 
@@ -152,6 +152,7 @@ export default function VotreSerie(){
     },[ongletActifId])
 
     const [user_DATA, setUserDATA] = useState(null);
+    const [user_Stats, setUserStats] = useState(null);
     const [derniereAction, setDerniereAction] = useState(null);
     const [flammes, setFlammes] = useState(null)
     const [user_amis_DATA, setUserAmisData] = React.useState(null);
@@ -166,15 +167,23 @@ export default function VotreSerie(){
 
 
     React.useEffect(() => {
+        if (!user_DATA) return
 
-        setFlammes(user_DATA?.stats?.flames || 0)
+        fetchUserStats(user_DATA?.id).then(setUserStats)
 
-        const lastActionDate = user_DATA?.stats?.lastActionDate;
+    }, [user_DATA?.id]);
+
+    React.useEffect(() => {
+        if (!user_Stats) return
+
+        setFlammes(user_Stats?.flames || 32)
+
+        const lastActionDate = user_Stats?.lastActionDate;
         if (!lastActionDate) return;
 
-        setDerniereAction(new Date(lastActionDate).getTime());
+        setDerniereAction(new Date().getTime());
 
-    }, [user_DATA?.stats]);
+    }, [user_Stats]);
 
 
     const periodeEnCours = (() => {

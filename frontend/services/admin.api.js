@@ -131,7 +131,8 @@ export async function publishCard(title, description, photoUrl, points, partnerI
         throw new Error(text || "Erreur publication carte");
     }
 
-    return await response.json();
+    const text = await response.text();
+    return text ? JSON.parse(text) : null;
 }
 
 export async function deleteCard(cardId) {
@@ -152,28 +153,41 @@ export async function addPartner(name, type, image) {
     const token = await AsyncStorage.getItem("@auth_token");
     const formData = new FormData();
 
-    formData.append("name", name);
-    formData.append("type", type);
-    if (Platform.OS === "web") {
-        formData.append("image", image); // File natif
+    formData.append("name", String(name ?? ""));
+    formData.append("type", String(type ?? ""));
+
+    if (!image) {
+        throw new Error("Image manquante");
+    }
+
+    if (image instanceof File) {
+        formData.append("image", image);
+    } else if (typeof image === "string") {
+        const res = await fetch(image);
+        if (!res.ok) {
+            throw new Error("Impossible de lire l'image sélectionnée");
+        }
+        const blob = await res.blob();
+        formData.append("image", blob, "photo.jpg");
     } else {
-        formData.append("image", {
-            uri: image.uri,
-            name: image.name ?? "document.jpg",
-            type: image.type ?? "image/jpeg",
-        });
+        throw new Error("Format image invalide");
     }
 
     const response = await fetch(`${API_URL}/admin/partner/add`, {
         method: "POST",
         headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
         },
-        body: formData
+        body: formData,
     });
 
-    const data = await response.json();
-    return data;
+    if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || `API error (${response.status})`);
+    }
+
+    const text = await response.text();
+    return text ? JSON.parse(text) : null;
 }
 
 export async function getAllPartners() {
@@ -231,53 +245,52 @@ export async function publishDonation(
     const token = await AsyncStorage.getItem("@auth_token");
     const formData = new FormData();
 
-    formData.append("slug", slug);
-    formData.append("title", title);
-    formData.append("fullTitle", fullTitle);
-    formData.append("description", description);
-    formData.append("fullDescription", fullDescription);
-    formData.append("points", points);
-    formData.append("partnerId", partnerId);
+    formData.append("slug", String(slug ?? ""));
+    formData.append("title", String(title ?? ""));
+    formData.append("fullTitle", String(fullTitle ?? ""));
+    formData.append("description", String(description ?? ""));
+    formData.append("fullDescription", String(fullDescription ?? ""));
+    formData.append("points", String(points ?? 0));
+    formData.append("partnerId", String(partnerId ?? ""));
 
-    if (Platform.OS === "web") {
-        formData.append("image", image);
-    } else {
-        formData.append("image", {
-            uri: image.uri,
-            name: image.name ?? "document.jpg",
-            type: image.type ?? "image/jpeg",
-        });
-    }
+    const appendImage = async (key, value) => {
+        if (!value) throw new Error(`Image manquante: ${key}`);
 
-    if (Platform.OS === "web") {
-        formData.append("cardImage", cardImage);
-    } else {
-        formData.append("cardImage", {
-            uri: cardImage.uri,
-            name: cardImage.name ?? "document.jpg",
-            type: cardImage.type ?? "image/jpeg",
-        });
-    }
+        if (value instanceof File) {
+            formData.append(key, value);
+            return;
+        }
 
-    if (Platform.OS === "web") {
-        formData.append("bannerImage", bannerImage);
-    } else {
-        formData.append("bannerImage", {
-            uri: bannerImage.uri,
-            name: bannerImage.name ?? "document.jpg",
-            type: bannerImage.type ?? "image/jpeg",
-        });
-    }
+        if (typeof value === "string") {
+            const res = await fetch(value);
+            if (!res.ok) throw new Error(`Impossible de lire l'image: ${key}`);
+            const blob = await res.blob();
+            formData.append(key, blob, `${key}.jpg`);
+            return;
+        }
+
+        throw new Error(`Format image invalide: ${key}`);
+    };
+
+    await appendImage("image", image);
+    await appendImage("cardImage", cardImage);
+    await appendImage("bannerImage", bannerImage);
 
     const response = await fetch(`${API_URL}/admin/donation`, {
         method: "POST",
         headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
         },
+        body: formData,
     });
 
-    const data = await response.json();
-    return data;
+    const text = await response.text();
+
+    if (!response.ok) {
+        throw new Error(text || `API error (${response.status})`);
+    }
+
+    return text ? JSON.parse(text) : null;
 }
 
 export async function publishCompetition(

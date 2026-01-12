@@ -76,8 +76,8 @@ const EnCours = ({config, event_DATA}) => {
             {/* Carte Info */}
             <View style={styles.contenuMilieuContainer}>
 
-                {event_user_DATA ? (
-                    <View style={styles.carteInfoContainer}>
+                {event_user_DATA ?
+                    (<View style={styles.carteInfoContainer}>
                         <Text style={styles.infoPointsText}>{pointsRecolte} pts / {pointsObjectif} pts</Text>
                         <View style={styles.barreDAvancementContainer}>
                             <View
@@ -93,14 +93,18 @@ const EnCours = ({config, event_DATA}) => {
                                 }}
                             />
                         </View>
-                        <Text style={styles.infoSousText}>Tu es à {(pourcentageDAvancement * 100).toFixed(2)}% de l&#39;objectif ! 🤤</Text>
-                    </View>
-                ) : (
-                    <View style={[styles.carteInfoContainer, {padding: 30, gap: 10}]}>
-                        <Text style={styles.infoPointsText}>Coût d’incription</Text>
-                        <Text style={styles.coutText}>{coutInscriptionEvent} points</Text>
-                    </View>
-                )
+                        {
+                            pourcentageDAvancement >= 1 ?
+                                <Text>Tu es qualifié ! 🔥</Text>
+                                :
+                                <Text>Tu es à {(pourcentageDAvancement * 100).toFixed(2)}% de l&#39;objectif !</Text>
+                        }
+                    </View>)
+                    :
+                    (<View style={[styles.carteInfoContainer, {padding: 30, gap: 10}]}>
+                            <Text style={styles.infoPointsText}>Coût d’incription</Text>
+                            <Text style={styles.coutText}>{coutInscriptionEvent} points</Text>
+                    </View>)
                 }
                 <View style={styles.boutonsContainer}>
                     {event_user_DATA ? (
@@ -116,7 +120,7 @@ const EnCours = ({config, event_DATA}) => {
                             style={styles.boutonsSecondaireText}>En savoir plus</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.boutonSecondaireContainer}><Text
-                            style={styles.boutonsSecondaireText}>Voir les récompences</Text>
+                            style={styles.boutonsSecondaireText}>Voir les récompenses</Text>
                         </TouchableOpacity>
                 </View>
             </View>
