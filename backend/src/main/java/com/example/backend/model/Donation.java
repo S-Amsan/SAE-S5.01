@@ -40,6 +40,10 @@ public class Donation {
     @Column(nullable = false)
     private String bannerImageUrl;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private DonationType type;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "partner_id", nullable = false)
     private Partner partner;
