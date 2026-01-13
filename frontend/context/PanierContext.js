@@ -5,6 +5,8 @@ const PanierContext = createContext(null);
 
 const PANIER_KEY = "ecocecption_panier_articles";
 const FAVORIS_KEY = "ecocecption_favoris";
+const ACHATS_KEY = "ecocecption_achats";
+
 
 const genererCodeFictif = () => {
     const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -79,6 +81,34 @@ export function PanierProvider({ children }) {
 
         sauvegarderFavoris();
     }, [favoris]);
+
+    useEffect(() => {
+        const chargerAchats = async () => {
+            try {
+                const raw = await AsyncStorage.getItem(ACHATS_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (Array.isArray(parsed)) setAchats(parsed);
+                }
+            } catch (e) {
+                console.log("Erreur chargement achats:", e);
+            }
+        };
+
+        chargerAchats();
+    }, []);
+
+    useEffect(() => {
+        const sauvegarderAchats = async () => {
+            try {
+                await AsyncStorage.setItem(ACHATS_KEY, JSON.stringify(achats));
+            } catch (e) {
+                console.log("Erreur sauvegarde achats:", e);
+            }
+        };
+
+        sauvegarderAchats();
+    }, [achats]);
 
     const nombreProduits = useMemo(() => {
         return articles.reduce((acc, it) => acc + (Number(it.quantity) || 1), 0);
