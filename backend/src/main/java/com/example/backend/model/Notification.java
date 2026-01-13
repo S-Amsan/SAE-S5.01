@@ -33,7 +33,7 @@ public class Notification {
     private LocalDateTime receivedAt;
 
     @Column(nullable = false)
-    private boolean read = false;
+    private boolean isRead = false;
 
     public Notification() {}
 }

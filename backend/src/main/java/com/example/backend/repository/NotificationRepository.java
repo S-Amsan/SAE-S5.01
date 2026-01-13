@@ -13,6 +13,4 @@ public interface NotificationRepository
     List<Notification> findByUserId(Long userId);
 
     List<Notification> findAllByUserOrderByReceivedAtDesc(User user);
-
-    long countByUserIdAndStatus(Long userId, String status);
 }
