@@ -1,6 +1,9 @@
-import React, { createContext, useContext, useMemo, useCallback, useState } from "react";
+import React, { createContext, useContext, useMemo, useCallback, useState, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const PanierContext = createContext(null);
+
+const PANIER_KEY = "ecocecption_panier_articles";
 
 const genererCodeFictif = () => {
     const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -19,6 +22,35 @@ export function PanierProvider({ children }) {
     const [favoris, setFavoris] = useState([]);
 
     const [afficherTitreAjoute, setAfficherTitreAjoute] = useState(false);
+
+    useEffect(() => {
+        const chargerPanier = async () => {
+            try {
+                const raw = await AsyncStorage.getItem(PANIER_KEY);
+                if (raw) {
+                    const parsed = JSON.parse(raw);
+                    if (Array.isArray(parsed)) setArticles(parsed);
+                }
+            } catch (e) {
+                console.log("Erreur chargement panier:", e);
+            }
+        };
+
+        chargerPanier();
+    }, []);
+
+    // Sauvegarder le panier à chaque changement
+    useEffect(() => {
+        const sauvegarderPanier = async () => {
+            try {
+                await AsyncStorage.setItem(PANIER_KEY, JSON.stringify(articles));
+            } catch (e) {
+                console.log("Erreur sauvegarde panier:", e);
+            }
+        };
+
+        sauvegarderPanier();
+    }, [articles]);
 
     const nombreProduits = useMemo(() => {
         return articles.reduce((acc, it) => acc + (Number(it.quantity) || 1), 0);
@@ -78,9 +110,15 @@ export function PanierProvider({ children }) {
         });
     }, []);
 
-    const viderPanier = useCallback(() => {
+    const viderPanier = useCallback(async () => {
         setArticles([]);
         setAfficherTitreAjoute(false);
+
+        try {
+            await AsyncStorage.removeItem(PANIER_KEY);
+        } catch (e) {
+            console.log("Erreur suppression panier:", e);
+        }
     }, []);
 
     const passerCommande = useCallback(() => {
