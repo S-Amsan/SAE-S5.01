@@ -6,6 +6,7 @@ import Br from "../../_component/Br";
 import PopUp from "../../../../../components/PopUp";
 import Toast from "react-native-toast-message";
 import { tempsEcoule } from "../../../../../utils/temps";
+import {invalidateDocument, validateDocument} from "../../../../../services/admin.api";
 
 const STATE_LABELS = {
     WAITING: "En attente",
@@ -82,8 +83,6 @@ const JustificatifPreview = ({ justificatif }) => {
     );
 };
 
-const handleAccepter = async (id) => true;
-const handleRefuser = async (id) => true;
 
 export default function Justificatifs({ carte }) {
     const [recherche, setRecherche] = useState("");
@@ -153,14 +152,16 @@ export default function Justificatifs({ carte }) {
         }
 
         try {
-            // await acceptJustificatif(justif.id); // TODO
-            await handleAccepter(justif.id);
+            validateDocument(justif.id).then(()=> {
+                carte.reloadData("justificatifs");
 
-            Toast.show({
-                type: "success",
-                text1: "Justificatif accepté",
-                text2: `Le justificatif de ${justif.user.name} a été accepté avec succès!`,
-            });
+                Toast.show({
+                    type: "success",
+                    text1: "Justificatif accepté",
+                    text2: `Le justificatif de ${justif.user.name} a été accepté avec succès!`,
+                });
+            })
+
         } catch (e) {
             Toast.show({
                 type: "error",
@@ -183,14 +184,16 @@ export default function Justificatifs({ carte }) {
         }
 
         try {
-            // await rejectJustificatif(justif.id); // TODO
-            await handleRefuser(justif.id);
+            invalidateDocument(justif.id).then(()=> {
+                carte.reloadData("justificatifs");
 
-            Toast.show({
-                type: "success",
-                text1: "Justificatif refusé",
-                text2: `Le justificatif ${justif.user.name} a été refusé avec succès!`,
-            });
+                Toast.show({
+                    type: "success",
+                    text1: "Justificatif refusé",
+                    text2: `Le justificatif de ${justif.user.name} a été refusé avec succès!`,
+                });
+            })
+
         } catch (e) {
             Toast.show({
                 type: "error",
@@ -200,9 +203,14 @@ export default function Justificatifs({ carte }) {
         }
     };
 
+    const infoSupplementaire_DATA = carte?.data?.filter((c) => {
+        return STATE_LABELS[c?.state ?? ""] === STATE_LABELS.WAITING;
+    }).length
+
     return (
         <Carte
             carte={carte}
+            infoSupplementaire_DATA = {infoSupplementaire_DATA}
             recherche={recherche}
             setRecherche={setRecherche}
             filtres={filtres}
@@ -216,6 +224,9 @@ export default function Justificatifs({ carte }) {
 
             {dataFiltree.map((c) => {
                 const stateLabel = getStateLabel(c?.state);
+                const accepte = stateLabel === STATE_LABELS.VALIDATED;
+                const refuse = stateLabel === STATE_LABELS.REJECTED;
+
 
                 return (
                     <View key={c.id} style={styles.item}>
@@ -272,19 +283,24 @@ export default function Justificatifs({ carte }) {
                                 <Text style={[styles.btnText, styles.btnLightText]}>Voir</Text>
                             </TouchableOpacity>
 
-                            <TouchableOpacity
+                            {!accepte &&
+                                <TouchableOpacity
                                 style={[styles.btn, styles.btnAccept]}
                                 onPress={() => handleAccepter(c)}
-                            >
-                                <Text style={styles.btnText}>Accepter</Text>
-                            </TouchableOpacity>
+                                >
+                                    <Text style={styles.btnText}>Accepter</Text>
+                                </TouchableOpacity>
+                            }
 
-                            <TouchableOpacity
+                            {!refuse &&
+                                <TouchableOpacity
                                 style={[styles.btn, styles.btnReject]}
                                 onPress={() => handleRefuser(c)}
-                            >
-                                <Text style={styles.btnText}>Refuser</Text>
-                            </TouchableOpacity>
+                                >
+                                    <Text style={styles.btnText}>Refuser</Text>
+                                </TouchableOpacity>
+                            }
+
                         </View>
                     </View>
                 );

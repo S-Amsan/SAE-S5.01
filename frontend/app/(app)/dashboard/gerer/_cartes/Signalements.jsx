@@ -5,7 +5,7 @@ import Carte from "../../_component/Carte";
 import Br from "../../_component/Br";
 import PopUp from "../../../../../components/PopUp";
 import {tempsEcoule} from "../../../../../utils/temps";
-import {banUser, invalidatePost} from "../../../../../services/admin.api";
+import {banUser, checkReport, invalidatePost} from "../../../../../services/admin.api";
 import Toast from "react-native-toast-message";
 
 const getTypeObjet = (post) => {
@@ -118,23 +118,42 @@ export default function Signalements ({carte}) {
         setSelected(valeurDefaut)
     }
 
-    const handleBannir = (user) => {
-        if (!user.banned){
-            banUser(user.id).then(() => {
-                    carte.reloadData("utilisateurs")
+    const handleBannir = (signalement) => {
+        if (!signalement.user.banned){
+            banUser(signalement.user.id)
+                .then(() => checkReport(signalement.id))
+                .then(() => {
+                    carte.reloadData(["utilisateurs", "signalements"]);
                     Toast.show({
                         type: "success",
                         text1: "Confirmation de ban",
-                        text2: `@${user.name} a été ban avec succès!`
-                    })
-                }
-            )
+                        text2: `@${signalement.user.name} a été ban avec succès!`,
+                    });
+                })
+                .catch((err) => {
+                    Toast.show({
+                        type: "error",
+                        text1: "Erreur",
+                        text2: err?.message ?? "Erreur API",
+                    });
+                });
         }else{
-            Toast.show({
-                type: "info",
-                text1: "Utilisateur déjà banni",
-                text2: `@${user.name} est déjà banni(e).`
-            });
+            checkReport(signalement.id)
+                .then(() => {
+                    carte.reloadData(["utilisateurs", "signalements"]);
+                    Toast.show({
+                        type: "info",
+                        text1: "Utilisateur déjà banni",
+                        text2: `@${signalement.user.name} est déjà banni(e).`
+                    });
+                })
+                .catch((err) => {
+                    Toast.show({
+                        type: "error",
+                        text1: "Erreur",
+                        text2: err?.message ?? "Erreur API",
+                    });
+                });
         }
     }
 
@@ -156,8 +175,21 @@ export default function Signalements ({carte}) {
 
     }
 
+    const infoSupplementaire_DATA = carte?.data?.filter((c) => {
+        return !c.checked
+    }).length
+
     return (
-        <Carte carte={carte} recherche={recherche} setRecherche={setRecherche} filtres={filtres} selected={selected} setSelected={setSelected} styleScrollView={{gap : 10}}>
+        <Carte
+            carte={carte}
+            infoSupplementaire_DATA={infoSupplementaire_DATA}
+            recherche={recherche}
+            setRecherche={setRecherche}
+            filtres={filtres}
+            selected={selected}
+            setSelected={setSelected}
+            styleScrollView={{gap : 10}}
+        >
             <PopUp visible={postToPreview} setVisible={() => setPostToPreview(null)}>
                 <PostPreview report={postToPreview} />
             </PopUp>
@@ -197,7 +229,7 @@ export default function Signalements ({carte}) {
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={[styles.signalementBouton, styles.banBouton]}
-                                onPress={() => handleBannir(c.user)}
+                                onPress={() => handleBannir(c)}
                             >
                                 <Text style={[styles.signalementBoutonText, styles.banBoutonText]}>Bannir l&#39;utilisateur</Text>
                             </TouchableOpacity>

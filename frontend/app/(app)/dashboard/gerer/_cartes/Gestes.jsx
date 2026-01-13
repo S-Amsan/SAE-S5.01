@@ -6,15 +6,9 @@ import {formatNombreEspace} from "../../../../../utils/format";
 import Toast from "react-native-toast-message";
 
 import {Picker} from "@react-native-picker/picker";
-import {publishCard} from "../../../../../services/admin.api";
+import {deleteCard, publishCard} from "../../../../../services/admin.api";
 
-const handleDelete = (geste) => {
-    Toast.show({
-        type: "success",
-        text1: "Confirmation de suppression",
-        text2: `Le geste à été supprimer avec succès!`,
-    });
-};
+
 
 export default function Gestes({carte, allData}) {
     // Ajouter //
@@ -136,6 +130,37 @@ export default function Gestes({carte, allData}) {
 
         resetForm();
         setAjouter(false);
+    };
+
+    const handleDelete = (geste) => {
+        Toast.show({
+            type: "success",
+            text1: "Confirmation de suppression",
+            text2: `Le geste à été supprimer avec succès!`,
+        });
+
+        console.log(geste)
+
+        deleteCard(geste.id)
+            .then(() => {
+                carte.reloadData("gestes");
+                Toast.show({
+                    type: "success",
+                    text1: "Confirmation de suppression",
+                    text2: "Le geste à été supprimer avec succès!",
+                });
+
+                resetForm();
+                setAjouter(false);
+            })
+            .catch((err) => {
+                console.error(err);
+                Toast.show({
+                    type: "error",
+                    text1: "Erreur",
+                    text2: err.message,
+                });
+            });
     };
 
     return (

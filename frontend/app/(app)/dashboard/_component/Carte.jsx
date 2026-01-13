@@ -5,8 +5,21 @@ import {Ionicons} from "@expo/vector-icons";
 import Filtres from "./Filtres";
 import Br from "./Br";
 
-export default function Carte ({carte,recherche, setRecherche,filtres, selected, setSelected,ajouter = false, setAjouter = () => {}, styleScrollView = {}, header = null, footer = null, children}) {
-    const infoSupplementaire_DATA = carte.infoSupplementaire && carte?.data?.filter(c => !c.checked)?.length || 0;
+export default function Carte ({
+       carte,
+       infoSupplementaire_DATA = 0,
+       recherche,
+       setRecherche,
+       filtres,
+       selected,
+       setSelected,
+       ajouter = false,
+       setAjouter = () => {},
+       styleScrollView = {},
+       header = null,
+       footer = null,
+       children
+}) {
 
     return (
         <View style={styles.carte}>
@@ -79,17 +92,18 @@ export default function Carte ({carte,recherche, setRecherche,filtres, selected,
                     </View>
                 </>
                 :
-                <ScrollView
-                    showsVerticalScrollIndicator
-                    contentContainerStyle={[{
-                        paddingBottom: 20,
-                        paddingTop: 15,
-                        paddingHorizontal: 5
-                    }, styleScrollView]}
-                >
-                    {children}
-                </ScrollView>
-
+                <View style={styles.carteContenu}>
+                    <ScrollView
+                        showsVerticalScrollIndicator
+                        contentContainerStyle={[{
+                            paddingBottom: 20,
+                            paddingTop: 15,
+                            paddingHorizontal: 5
+                        }, styleScrollView]}
+                    >
+                        {children}
+                    </ScrollView>
+                </View>
             }
             {
                 ajouter && footer &&

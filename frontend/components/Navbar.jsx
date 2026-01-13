@@ -191,7 +191,7 @@ export default function Navbar() {
                                                     <TouchableOpacity
                                                         key={t.id}
                                                         style={styles.tabsDashbord}
-                                                        onPress={() => !isActive && router.push(`/(app)/${tab.id}`)}
+                                                        onPress={() => !isActive && router.push(`/dashboard/${t.id}`)}
                                                     >
                                                         <Image
                                                             source={IconComponent}

@@ -14,6 +14,7 @@ import {useRouter} from "expo-router";
 import { fetchAllDocuments } from "../../../../../services/documents.api";
 import { useEffect } from "react";
 import {fetchAllCards} from "../../../../../services/cards.api";
+import {loadUser} from "../../../../../services/RegisterStorage";
 
 
 export default function Gestes({ onAssociate }) {
@@ -32,30 +33,36 @@ export default function Gestes({ onAssociate }) {
         }));
     }
 
-    useEffect(() => {
-        const loadData = async () => {
-            try {
-                const [cards, documents] = await Promise.all([
-                    fetchAllCards(),
-                    fetchAllDocuments(),
-                ]);
-
+    const loadData = async () => {
+        try {
+            Promise.all([
+                loadUser(),
+                fetchAllCards(),
+                fetchAllDocuments(),
+            ]).then(([user,cards, documents]) => {
+                console.log("USER:", user)
                 console.log("CARDS:", cards);
                 console.log("DOCUMENTS:", documents);
 
+                documents = documents.filter((d) => d.user.id === user.id);
 
                 const merged = mergeCardsWithDocuments(cards, documents);
 
                 setPartenaires(merged);
-            } catch (e) {
-                console.error("LOAD DATA ERROR", e);
-            } finally {
-                setLoading(false);
-            }
-        };
+            });
 
+
+        } catch (e) {
+            console.error("LOAD DATA ERROR", e);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         loadData();
     }, []);
+
 
 
     const [hoveredId, setHoveredId] = useState(null);

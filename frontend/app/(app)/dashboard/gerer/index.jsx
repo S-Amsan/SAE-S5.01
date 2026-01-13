@@ -32,20 +32,7 @@ export default function Gerer() {
     const [utilisateurs_DATA, setUtilisateursData] = useState(null);
     const [gestes_DATA, setGestesData] = useState(null);
     const [justificatifs_DATA, setJustificatifsData] = useState(null);
-    const [partenaires_DATA, setPartenairesData] = useState([
-        {id : 2, image_url : "https://www.recharge.fr/_next/image?url=https%3A%2F%2Fstatic.rapido.com%2Fcms%2Fsites%2F24%2F2024%2F07%2F17093541%2FCard-2.png&w=288&q=100", name : "Fnac", type : "SPONSOR"},
-        {id : 3, image_url : "https://s3-eu-west-1.amazonaws.com/tpd/logos/589998870000ff00059c3ce1/0x0.png", name : "Uber Eats", type : "SPONSOR"},
-        {id : 4, image_url : "https://grapheine.com/wp-content/uploads/2016/09/new-logo-deliveroo-2560x1575.webp", name : "Deliveroo", type : "SPONSOR"},
-        {id : 5, image_url : "https://infodon.fr/app/uploads/2019/09/400x400_-croix-rouge-logo.jpg", name : "Croix-Rouge", type : "ASSOCIATION"},
-        {id : 6, image_url : "https://livinglakescanada.ca/wp-content/uploads/2024/02/wwf-3.png", name : "WWF", type : "ASSOCIATION"},
-        {id : 7, image_url : "https://www.becharge.fr/fr-fr/Acheter/cartes-cadeaux-Amazonfr-3-255?srsltid=AfmBOor-HgAB9pi5fKuvIUzttxGM5Gqh443Z-s51TsQrrmFcbpVtRgFJ", name : "Amazon", type : "SPONSOR"},
-        {id : 8, image_url : "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/960px-Steam_icon_logo.svg.png", name : "Steam", type : "SPONSOR"},
-        {id : 9, image_url : "https://www.lundimatin.fr/wp-content/uploads/2023/03/Frame-1716.png", name : "Zalando", type : "SPONSOR"},
-        {id : 10, image_url : "https://www.pagesjaunes.fr/media/agc/29/8c/31/00/00/92/62/13/f7/48/671b298c310000926213f748/671b298c310000926213f749.jpg", name : "Decathlon", type : "SPONSOR"},
-        {id : 11, image_url : "https://static-cms.carrefour.fr/sites/default/files/2023-02/HEADER-edito-desk-575x424-restos-du-coeur-s09-2023_0%20%282%29%20%281%29%20%281%29.jpg", name : "Restos du Coeur", type : "ASSOCIATION"},
-        {id : 12, image_url : "https://infodon.fr/app/uploads/2019/09/Logo-medecins-sans-frontieres-MSF-400x400-1.jpg", name : "Médecins Sans Frontières", type : "ASSOCIATION"},
-    ]);
-
+    const [partenaires_DATA, setPartenairesData] = useState(null);
     const [recompenses_DATA, setRecompensesData] = useState(null);
     const [evenements_DATA, setEvenementsData] = useState(null);
     const [concours_DATA, setConcoursData] = useState(null);

@@ -180,8 +180,12 @@ export default function Recompenses({carte, allData}) {
     const [partnerId, setPartnerId] = useState("");
     const [categorie, setCategorie] = useState("Dons");
     const [points, setPoints] = useState("");
+
     const [slug, setSlug] = useState("");
     const [title, setTitle] = useState("");
+
+
+
     const [fullTitle, setFullTitle] = useState("");
     const [description, setDescription] = useState("");
     const [fullDescription, setFullDescription] = useState("");
@@ -387,7 +391,7 @@ export default function Recompenses({carte, allData}) {
 
                                     <TouchableOpacity
                                         style={[styles.bouton, styles.boutonRouge, {marginTop: 6}]}
-                                        onPress={() => {handleDelete(c)}}
+                                        onPress={() => {null}}
                                     >
                                         <Text style={styles.boutonText}>Supprimer</Text>
                                     </TouchableOpacity>

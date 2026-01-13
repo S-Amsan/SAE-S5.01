@@ -20,12 +20,12 @@ import {getCurrentRank} from "../../../../constants/rank";
 import {formatNombreEspace} from "../../../../utils/format";
 import {useLocalSearchParams, useRouter} from "expo-router";
 import { fetchSuccess } from "../../../../services/competitions.api";
-import { getFriends } from "../../../../services/friends.api";
+import {getFriends, sendFriendRequestTo} from "../../../../services/friends.api";
 import OverlaySombre from "../../../../components/OverlaySombre";
 import {loadUser} from "../../../../services/RegisterStorage";
 import {
-    fetchActions,
-    fetchSuccessForUser, fetchUserActions,
+    fetchSuccessForUser,
+    fetchUserActions,
     fetchUserById,
     fetchUsers,
     fetchUserStats
@@ -54,7 +54,7 @@ const ProfilSection = ({user_DATA, user_amis_DATA, userActuel, router}) => {
                     <Text style={styles.userNom}>@{user_DATA?.pseudo || "USER_PSEUDO"}</Text>
                     {isWeb &&
                         <View style={styles.userAmisContainer}>
-                            <Text style={styles.userAmisNb}>{user_amis_DATA || 0}</Text>
+                            <Text style={styles.userAmisNb}>{user_amis_DATA?.length || 0}</Text>
                             <Text style={styles.userAmisText}>Amis</Text>
                         </View>
                     }
@@ -64,7 +64,7 @@ const ProfilSection = ({user_DATA, user_amis_DATA, userActuel, router}) => {
 
             {!isWeb &&
                 <View style={styles.userAmisContainer}>
-                    <Text style={styles.userAmisNb}>{user_amis_DATA || 0}</Text>
+                    <Text style={styles.userAmisNb}>{user_amis_DATA?.length || 0}</Text>
                     <Text style={styles.userAmisText}>Amis</Text>
                 </View>
             }
@@ -77,7 +77,7 @@ const ProfilSection = ({user_DATA, user_amis_DATA, userActuel, router}) => {
                             <Text style={styles.boutonAmisText}>Modifier</Text>
                         </TouchableOpacity>
                         :
-                        <TouchableOpacity style={styles.boutonAmisContainer}>
+                        <TouchableOpacity style={styles.boutonAmisContainer} onPress={() => sendFriendRequestTo(user_DATA.id)}>
                             <Ionicons name="add" size={24} color="#04D992" />
                             <Text style={styles.boutonAmisText}>Amis</Text>
                         </TouchableOpacity>
@@ -289,6 +289,7 @@ export default function Profil(){
         }else{
             fetchUserById(id).then(setUserDATA)
         }
+
         fetchUsers().then(setUsersDATA);
     }, []);
 
@@ -302,7 +303,7 @@ export default function Profil(){
     useEffect(()=> {
         if(!user_DATA?.id) return;
 
-        getFriends().then((friends) => setUserAmisData(friends.length));
+        getFriends().then((friends) => setUserAmisData(friends));
         fetchSuccess().then(setSuccesData);
         fetchSuccessForUser(user_DATA?.id).then(setUserSuccesData)
         fetchUserActions(user_DATA?.id).then(setuserActiviteDATA)
@@ -363,7 +364,7 @@ export default function Profil(){
         setUserStatistiqueDATA(
             {
                 Action_eco : user_DATA?.stats?.ecoActions ?? 0,
-                Votes_effectues : 0, // TODO changer
+                Votes_effectues : user_DATA?.stats?.votes ?? 0,
                 Objets_Recup : user_DATA?.stats?.recoveredObjects ?? 0
             }
         )

@@ -2,19 +2,14 @@ import React from "react";
 import { BarChart } from "react-native-gifted-charts";
 import {useScreenDimensions} from "./chartConfig";
 
-export default function RecompensesParCategorieChart() {
-    const barData = [
-        { value: 950, label: 'CARTES CADEAUX', frontColor: '#36a2eb' },
-        { value: 420, label: 'BONS DE RÉDUCTION', frontColor: '#36a2eb' },
-        { value: 210, label: 'DONS AUX ASSOCIATIONS', frontColor: '#36a2eb' },
-    ];
+export default function RecompensesParCategorieChart({data}) {
 
     const width = useScreenDimensions();
 
     return (
         <BarChart
             width={width-70}
-            data={barData}
+            data={data}
             barWidth={60}
             spacing={100}
             roundedTop={false} // Désactiver l'arrondi
