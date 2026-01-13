@@ -53,6 +53,28 @@ export async function fetchUserById(id) {
     return await res.json();
 }
 
+export async function updateMyAccount(pseudo, email, name, password, phone, age) {
+    const token = await AsyncStorage.getItem('@auth_token');
+    const formData = new FormData();
+
+    formData.append('pseudo', pseudo);
+    formData.append('email', email);
+    formData.append('name', name);
+    formData.append('password', password);
+    formData.append('phone', phone);
+    formData.append('age', age);
+
+    const res = await fetch(`${API_URL}/user/update`, {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        body: formData
+    });
+
+    return await res.text();
+}
+
 export async function deleteMyAccount() {
     const token = await AsyncStorage.getItem('@auth_token');
     const res = await fetch(`${API_URL}/user/delete`, {
