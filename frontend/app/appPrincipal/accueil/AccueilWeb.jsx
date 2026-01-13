@@ -5,7 +5,7 @@ import {
     ActivityIndicator,
     Pressable, Text, TouchableOpacity,Image,
 } from "react-native";
-
+import { useMemo } from "react";
 import Header from "../../../components/Header";
 import Navbar from "../../../components/Navbar";
 
@@ -34,9 +34,18 @@ export default function AccueilWeb() {
 
     const [recherche, setRecherche] = useState("");
     const [filtres, setFiltres] = useState([
-        { id: "tri", options: ["Récent", "Ancien"], select: "Récent" },
-        { id: "lieu", options: ["France", "Autre"], select: "France" },
+        {
+            id: "type",
+            options: ["Tous", "Recycler", "Objet", "Récupérer"],
+            select: "Tous",
+        },
+        {
+            id: "tri",
+            options: ["Récent", "Ancien"],
+            select: "Récent",
+        },
     ]);
+
 
     const [showObjectModal, setShowObjectModal] = useState(false);
 
@@ -96,20 +105,91 @@ export default function AccueilWeb() {
     /* ===========================
        FEED UNIFIÉ
     =========================== */
-    const feed = [
-        ...posts.map(post => ({
-            type: "post",
-            id: `post-${post.id}`,
-            date: new Date(post.createdAt),
-            data: post,
-        })),
-        ...objects.map(object => ({
-            type: "object",
-            id: `object-${object.id}`,
-            date: new Date(object.creationDate),
-            data: object,
-        })),
-    ].sort((a, b) => b.date - a.date);
+
+    const TYPE_MAP = {
+        "Recycler": "Post",
+        "Objet": "PostObjet",
+        "Récupérer": "PostRecupObjet",
+    };
+
+
+    const filteredFeed = useMemo(() => {
+        const typeLabel = filtres.find(f => f.id === "type")?.select;
+        const tri = filtres.find(f => f.id === "tri")?.select;
+
+        const selectedSubType = TYPE_MAP[typeLabel];
+
+        const feed = [
+
+            ...posts.map(post => {
+                const isRecup = post.object_id !== null && post.object_id !== undefined;
+
+                return {
+                    type: "post",
+                    subType: isRecup ? "PostRecupObjet" : "Post",
+                    date: new Date(post.createdAt),
+                    data: post,
+                };
+            }),
+
+
+            ...objects.map(object => ({
+                type: "object",
+                subType: "PostObjet",
+                date: new Date(object.creationDate),
+                data: object,
+            })),
+        ];
+
+
+        return feed
+
+            .filter(item => {
+                if (!typeLabel || typeLabel === "Tous") return true;
+
+                if (typeLabel === "Recycler") {
+                    return item.type === "post" && item.subType === "Post";
+                }
+
+                if (typeLabel === "Récupérer") {
+                    return item.type === "post" && item.subType === "PostRecupObjet";
+                }
+
+                if (typeLabel === "Objet") {
+                    return item.type === "object";
+                }
+
+                return true;
+            })
+
+
+
+            .filter(item => {
+                if (!recherche) return true;
+
+                const q = recherche.toLowerCase();
+
+
+                if (item.subType === "PostObjet") {
+                    return item.data.title?.toLowerCase().includes(q);
+                }
+
+
+                if (item.subType === "PostRecupObjet") {
+                    return item.data.description?.toLowerCase().includes(q);
+                }
+
+                return item.data.description?.toLowerCase().includes(q);
+            })
+
+            // ===== TRI =====
+            .sort((a, b) => {
+                if (tri === "Ancien") {
+                    return a.date - b.date;
+                }
+                return b.date - a.date;
+            });
+    }, [posts, objects, recherche, filtres]);
 
     return (
         <View style={{ flex: 1, flexDirection: "row", backgroundColor: "#f5f5f5" }}>
@@ -134,12 +214,14 @@ export default function AccueilWeb() {
                         {loading ? (
                             <ActivityIndicator size="large" color="#1DDE9A" />
                         ) : (
-                            feed.map(item => {
-                                switch (item.type) {
-                                    case "post":
+                            filteredFeed.map(item => {
+
+                                switch (item.subType) {
+                                    case "Post":
+                                    case "PostRecupObjet":
                                         return (
                                             <PostCard
-                                                key={item.id}
+                                                key={`${item.type}-${item.data.id}`}
                                                 post={item.data}
                                                 styles={style}
                                                 onSignaler={() => {
@@ -149,12 +231,12 @@ export default function AccueilWeb() {
                                             />
                                         );
 
-                                    case "object":
+                                    case "PostObjet":
                                         return (
                                             <ObjectCard
-                                                key={item.id}
+                                                key={`${item.type}-${item.data.id}`}
                                                 item={item.data}
-                                                buttonLabel={"Voir l'objet"}
+                                                buttonLabel="Voir l'objet"
                                                 onSeeObjet={(objet) => {
                                                     setSelectedObjet(objet);
                                                     setShowObjectModal(true);
@@ -165,6 +247,7 @@ export default function AccueilWeb() {
                                     default:
                                         return null;
                                 }
+
                             })
                         )}
                     </View>
