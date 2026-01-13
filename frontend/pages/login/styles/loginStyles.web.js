@@ -1,4 +1,4 @@
-import { StyleSheet, Dimensions } from "react-native";
+import {StyleSheet, Dimensions, Platform} from "react-native";
 
 const { width, height } = Dimensions.get("window");
 
@@ -69,7 +69,11 @@ export default StyleSheet.create({
         padding: 18,
         fontSize: 16,
         color: "#333",
-        width: "100%"
+        width: "100%",
+        ...(Platform.OS === "web" && {
+            outlineStyle: "none",
+            outlineWidth: 0,
+        }),
     },
 
     passwordContainer: {
@@ -85,7 +89,11 @@ export default StyleSheet.create({
         flex: 1,
         padding: 18,
         fontSize: 16,
-        color: "#333"
+        color: "#333",
+        ...(Platform.OS === "web" && {
+            outlineStyle: "none",
+            outlineWidth: 0,
+        }),
     },
 
     eyeIcon: { padding: 18 },
