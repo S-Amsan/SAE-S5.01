@@ -40,6 +40,9 @@ public class PostService {
     @Autowired
     private ReportRepository reportRepository;
 
+    @Autowired
+    private NotificationService notificationService;
+
     public Post publish(PostPublishRequest request, User user)
         throws IOException {
         var response = fileUploadService.upload(request.getImage());
@@ -84,6 +87,10 @@ public class PostService {
 
             userService.onPostReaction(user);
             actionService.onPostReaction(post);
+
+            if (type == ReactionType.LIKE) {
+                notificationService.onPostLike(post, user);
+            }
         }
     }
 

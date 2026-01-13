@@ -1,6 +1,7 @@
 package com.example.backend.service;
 
 import com.example.backend.model.Notification;
+import com.example.backend.model.Post;
 import com.example.backend.model.User;
 import com.example.backend.repository.NotificationRepository;
 import java.util.List;
@@ -15,5 +16,18 @@ public class NotificationService {
 
     public List<Notification> getNotificationsForUser(User user) {
         return notificationRepository.findAllByUserOrderByReceivedAtDesc(user);
+    }
+
+    void onPostLike(Post post, User user) {
+        Notification notification = new Notification();
+
+        notification.setUser(post.getUser());
+        notification.setTitle("Post liké");
+        notification.setDescription(
+            "Ton post a été liké par " + user.getPseudo()
+        );
+        notification.setImageUrl(post.getImageUrl());
+
+        notificationRepository.save(notification);
     }
 }

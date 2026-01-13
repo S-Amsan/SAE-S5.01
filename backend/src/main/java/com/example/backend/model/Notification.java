@@ -3,6 +3,7 @@ package com.example.backend.model;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Data
 @Entity
@@ -24,17 +25,15 @@ public class Notification {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    @Column(length = 255)
+    @Column(nullable = true)
     private String imageUrl;
 
+    @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime receivedAt;
 
-    @Column(nullable = false, length = 50)
-    private String status;
-
-    @Column(nullable = false, length = 50)
-    private String type;
+    @Column(nullable = false)
+    private boolean read = false;
 
     public Notification() {}
 }
