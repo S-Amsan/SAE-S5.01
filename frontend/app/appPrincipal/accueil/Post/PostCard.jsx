@@ -178,7 +178,7 @@ export default function PostCard({ post, onSignaler }) {
             onSignaler?.(post.id);
         } else {
             router.push({
-                pathname: "/appPrincipal/accueil/PostAction/signalement",
+                pathname: "/appPrincipal/accueil/Post/signalement",
                 params: { postId: post.id },
             });
         }

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import Header from "../../../../../components/Header";
 import { isWeb } from "../../../../../utils/platform";
 
@@ -9,12 +9,16 @@ import SignalementSuccess from "./_components/SignalementSuccess";
 
 export default function Index() {
     const router = useRouter();
+    const { postId } = useLocalSearchParams();
     const [page, setPage] = useState("reasons");
-    const [reason, setReason] = useState(null);
-
 
     if (isWeb) {
         router.back();
+        return null;
+    }
+
+    if (!postId) {
+        console.error("postId manquant (route mobile)");
         return null;
     }
 
@@ -34,19 +38,13 @@ export default function Index() {
 
             {page === "reasons" && (
                 <SignalementReasons
-                    onSelect={async (selectedReason) => {
-                        setReason(selectedReason);
-                        // TODO: Enregister la raison du signalement avec id de PostAction
-                        setPage("success");
-                    }}
+                    postId={postId}
+                    onSuccess={() => setPage("success")}
                 />
             )}
 
-
             {page === "success" && (
-                <SignalementSuccess
-                    onDone={() => router.back()}
-                />
+                <SignalementSuccess onDone={() => router.back()} />
             )}
         </View>
     );

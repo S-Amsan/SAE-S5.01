@@ -7,7 +7,12 @@ import org.hibernate.annotations.CreationTimestamp;
 
 @Data
 @Entity
-@Table(name = "reports")
+@Table(
+        name = "reports",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"post_id", "user_id"})
+        }
+)
 public class Report {
 
     @Id

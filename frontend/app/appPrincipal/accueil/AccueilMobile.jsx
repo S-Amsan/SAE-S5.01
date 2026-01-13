@@ -175,10 +175,10 @@ export default function AccueilMobile() {
             </Animated.View>
 
             {/* CONTENT */}
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1}}>
                 <Header user={user} boutonNotification userProfil userDetails />
 
-                <View style={{ flex: 1, padding: 10 }}>
+                <View style={{ flex: 1, padding: 10, backgroundColor:"#fff"  }}>
                     {loading ? (
                         <ActivityIndicator size="large" color="#1DDE9A" />
                     ) : (

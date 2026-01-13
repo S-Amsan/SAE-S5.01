@@ -6,7 +6,12 @@ import NotificationDrawer from "./appPrincipal/notifications/NotificationDrawer"
 export default function RootLayout() {
     return (
         <NotificationProvider>
-            <Stack screenOptions={{ headerShown: false }}>
+            <Stack
+                screenOptions={{
+                    headerShown: false,
+                    gestureEnabled: false,
+                }}
+            >
                 <Stack.Screen name="splash" />
                 <Stack.Screen name="Login" />
                 <Stack.Screen name="SignUp" />
@@ -15,6 +20,7 @@ export default function RootLayout() {
                 <Stack.Screen name="age" />
                 <Stack.Screen name="photo" />
             </Stack>
+
 
             <NotificationDrawer />
 

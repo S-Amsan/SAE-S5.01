@@ -8,7 +8,12 @@ export default function Layout() {
 
     return (
         <PanierProvider>
-            <Stack screenOptions={{ headerShown: false }}>
+            <Stack
+                screenOptions={{
+                    headerShown: false,
+                    gestureEnabled: false,
+                }}
+            >
                 <Stack.Screen name="accueil" />
                 <Stack.Screen name="missions" />
                 <Stack.Screen name="social" />
@@ -17,6 +22,7 @@ export default function Layout() {
                 <Stack.Screen name="notifications" />
                 <Stack.Screen name="parametres" />
             </Stack>
+
         </PanierProvider>
     );
 

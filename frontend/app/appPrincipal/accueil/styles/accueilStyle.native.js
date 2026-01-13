@@ -118,4 +118,59 @@ export default StyleSheet.create({
         backgroundColor: "rgba(255,255,255,0.2)",
         marginHorizontal: 12,
     },
+
+    quoteCard: {
+        marginTop: 12,
+        padding: 12,
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: "#000000",
+        alignSelf: "center",
+        width:'100%'
+    },
+
+    quoteHeader: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 10,
+    },
+
+    quoteAvatar: {
+        width: 34,
+        height: 34,
+        borderRadius: 17,
+        marginRight: 10,
+        backgroundColor: "#EAEAEA",
+    },
+
+    quoteName: {
+        fontSize: 15,
+        fontWeight: "700",
+        color: "#111111",
+    },
+
+    quoteText: {
+        marginTop: 2,
+        fontSize: 14,
+        color: "#333333",
+    },
+
+    quoteBody: {
+        flexDirection: "row",
+        alignItems: "center",
+    },
+
+    quoteImage: {
+        width: "60%",
+        height: 110,
+        borderRadius: 12,
+        marginRight: 12,
+        backgroundColor: "#F2F2F2",
+    },
+
+    quoteTitle: {
+        fontSize: 15,
+        fontWeight: "600",
+        color: "#111111",
+    },
 });
