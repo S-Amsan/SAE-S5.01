@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Platform, ScrollView, View } from "react-native";
+import {Platform, Pressable, ScrollView, Text, View} from "react-native";
 
 import Header from "../../../../components/Header";
 import Navbar from "../../../../components/Navbar";
@@ -8,7 +8,9 @@ import SectionProduits from "../../../../components/boutique/sectionProduits/sec
 import HeaderBoutique from "../../../../components/boutique/headerBoutique/headerBoutique";
 
 import styles from "./styles/styles";
+
 import {loadUser} from "../../../../services/RegisterStorage";
+import {usePanier} from "../../../../context/PanierContext";
 
 export default function Boutique() {
     const [recherche, setRecherche] = useState("");
@@ -18,6 +20,7 @@ export default function Boutique() {
     ]);
 
     const [filtreActif, setFiltreActif] = useState(null);
+    const { ajouterPointsDebug } = usePanier();
 
     const [user, setUser] = useState(null);
 
@@ -74,6 +77,11 @@ export default function Boutique() {
                             recherche={recherche}
                             setRecherche={setRecherche}
                         />
+
+                        {/*<Pressable onPress={() => ajouterPointsDebug(50000)} style={{ padding: 10, backgroundColor: "#eee", borderRadius: 8, alignSelf: "flex-start", marginBottom: 12 }}>
+                            <Text selectable={false}>+50 000 points (DEV)</Text>
+                        </Pressable>*/}
+
                     </View>
                 </ScrollView>
             </View>

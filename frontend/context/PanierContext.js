@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useMemo, useCallback, useState, useEffect } from "react";
+import { fetchMyStats } from "../services/user.api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const PanierContext = createContext(null);
@@ -6,7 +7,7 @@ const PanierContext = createContext(null);
 const PANIER_KEY = "ecocecption_panier_articles";
 const FAVORIS_KEY = "ecocecption_favoris";
 const ACHATS_KEY = "ecocecption_achats";
-
+const POINTS_KEY = "ecocecption_points";
 
 const genererCodeFictif = () => {
     const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -25,6 +26,50 @@ export function PanierProvider({ children }) {
     const [favoris, setFavoris] = useState([]);
 
     const [afficherTitreAjoute, setAfficherTitreAjoute] = useState(false);
+
+    const [pointsUtilisateur, setPointsUtilisateur] = useState(0);
+
+    const rafraichirPoints = useCallback(async () => {
+        try {
+            const stats = await fetchMyStats();
+            const points = stats.find((s) => s.type === "default")?.valeur ?? 0;
+            setPointsUtilisateur((prev) => {
+                if (prev === 0) return 0;
+                return Number(points) || 0;
+            });
+        } catch (e) {
+            console.log("Erreur récupération points:", e);
+        }
+    }, []);
+
+    useEffect(() => {
+        const chargerPoints = async () => {
+            try {
+                const raw = await AsyncStorage.getItem(POINTS_KEY);
+                if (raw !== null) {
+                    setPointsUtilisateur(Number(raw));
+                } else {
+                    await rafraichirPoints();
+                }
+            } catch (e) {
+                console.log("Erreur chargement points:", e);
+            }
+        };
+
+        chargerPoints();
+    }, [rafraichirPoints]);
+
+
+    useEffect(() => {
+        const sauvegarderPoints = async () => {
+            try {
+                await AsyncStorage.setItem(POINTS_KEY, String(pointsUtilisateur));
+            } catch (e) {
+                console.log("Erreur sauvegarde points:", e);
+            }
+        };
+        sauvegarderPoints();
+    }, [pointsUtilisateur]);
 
     useEffect(() => {
         const chargerPanier = async () => {
@@ -110,6 +155,10 @@ export function PanierProvider({ children }) {
         sauvegarderAchats();
     }, [achats]);
 
+    const debiterPoints = useCallback((montant) => {
+        setPointsUtilisateur((prev) => Math.max(0, Number(prev) - Number(montant || 0)));
+    }, []);
+
     const nombreProduits = useMemo(() => {
         return articles.reduce((acc, it) => acc + (Number(it.quantity) || 1), 0);
     }, [articles]);
@@ -120,6 +169,21 @@ export function PanierProvider({ children }) {
             0
         );
     }, [articles]);
+
+    const aAssezDePoints = useCallback((montant) => {
+        return Number(pointsUtilisateur) >= Number(montant || 0);
+    }, [pointsUtilisateur]);
+
+    const debiterPointsLocal = useCallback((montant) => {
+        setPointsUtilisateur((prev) => {
+            const next = Number(prev) - Number(montant || 0);
+            return next < 0 ? 0 : next;
+        });
+    }, []);
+
+    const ajouterPointsDebug = useCallback((montant) => {
+        setPointsUtilisateur((prev) => Number(prev) + Number(montant || 0));
+    }, []);
 
     const ajouterAuPanier = useCallback((nouvelArticle) => {
         setArticles((prev) => {
@@ -180,6 +244,15 @@ export function PanierProvider({ children }) {
     }, []);
 
     const passerCommande = useCallback(() => {
+        if (articles.length === 0) return false;
+
+        // Vérification des points
+        if (!aAssezDePoints(totalPoints)) {
+            return false;
+        }
+
+        debiterPointsLocal(totalPoints);
+
         const dateAchatISO = new Date().toISOString();
 
         setAchats((prevAchats) => {
@@ -196,7 +269,9 @@ export function PanierProvider({ children }) {
                         quantity: 1,
                         dateAchatISO,
                         code: genererCodeFictif(),
-                        idLigneAchat: `${String(it.id)}-${dateAchatISO}-${i}-${Math.random().toString(16).slice(2)}`,
+                        idLigneAchat: `${String(it.id)}-${dateAchatISO}-${i}-${Math.random()
+                            .toString(16)
+                            .slice(2)}`,
                     });
                 }
             }
@@ -206,9 +281,21 @@ export function PanierProvider({ children }) {
 
         setArticles([]);
         setAfficherTitreAjoute(false);
-    }, [articles]);
+
+        return true;
+    }, [articles, totalPoints, aAssezDePoints, debiterPointsLocal]);
+
 
     const acheterOffre = useCallback((article) => {
+        const cout =
+            (Number(article.points) || 0) * (Number(article.quantity) || 1);
+
+        if (!aAssezDePoints(cout)) {
+            return false;
+        }
+
+        debiterPointsLocal(cout);
+
         const dateAchatISO = new Date().toISOString();
         const q = Number(article.quantity) || 1;
 
@@ -223,13 +310,18 @@ export function PanierProvider({ children }) {
                     quantity: 1,
                     dateAchatISO,
                     code: genererCodeFictif(),
-                    idLigneAchat: `${String(article.id)}-${dateAchatISO}-${i}-${Math.random().toString(16).slice(2)}`,
+                    idLigneAchat: `${String(article.id)}-${dateAchatISO}-${i}-${Math.random()
+                        .toString(16)
+                        .slice(2)}`,
                 });
             }
 
             return [...lignes, ...prevAchats];
         });
-    }, []);
+
+        return true;
+    }, [aAssezDePoints, debiterPointsLocal]);
+
 
     const estFavori = useCallback(
         (id) => {
@@ -278,6 +370,10 @@ export function PanierProvider({ children }) {
             acheterOffre,
             estFavori,
             toggleFavori,
+            pointsUtilisateur,
+            rafraichirPoints,
+            aAssezDePoints,
+            ajouterPointsDebug,
         }),
         [
             articles,
@@ -293,6 +389,10 @@ export function PanierProvider({ children }) {
             acheterOffre,
             estFavori,
             toggleFavori,
+            pointsUtilisateur,
+            rafraichirPoints,
+            aAssezDePoints,
+            ajouterPointsDebug,
         ]
     );
 

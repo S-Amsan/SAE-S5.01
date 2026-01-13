@@ -4,6 +4,7 @@ import { useNotification } from "../app/(app)/notifications/NotificationContext.
 import styles from "./styles/stylesHeader";
 import React, {useState} from "react";
 import {useNavigation, useRouter} from "expo-router";
+import { usePanier } from "../context/PanierContext";
 
 import point from "../assets/icones/point.png";
 import trophee from "../assets/icones/trophee.png";
@@ -38,6 +39,8 @@ export default function Header({
     const router = useRouter();
     const navigation = useNavigation();
     const {openNotifications} = useNotification();
+
+    const { pointsUtilisateur } = usePanier();
 
     // Filtre actuellement ouvert
     const [filtreActif, setFiltreActif] = useState(null);
@@ -236,7 +239,12 @@ export default function Header({
                                                     source={config.icon}
                                                     style={{width: 22, height: 22}}
                                                 />
-                                                <Text style={[styles.detailText, { color: config.color }]}>{formatNombreCourt(detail.valeur)}</Text>
+                                                <Text style={[styles.detailText, { color: config.color }]}>
+                                                    {detail.type === "default"
+                                                        ? formatNombreCourt(pointsUtilisateur)
+                                                        : formatNombreCourt(detail.valeur)
+                                                    }
+                                                </Text>
                                             </TouchableOpacity>
                                         )
                                     })}
@@ -306,7 +314,11 @@ export default function Header({
                                 source={config.icon}
                                 style={{width: 18, height: 18}}
                             />
-                            <Text style={[styles.detailText, { color: config.color }]}>{formatNombreCourt(detail.valeur)}</Text>
+                            <Text style={[styles.detailText, { color: config.color }]}>{detail.type === "default"
+                                    ? formatNombreCourt(pointsUtilisateur)
+                                    : formatNombreCourt(detail.valeur)
+                                }
+                            </Text>
                         </TouchableOpacity>
                     )
                 })}

@@ -220,6 +220,10 @@ export default StyleSheet.create({
 
     },
 
+    boutonAchatDisabled: {
+        opacity: 0.45,
+    },
+
     texteBoutonAchat: {
         color: "#FFFFFF",
         fontWeight: "600",

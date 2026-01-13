@@ -35,7 +35,7 @@ export const PRODUITS = [
         descriptionLongue:
             "Utilisable sur Amazon pour des millions de produits : high-tech, livres, vêtements, maison… Recharge instantanée et simple.",
         points: 10000,
-        imageCarte: "https://www.cysend.com/images/products/amazon.svg",
+        imageCarte: "https://staticpayment.ssl.mts.ru/prov-icons/Amazon_alt_16062025.png",
         banniere:
             "https://images.unsplash.com/photo-1512820790803-83ca734da794",
         type: "carte",

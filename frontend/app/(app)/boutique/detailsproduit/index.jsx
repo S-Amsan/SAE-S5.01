@@ -29,8 +29,9 @@ export default function DetailProduit() {
     const imageCarte = params.imageCarte ?? params.image ?? "";
     const imageBanniere = params.banniere ?? params.image ?? "";
     const type = params.type ?? "cartes";
-    const { ajouterAuPanier, acheterOffre } = usePanier();
-    const { toggleFavori, estFavori } = usePanier();
+    const { ajouterAuPanier, acheterOffre, toggleFavori, estFavori, pointsUtilisateur } = usePanier();
+    const coutProduit = Number(points) || 0;
+    const peutAcheter = Number(pointsUtilisateur) >= coutProduit;
     const favori = estFavori(id);
     const lienfictif = "https://ecoception.fr/boutique";
 
@@ -109,36 +110,22 @@ export default function DetailProduit() {
     ]);
 
     const handleBuyMobile = useCallback(() => {
-        acheterOffre({
-            id: String(id),
-            titre: String(titreCourt),
-            titreComplet: String(titreComplet),
-            description: String(params.description ?? ""),
-            descriptionLongue: String(description),
-            points: Number(points),
-            imageCarte: String(imageCarte),
-            banniere: String(imageBanniere),
-            type: String(type),
-            quantity: 1,
-        });
+        const ok = acheterOffre(articleCourant);
+
+        if (!ok) {
+            Alert.alert(
+                "Points insuffisants",
+                "Tu n’as pas assez de points pour acheter cette offre"
+            );
+            return;
+        }
 
         router.push({
             pathname: "boutique/historique",
             params: { justBought: "1" },
         });
-    }, [
-        acheterOffre,
-        id,
-        titreCourt,
-        titreComplet,
-        params.description,
-        description,
-        points,
-        imageCarte,
-        imageBanniere,
-        type,
-        router,
-    ]);
+    }, [acheterOffre, articleCourant, router]);
+
 
     if (Platform.OS !== "web") {
         return (
@@ -221,7 +208,7 @@ export default function DetailProduit() {
                 </ScrollView>
 
                 <View style={styles.barreAchat}>
-                    <Pressable style={styles.boutonAchat} onPress={handleBuyMobile}>
+                    <Pressable style={[styles.boutonAchat, !peutAcheter && styles.boutonAchatDisabled]} onPress={handleBuyMobile} disabled={!peutAcheter}>
                         <LinearGradient
                             colors={["#00DB83", "#0CD8A9"]}
                             start={{ x: 0, y: 0 }}
@@ -229,7 +216,7 @@ export default function DetailProduit() {
                             style={styles.fondGradient}
                             pointerEvents="none"
                         />
-                        <Text style={styles.texteBoutonAchat}>Acheter l’offre</Text>
+                        <Text style={styles.texteBoutonAchat} selectable={false}>Acheter l’offre</Text>
                     </Pressable>
                 </View>
             </View>

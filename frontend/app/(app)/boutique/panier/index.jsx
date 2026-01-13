@@ -49,19 +49,22 @@ export default function Index() {
     const {
         articles,
         totalPoints,
+        pointsUtilisateur,
         afficherTitreAjoute,
         setAfficherTitreAjoute,
         decrementerDuPanier,
         passerCommande,
     } = usePanier();
 
+    const peutCommander = articles.length > 0 && Number(pointsUtilisateur) >= Number(totalPoints);
+
     useEffect(() => {
         if (articles.length === 0) setAfficherTitreAjoute(false);
     }, [articles.length, setAfficherTitreAjoute]);
 
     const handleCommande = useCallback(() => {
-        passerCommande();
-        setAfficherTitreAjoute(false);
+        const ok = passerCommande();
+        if (ok) setAfficherTitreAjoute(false);
     }, [passerCommande, setAfficherTitreAjoute]);
 
     return (
@@ -101,9 +104,9 @@ export default function Index() {
                         </View>
 
                         <Pressable
-                            style={[styles.boutonCommande, articles.length === 0 && styles.boutonCommandeDisabled]}
+                            style={[styles.boutonCommande, (!peutCommander) && styles.boutonCommandeDisabled]}
                             onPress={handleCommande}
-                            disabled={articles.length === 0}
+                            disabled={!peutCommander}
                         >
                             <LinearGradient
                                 colors={["#00DB83", "#0CD8A9"]}
@@ -112,7 +115,7 @@ export default function Index() {
                                 style={styles.boutonGradient}
                                 pointerEvents="none"
                             />
-                            <Text style={styles.texteCommande}>Passer la commande</Text>
+                            <Text style={styles.texteCommande} selectable={false}>Passer la commande</Text>
                         </Pressable>
                     </View>
                 </ScrollView>

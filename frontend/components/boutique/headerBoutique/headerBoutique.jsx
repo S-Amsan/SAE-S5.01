@@ -2,12 +2,13 @@ import { Pressable, View, Text, Image, Platform, ScrollView } from "react-native
 import { useRouter, usePathname } from "expo-router";
 import point from "../../../assets/icones/point.png";
 import { usePanier } from "../../../context/PanierContext";
+import { formatNombreCourt } from "../../../utils/format";
 import styles from "./styles/styles";
 
 export default function HeaderBoutique({ filtreActif, setFiltreActif, mode = "complet" }) {
     const router = useRouter();
     const pathname = usePathname();
-    const { nombreProduits } = usePanier();
+    const { nombreProduits, pointsUtilisateur } = usePanier();
 
     const ongletActif = pathname?.includes("historique") ? "achats" : "catalogue";
 
@@ -141,7 +142,7 @@ export default function HeaderBoutique({ filtreActif, setFiltreActif, mode = "co
                 <View style={styles.blocPoints}>
                     <Text style={styles.textePoints}>Solde de points :</Text>
                     <View style={styles.pointsWrapper}>
-                        <Text style={styles.valeurPoints}>150k</Text>
+                        <Text style={styles.valeurPoints}>{formatNombreCourt(pointsUtilisateur)}</Text>
                         <Image source={point} style={styles.pointIcon} />
                     </View>
                 </View>
