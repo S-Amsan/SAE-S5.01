@@ -12,6 +12,8 @@ import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 /**
  * Join entity for Competition <-> User with extra attributes (points).
@@ -51,6 +53,7 @@ public class CompetitionParticipant {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @MapsId("userId")
     @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @Column(nullable = false)

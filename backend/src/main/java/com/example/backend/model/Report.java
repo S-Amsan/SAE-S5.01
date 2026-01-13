@@ -4,14 +4,16 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Data
 @Entity
 @Table(
-        name = "reports",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"post_id", "user_id"})
-        }
+    name = "reports",
+    uniqueConstraints = {
+        @UniqueConstraint(columnNames = { "post_id", "user_id" }),
+    }
 )
 public class Report {
 
@@ -25,8 +27,8 @@ public class Report {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
-
 
     @Column(nullable = false)
     private String reason;

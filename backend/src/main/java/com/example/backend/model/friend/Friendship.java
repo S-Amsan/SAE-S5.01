@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import java.time.Instant;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @Data
@@ -29,6 +31,7 @@ public class Friendship {
      */
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "requester_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User requester;
 
     /**
@@ -36,6 +39,7 @@ public class Friendship {
      */
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "addressee_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User addressee;
 
     @Enumerated(EnumType.STRING)

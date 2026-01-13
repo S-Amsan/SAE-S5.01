@@ -59,13 +59,22 @@ public class User {
     private boolean banned = false;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user")
+    @OneToMany(
+        mappedBy = "user",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<CompetitionParticipant> competitions;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(
+        mappedBy = "user",
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<Post> posts;

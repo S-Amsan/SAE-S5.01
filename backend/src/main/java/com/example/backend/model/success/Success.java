@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Data
 @Entity
@@ -21,6 +23,7 @@ public class Success {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
 
     @CreationTimestamp

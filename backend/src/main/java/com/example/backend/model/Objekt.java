@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Data
 @Entity
@@ -35,6 +37,7 @@ public class Objekt {
     @JoinColumn(name = "published_by_user_id", nullable = false)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User publishedBy;
 
     @JsonProperty("publisher_user_id")
@@ -52,6 +55,7 @@ public class Objekt {
     @JoinColumn(name = "picked_up_by_user_id")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User pickedUpBy;
 
     @CreationTimestamp
