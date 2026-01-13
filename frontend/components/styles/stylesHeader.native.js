@@ -3,7 +3,7 @@ import {StyleSheet} from "react-native";
 
 export default StyleSheet.create({
     container: {
-        backgroundColor: "reds",
+        backgroundColor: "#FFFFFF",
         height: 139,
 
         flexDirection: "row",
@@ -71,7 +71,7 @@ export default StyleSheet.create({
         width: 48,
         height: 48,
         borderRadius : 46,
-        boxShadow: "0px 2px 6px rgba(0,0,0,0.15)",
+        boxShadow: "0px 2px 6px rgba(0,0,0,0.25)",
     },
     boutonNotificationContainer : {
         position: "absolute",

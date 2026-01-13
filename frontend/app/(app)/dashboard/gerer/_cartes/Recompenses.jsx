@@ -8,7 +8,7 @@ import point from "../../../../../assets/icones/point.png";
 import Toast from "react-native-toast-message";
 
 import {Picker} from "@react-native-picker/picker";
-import {deletePartner, publishDonation} from "../../../../../services/admin.api";
+import {publishDonation} from "../../../../../services/admin.api";
 
 const normalizeLabel = (t) => {
     const s = String(t ?? "").trim();
@@ -178,7 +178,7 @@ export default function Recompenses({carte, allData}) {
     };
 
     const [partnerId, setPartnerId] = useState("");
-    const [categorie, setCategorie] = useState("Dons");
+    const [categorie, setCategorie] = useState("DON");
     const [points, setPoints] = useState("");
 
     const [slug, setSlug] = useState("");
@@ -258,6 +258,7 @@ export default function Recompenses({carte, allData}) {
         const pointsInt = parseInt(points, 10);
         const pointsOk = Number.isInteger(pointsInt) && pointsInt > 0;
 
+        console.log(categorie)
         const imgOk = !!image && !!cardImage && !!bannerImage;
 
         if (!partnerOk || !slugOk || !titleOk || !descOk || !fullDescOk || !pointsOk || !imgOk) {
@@ -429,9 +430,9 @@ export default function Recompenses({carte, allData}) {
                         <View style={{flexDirection: "row", alignItems: "center", gap: 10}}>
                             <Text style={{width: "15%"}}>Catégorie :</Text>
                             <Picker selectedValue={categorie} onValueChange={setCategorie} style={styles.pickerWrapper}>
-                                <Picker.Item label="Dons" value="Dons" />
-                                <Picker.Item label="Bons de réduction" value="Bons de réduction" />
-                                <Picker.Item label="Cartes cadeaux" value="Cartes cadeaux" />
+                                <Picker.Item label="Dons" value="DON" />
+                                <Picker.Item label="Bons de réduction" value="COUPON" />
+                                <Picker.Item label="Cartes cadeaux" value="CARD" />
                             </Picker>
                         </View>
 

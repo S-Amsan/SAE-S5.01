@@ -109,7 +109,7 @@ export default function Login(){
                                     onPress={() => setShowPassword(!showPassword)}
                                 >
                                     <Ionicons
-                                        name={showPassword ? "eye-off" : "eye"}
+                                        name={showPassword ? "eye" : "eye-off"}
                                         size={24}
                                         color="#999"
                                     />
@@ -213,7 +213,7 @@ export default function Login(){
                                 onPress={() => setShowPassword(!showPassword)}
                             >
                                 <Ionicons
-                                    name={showPassword ? "eye-off" : "eye"}
+                                    name={showPassword ? "eye" : "eye-off"}
                                     size={24}
                                     color="#999"
                                 />
