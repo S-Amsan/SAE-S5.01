@@ -62,7 +62,7 @@ export const styles = {
     },
     card: {
         width: isWeb ? "50%" : "90%",
-        height: "50%",
+        height: "60%",
         backgroundColor: "#fff",
         borderRadius: 30,
         padding: 24,

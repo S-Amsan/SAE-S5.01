@@ -37,9 +37,11 @@ export default function AccueilMobile() {
 
     useEffect(() => {
         AsyncStorage.getItem(ONBOARDING_KEY).then(value => {
+            console.log("ONBOARDING_KEY =", value);
             if (!value) setShowOnboarding(true);
         });
     }, []);
+
 
     const closeOnboarding = async () => {
         await AsyncStorage.setItem(ONBOARDING_KEY, "true");

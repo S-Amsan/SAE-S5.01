@@ -123,8 +123,13 @@ export default function Photo() {
                 photoUri
             });
 
+            // 🔐 récupère le token + user
             await login(data.email, data.password);
 
+            // 🔥 RESET ONBOARDING (IMPORTANT)
+            await AsyncStorage.removeItem("@onboarding_seen");
+
+            // 🧹 nettoyage
             await clearRegisterData();
 
             Toast.show({
@@ -144,6 +149,7 @@ export default function Photo() {
             });
         } finally {
             setLoading(false);
+    }{
         }
     };
 
