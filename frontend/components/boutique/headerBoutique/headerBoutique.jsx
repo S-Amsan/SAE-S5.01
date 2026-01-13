@@ -17,7 +17,7 @@ export default function HeaderBoutique({ filtreActif, setFiltreActif, mode = "co
                 <View style={styles.onglets}>
                     <Pressable
                         style={[styles.onglet, ongletActif === "catalogue" && styles.ongletActif]}
-                        onPress={() => router.push("/appPrincipal/boutique")}
+                        onPress={() => router.push("boutique")}
                     >
                         <Text style={[styles.texteOnglet, ongletActif === "catalogue" && styles.texteOngletActif]}>
                             Catalogue
@@ -26,7 +26,7 @@ export default function HeaderBoutique({ filtreActif, setFiltreActif, mode = "co
 
                     <Pressable
                         style={[styles.onglet, ongletActif === "achats" && styles.ongletActif]}
-                        onPress={() => router.push("/appPrincipal/boutique/historique")}
+                        onPress={() => router.push("boutique/historique")}
                     >
                         <Text style={[styles.texteOnglet, ongletActif === "achats" && styles.texteOngletActif]}>
                             Mes achats

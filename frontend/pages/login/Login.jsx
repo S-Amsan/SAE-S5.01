@@ -35,7 +35,7 @@ export default function Login(){
 
         try {
             await login(email.trim(), password);
-            router.replace("/appPrincipal/accueil");
+            router.replace("/(app)");
         } catch (e) {
             console.log("LOGIN ERROR", e);
 
@@ -50,9 +50,9 @@ export default function Login(){
     };
 
 
-    const handleSignUp = () => {
-        navigation.navigate('SignUp');
-    };
+        const handleSignUp = () => {
+            router.push("/(auth)/SignUp");
+        };
 
     const handleForgotPassword = () => {
         console.log('Mot de passe oublié');

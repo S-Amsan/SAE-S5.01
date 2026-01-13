@@ -14,19 +14,19 @@ export default function TabNavbarWeb({
     return (
         <View style={styles.container}>
 
-            <TouchableOpacity style={styles.boutonRetourcontainer} onPress={() => router.push(`/appPrincipal/${pageBack}`)}>
+            <TouchableOpacity style={styles.boutonRetourcontainer} onPress={() => router.push(`/app/${pageBack}`)}>
                 <Ionicons name="chevron-back" size={27} color="#000000" />
             </TouchableOpacity>
 
             <View style={styles.ongletsContainer}>
                 {onglets.map((onglet) => {
-                    const isActive = pathname === `/appPrincipal/${onglet.page}`;
+                    const isActive = pathname === `/app/${onglet.page}`;
 
                     return (
                         <TouchableOpacity
                             key={onglet.id}
                             style={styles.ongletContainer}
-                            onPress={() => !isActive && router.push(`/appPrincipal/${onglet.page}`)}
+                            onPress={() => !isActive && router.push(`/app/${onglet.page}`)}
                         >
                             <Text style={[styles.ongletText, isActive && {color : "#05D993", backgroundColor : "#FFFFFF"}]}>{onglet.label}</Text>
                         </TouchableOpacity>)

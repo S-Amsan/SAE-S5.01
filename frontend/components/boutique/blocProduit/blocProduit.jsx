@@ -23,7 +23,7 @@ export default function BlocProduit({
 
     const ouvrirDetails = () => {
         router.push({
-            pathname: "/appPrincipal/boutique/detailsproduit",
+            pathname: "boutique/detailsproduit",
             params: {
                 id,
                 titre,

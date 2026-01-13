@@ -134,7 +134,7 @@ export default function Photo() {
                 text2: "Bienvenue !"
             });
 
-            router.replace("/appPrincipal/accueil");
+            router.replace("//app//accueil");
         } catch (err) {
             console.log("Erreur signup:", err);
             Toast.show({

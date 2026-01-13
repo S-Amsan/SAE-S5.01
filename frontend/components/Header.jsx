@@ -1,6 +1,6 @@
 import {View, Text, TouchableOpacity, TextInput, Image} from "react-native";
 import {Ionicons} from "@expo/vector-icons";
-import { useNotification } from "../app/appPrincipal/notifications/NotificationContext.jsx";
+import { useNotification } from "../app/(app)/notifications/NotificationContext.jsx";
 import styles from "./styles/stylesHeader";
 import React, {useState} from "react";
 import {useNavigation, useRouter} from "expo-router";
@@ -61,17 +61,17 @@ export default function Header({
         flammes: {
             icon: flamme,
             color: "#fd411d",
-            route: "/appPrincipal/social/votreSerie",
+            route: "social/votreSerie",
         },
         trophees: {
             icon: trophee,
             color: "#E7A2F0",
-            route: "/appPrincipal/social/classement",
+            route: "social/classement",
         },
         default: {
             icon: point,
             color: "#278674",
-            route: "/appPrincipal/boutique",
+            route: "/boutique",
         },
     };
 
@@ -258,7 +258,7 @@ export default function Header({
                     if (typeof onBack === "function") {
                         onBack();
                     } else {
-                        navigation.goBack();
+                        router.back();
                     }
                 }}
             >
@@ -324,7 +324,7 @@ export default function Header({
         {/* BOUTON PARAMETRES*/}
         {boutonParametres && (
             <TouchableOpacity style={styles.boutonParametresContainer}
-                              onPress={() => router.push("/appPrincipal/parametres")}
+                              onPress={() => router.push("/(app)/parametres")}
             >
                 <Image
                     source={parametres}
@@ -337,7 +337,7 @@ export default function Header({
         {userProfil && (
             <TouchableOpacity
                 style={styles.photoProfilContainer}
-                onPress={() => router.push(`/appPrincipal/social/profil`)}
+                onPress={() => router.push(`social/profil`)}
             >
                 <Image
                     source={

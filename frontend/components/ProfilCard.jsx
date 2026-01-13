@@ -11,13 +11,13 @@ import {usePathname, useRouter} from "expo-router";
 export default function ProfilCard({ photo, name, username }) {
     const router = useRouter();
     const pathname = usePathname();
-    const pageProfil = pathname === "/appPrincipal/social/profil";
+    const pageProfil = pathname === "social/profil";
 
     const { width } = useWindowDimensions();
     const styles = getStyles(width);
 
     return (
-        <Pressable style={styles.container} onPress={() => !pageProfil && router.push(`/appPrincipal/social/profil`)}>
+        <Pressable style={styles.container} onPress={() => !pageProfil && router.push(`social/profil`)}>
             <Image source={{ uri: photo }} style={styles.photo} />
 
             <View style={styles.textContainer}>

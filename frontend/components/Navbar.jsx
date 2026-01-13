@@ -11,7 +11,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter, usePathname } from "expo-router";
 import { useWindowDimensions } from "react-native-web";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNotification } from "../app/appPrincipal/notifications/NotificationContext";
+import { useNotification } from "../app/(app)/notifications/NotificationContext";
 
 import { fetchUserByEmail } from "../services/user.api";
 
@@ -64,7 +64,7 @@ const handleClick = (router, tab, isDashboard, setIsDashboard) => {
     if (tab.id === "dashboard"){
         setIsDashboard(!isDashboard)
     }else{
-        router.push(`/appPrincipal/${tab.id}`)
+        router.push(`/(app)/${tab.id}`)
     }
 }
 
@@ -77,7 +77,7 @@ export default function Navbar() {
     const pathname = usePathname();
 
     const [user, setUser] = useState(null);
-    const [dashboardTabOpen, setDashboardTabOpen] = useState(pathname.startsWith("/appPrincipal/dashboard") );
+    const [dashboardTabOpen, setDashboardTabOpen] = useState(pathname.startsWith("dashboard"));
 
 
     useEffect(() => {
@@ -104,7 +104,6 @@ export default function Navbar() {
 
         loadUser();
     }, []);
-
 
     // console.log("RENDER USER:", user);
     // console.log("RENDER PHOTO URL:", user?.photoProfileUrl);
@@ -141,11 +140,11 @@ export default function Navbar() {
 
                     <View style={styles.tabsContainer}>
                         {tabs.map(tab => {
-                            const isActive = pathname.startsWith(`/appPrincipal/${tab.id}`);
+                            const isActive = pathname.startsWith(`/${tab.id}`);
                             const IconComponent = isActive ? tab.IconActive : tab.Icon;
                             const isDashboard = tab.id === "dashboard"
 
-                            if (isDashboard && !user?.admin) return null // accésible que pour les admin
+                            if (isDashboard && !user?.admin) return null
 
                             const IconArrow = dashboardTabOpen
                                 ? (isActive ? IconArrowDownOn : IconArrowDown)
@@ -185,14 +184,14 @@ export default function Navbar() {
                                         <View  style={styles.tabsDashbordContainer}>
 
                                             {tabsDashboard.map(t => {
-                                                const isActive = pathname.startsWith(`/appPrincipal/dashboard/${t.id}`);
+                                                const isActive = pathname.startsWith(`/dashboard/${t.id}`);
                                                 const IconComponent = isActive ? t.IconActive : t.Icon;
 
                                                 return (
                                                     <TouchableOpacity
                                                         key={t.id}
                                                         style={styles.tabsDashbord}
-                                                        onPress={() => !isActive && router.push(`/appPrincipal/dashboard/${t.id}`)}
+                                                        onPress={() => !isActive && router.push(`/(app)/${tab.id}`)}
                                                     >
                                                         <Image
                                                             source={IconComponent}
@@ -224,14 +223,14 @@ export default function Navbar() {
     return (
         <View style={styles.container}>
             {tabs.slice(0, 4).map(tab => {
-                const isActive = pathname.startsWith(`/appPrincipal/${tab.id}`);
+                const isActive = pathname.startsWith(`/${tab.id}`);
                 const IconComponent = isActive ? tab.IconActive : tab.Icon;
 
                 return (
                     <Pressable
                         key={tab.id}
                         style={{ alignItems: "center", opacity: isActive ? 1 : 0.45 }}
-                        onPress={() => !isActive && router.push(`/appPrincipal/${tab.id}`)}
+                        onPress={() => !isActive && router.push(`/(app)/${tab.id}`)}
                     >
                         <Image source={IconComponent} style={{ width: 25, height: 25 }} />
                         <Text style={{ fontSize: 11, color: isActive ? "#FFF" : "#000" }}>
