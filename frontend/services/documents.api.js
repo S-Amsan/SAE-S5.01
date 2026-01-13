@@ -1,9 +1,10 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_URL } from "../constants/API_URL";
-import {Platform} from "react-native";
+import { Platform } from "react-native";
+import { apiFetch } from "./api";
 
+/* ===========================
+   UPLOAD DOCUMENT
+=========================== */
 export async function uploadDocument(cardId, file) {
-    const token = await AsyncStorage.getItem("@auth_token");
     const formData = new FormData();
 
     formData.append("cardId", String(cardId));
@@ -17,27 +18,17 @@ export async function uploadDocument(cardId, file) {
             type: file.type ?? "image/jpeg",
         });
     }
-    const response = await fetch(`${API_URL}/document/upload`, {
+
+    return apiFetch("/document/upload", {
         method: "POST",
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
         body: formData,
+        // ⚠️ pas de Content-Type pour FormData
     });
-
-    if (!response.ok) {
-        const err = await response.text();
-        throw new Error(err || "Upload failed");
-    }
-
-    const text = await response.text();
-    return text ? JSON.parse(text) : null;
 }
 
-
-
-
+/* ===========================
+   FETCH ALL DOCUMENTS
+=========================== */
 export async function fetchAllDocuments() {
-    const response = await fetch(`${API_URL}/document/all`);
-    return response.json();
+    return apiFetch("/document/all");
 }

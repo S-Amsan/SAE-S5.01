@@ -1,88 +1,56 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { API_URL } from "../constants/API_URL";
+import { apiFetch } from "./api";
 
-// Response example:
-// [
-//   {
-//     "id": 2,
-//     "email": "wangshihong2333@gmail.com",
-//     "pseudo": "WSH2333",
-//     "phone": "+33767187457",
-//     "photoProfile": "http://82.66.240.161:8090/files/dc4aa0c94e24d4db16ee182d355e8ad27cfcf08a8cac282e932f66c19ed8d3fa.jpg",
-//     "actif": true,
-//     "name": "Wang Shihong"
-//   }
-// ]
+/* ===========================
+   GET MY FRIENDS
+=========================== */
 export async function getFriends() {
-    const token = await AsyncStorage.getItem('@auth_token');
-
-    const res = await fetch(`${API_URL}/friends/my`, {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
-
-    const friends = await res.json();
-    return friends;
+    return apiFetch("/friends/my");
 }
 
+/* ===========================
+   SEND FRIEND REQUEST
+=========================== */
 export async function sendFriendRequestTo(userId) {
-    const token = await AsyncStorage.getItem('@auth_token');
     const formData = new FormData();
+    formData.append("toUserId", String(userId));
 
-    formData.append("toUserId", userId);
-
-    const res = await fetch(`${API_URL}/friends/requests`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
-        body: formData
+    return apiFetch("/friends/requests", {
+        method: "POST",
+        body: formData,
     });
 }
 
+/* ===========================
+   REJECT FRIEND REQUEST
+=========================== */
 export async function rejectFriendRequest(requestId) {
-    const token = await AsyncStorage.getItem('@auth_token');
-
-    const res = await fetch(`${API_URL}/friends/requests/${requestId}/reject`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
+    return apiFetch(`/friends/requests/${requestId}/reject`, {
+        method: "POST",
     });
 }
 
+/* ===========================
+   CANCEL INCOMING REQUEST
+   (nom conservé pour ne rien casser)
+=========================== */
 export async function fetchIncomingRequests(requestId) {
-    const token = await AsyncStorage.getItem('@auth_token');
-
-    const res = await fetch(`${API_URL}/friends/requests/${requestId}/cancel`, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
+    return apiFetch(`/friends/requests/${requestId}/cancel`, {
+        method: "POST",
     });
 }
 
+/* ===========================
+   FETCH OUTGOING REQUESTS
+=========================== */
 export async function fetchOutgoingRequests() {
-    const token = await AsyncStorage.getItem('@auth_token');
-
-    const res = await fetch(`${API_URL}/friends/requests/outgoing`, {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
-    });
-
-    const requests = await res.json();
-    return requests;
+    return apiFetch("/friends/requests/outgoing");
 }
 
+/* ===========================
+   DELETE FRIEND
+=========================== */
 export async function deleteFriend(userId) {
-    const token = await AsyncStorage.getItem('@auth_token');
-
-    const res = await fetch(`${API_URL}/friends/${userId}`, {
-        method: 'DELETE',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        },
+    return apiFetch(`/friends/${userId}`, {
+        method: "DELETE",
     });
 }

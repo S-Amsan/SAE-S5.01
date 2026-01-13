@@ -1,28 +1,10 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { API_URL } from "../constants/API_URL";
+import { apiFetch } from "./api";
 
-
-/**
- * Response example:
- * ```js
- * {
- * "id": 1,
- * "pseudo": "feodot",
- * "passwordHash": "$2a$10$QmGG5hda3mzB2v3ZzjViBO8P.691E5iBidtxnGyvfjyC0Qcdfqy0i",
- * "email": "raevskijb@gmail.com",
- * "phone": null,
- * "photoProfileUrl": "http://82.66.240.161:8090/files/e6147c61a425a38eb159e7295dc6be40c57b591494d654baef0a510f16a36cd5.jpg",
- * "dateCreation": "2025-12-30T12:53:21.925945Z",
- * "dateModification": "2025-12-30T12:53:21.925945Z",
- * "actif": true,
- * "age": 20,
- * "name": "Bohdan"
- * }
- * ```
- */
+/* ===========================
+   USERS
+=========================== */
 export async function fetchUserByEmail(email) {
-    const res = await fetch(`${API_URL}/user/email/${email}`);
-    const user = await res.json();
+    const user = await apiFetch(`/user/email/${email}`);
 
     if (!user) {
         throw new Error("Utilisateur introuvable");
@@ -32,64 +14,20 @@ export async function fetchUserByEmail(email) {
 }
 
 export async function fetchUserById(id) {
-    const token = await AsyncStorage.getItem('@auth_token');
-
-    if (!token) {
-        throw new Error("Token d'authentification manquant");
-    }
-
-    const res = await fetch(`${API_URL}/user/id/${id}`, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        }
-    });
-
-    if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`HTTP ${res.status} - ${text}`);
-    }
-
-    return await res.json();
+    return apiFetch(`/user/id/${id}`);
 }
-
-
-
 
 export async function fetchUsers() {
-    const token = await AsyncStorage.getItem('@auth_token');
-
-    const res = await fetch(`${API_URL}/user/all`, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-        }
-    });
-
-    if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`HTTP ${res.status} - ${text}`);
-    }
-
-    return await res.json();
+    return apiFetch("/user/all");
 }
 
-
+/* ===========================
+   STATS
+=========================== */
 export async function fetchMyStats() {
-    const token = await AsyncStorage.getItem('@auth_token');
+    const data = await apiFetch("/user/stats/my");
 
-    const res = await fetch(`${API_URL}/user/stats/my`, {
-        headers: { Authorization: `Bearer ${token}` },
-    });
-
-    if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
-    }
-
-    const text = await res.text();
-    if (!text) return [];
-
-    const data = JSON.parse(text);
+    if (!data) return [];
 
     return [
         { type: "default", valeur: data.points },
@@ -98,114 +36,51 @@ export async function fetchMyStats() {
     ];
 }
 
-
 export async function fetchUserStats(userId) {
     if (!userId) {
         throw new Error("userId manquant pour fetchUserStats");
     }
 
-    const token = await AsyncStorage.getItem('@auth_token');
-
-    const res = await fetch(`${API_URL}/user/stats/${userId}`, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
-
-    if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`HTTP ${res.status} - ${text}`);
-    }
-
-    return await res.json();
+    return apiFetch(`/user/stats/${userId}`);
 }
 
-
+/* ===========================
+   POINTS
+=========================== */
 export async function fetchUserPointsForCompetition(competitionId) {
-    const token = await AsyncStorage.getItem('@auth_token');
-    const res = await fetch(`${API_URL}/user/points/competition/${competitionId}`, {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
-    const text = await res.text();
+    const points = await apiFetch(
+        `/user/points/competition/${competitionId}`
+    );
 
-    if (!text) {
-        return null;
-    }
-
-    const points = parseInt(text, 10);
-
-    return Number.isNaN(points) ? null : points;
+    return Number.isFinite(points) ? points : null;
 }
 
 export async function fetchUserPointsForEvent(eventId) {
-    const token = await AsyncStorage.getItem('@auth_token');
-    const res = await fetch(`${API_URL}/user/points/event/${eventId}`, {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
-    const text = await res.text();
+    const points = await apiFetch(
+        `/user/points/event/${eventId}`
+    );
 
-    if (!text) {
-        return null;
-    }
-
-    const points = parseInt(text, 10);
-
-    return Number.isNaN(points) ? null : points;
+    return Number.isFinite(points) ? points : null;
 }
 
-/**
- * Response example:
- * ```json
- * [
- *   {
- *     "id": 1,
- *     "acquiredAt": "2026-01-07",
- *     "description": "voté 5 posts",
- *     "user_id": 3,
- *     "image_url": "http://82.66.240.161:8090/files/0ae4130a1bc9191dfceb17b7e485196944b10aa084b05d181095688813580331.png"
- *   }
- * ]
- * ```
-*/
+/* ===========================
+   ACTIONS
+=========================== */
 export async function fetchMyActions() {
-    const token = await AsyncStorage.getItem('@auth_token');
-    const res = await fetch(`${API_URL}/user/actions/my`, {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
-
-    const actions = await res.json();
-    return actions;
+    return apiFetch("/user/actions/my");
 }
 
 export async function fetchUserActions(userId) {
-    const res = await fetch(`${API_URL}/user/actions/${userId}`, {
-    });
-
-    const actions = await res.json();
-    return actions;
+    return apiFetch(`/user/actions/${userId}`);
 }
 
+/* ===========================
+   SUCCESS
+=========================== */
 export async function fetchMySuccess() {
-    const token = await AsyncStorage.getItem('@auth_token');
-    const res = await fetch(`${API_URL}/user/success/my`, {
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
-
-    const actions = await res.json();
-    return actions;
+    return apiFetch("/user/success/my");
 }
 
 export async function fetchSuccessForUser(userId) {
-    const res = await fetch(`${API_URL}/user/success/${userId}`);
-
-    const actions = await res.json();
-    return actions;
+    return apiFetch(`/user/success/${userId}`);
 }
