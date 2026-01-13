@@ -1,11 +1,6 @@
 package com.example.backend.controller;
 
-import com.example.backend.exceptions.AccountAlreadyExistsException;
-import com.example.backend.exceptions.BusinessLogicException;
-import com.example.backend.exceptions.FileUploadException;
-import com.example.backend.exceptions.InvalidRequestException;
-import com.example.backend.exceptions.ResourceNotFoundException;
-import com.example.backend.exceptions.ServiceUnavailableException;
+import com.example.backend.exceptions.*;
 import com.example.backend.model.http.res.ApiError;
 import io.jsonwebtoken.ExpiredJwtException;
 import java.time.LocalDateTime;
@@ -150,6 +145,13 @@ public class RestExceptionHandler {
         ServiceUnavailableException ex
     ) {
         return buildResponse(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
+    }
+
+    @ExceptionHandler(InvalidDonationTypeException.class)
+    public ResponseEntity<ApiError> handleInvalidDonationTypeException(
+        InvalidDonationTypeException ex
+    ) {
+        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
     /**

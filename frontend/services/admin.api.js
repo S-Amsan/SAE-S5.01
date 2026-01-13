@@ -240,7 +240,8 @@ export async function publishDonation(
     image,
     cardImage,
     bannerImage,
-    partnerId
+    partnerId,
+    type
 ) {
     const token = await AsyncStorage.getItem("@auth_token");
     const formData = new FormData();
@@ -252,6 +253,7 @@ export async function publishDonation(
     formData.append("fullDescription", String(fullDescription ?? ""));
     formData.append("points", String(points ?? 0));
     formData.append("partnerId", String(partnerId ?? ""));
+    formData.append("type", String(type ?? ""));
 
     const appendImage = async (key, value) => {
         if (!value) throw new Error(`Image manquante: ${key}`);

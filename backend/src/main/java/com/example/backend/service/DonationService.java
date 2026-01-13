@@ -1,7 +1,8 @@
 package com.example.backend.service;
 
-import com.example.backend.exceptions.FileUploadException;
+import com.example.backend.exceptions.*;
 import com.example.backend.model.donation.Donation;
+import com.example.backend.model.donation.DonationType;
 import com.example.backend.model.http.req.DonationPublishRequest;
 import com.example.backend.model.http.res.FileUploadResponse;
 import com.example.backend.model.partner.Partner;
@@ -35,6 +36,20 @@ public class DonationService {
         donation.setDescription(request.getDescription());
         donation.setFullDescription(request.getFullDescription());
         donation.setPoints(request.getPoints());
+
+        DonationType type;
+
+        if (request.getType().equalsIgnoreCase("don")) {
+            type = DonationType.DON;
+        } else if (request.getType().equalsIgnoreCase("coupoon")) {
+            type = DonationType.COUPON;
+        } else if (request.getType().equalsIgnoreCase("card")) {
+            type = DonationType.CARD;
+        } else {
+            throw new InvalidDonationTypeException(request.getType());
+        }
+
+        donation.setType(type);
 
         Partner partner = partnerService
             .getById(request.getPartnerId())

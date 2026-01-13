@@ -41,4 +41,8 @@ public class DonationPublishRequest {
 
     @NotNull
     private Long partnerId;
+
+    @NotNull
+    @NotBlank
+    private String type;
 }
