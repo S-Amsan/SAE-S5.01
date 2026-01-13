@@ -143,7 +143,7 @@ const MesRecompenses = () => {
     return (
         <TouchableOpacity style={styles.mesRecompencesContainer}>
             <Image source={cadeau} style={styles.cadeauIcon}/>
-            <Text style={styles.cadeauText}>Mes récompences <Text style={styles.cadeauNbText}>{recompencesGagne > 0 && "(" + recompencesGagne + ")"}</Text></Text>
+            <Text style={styles.cadeauText}>Mes récompenses <Text style={styles.cadeauNbText}>{recompencesGagne > 0 && "(" + recompencesGagne + ")"}</Text></Text>
             <Ionicons name="chevron-forward" size={30} style={styles.cadeauChevron}/>
         </TouchableOpacity>
     )
@@ -423,10 +423,17 @@ export default function Profil(){
                         </>
                         :
                         <>
-                            <Header titre={userActuel ? "Mon profil" : "" } boutonRetour={true} boutonParametres={userActuel}/>
+                            <Header titre={userActuel ? "Mon profil" : `@${user_DATA?.pseudo}` } boutonRetour={true} boutonParametres={userActuel}/>
 
                             <ScrollView>
-                                <Image source={DEFAULT_BANNER} style={styles.banner} />
+                                <Image
+                                    source={
+                                        user_DATA?.profileBannerUrl
+                                            ? { uri: user_DATA.profileBannerUrl }
+                                            : DEFAULT_BANNER
+                                    }
+                                    style={styles.banner}
+                                />
                                 <ProfilSection user_DATA={user_DATA} user_amis_DATA={user_amis_DATA} router={router} userActuel={userActuel}/>
                                 <Cartes user_DATA={user_DATA} router={router}/>
                                 {userActuel && <MesRecompenses/>}

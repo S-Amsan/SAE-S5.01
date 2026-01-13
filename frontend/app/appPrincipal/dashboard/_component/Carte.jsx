@@ -5,7 +5,7 @@ import {Ionicons} from "@expo/vector-icons";
 import Filtres from "./Filtres";
 import Br from "./Br";
 
-export default function Carte ({carte,recherche, setRecherche,filtres, selected, setSelected, children}) {
+export default function Carte ({carte,recherche, setRecherche,filtres, selected, setSelected,ajouter = false, setAjouter = () => {}, styleScrollView = {}, header = null, footer = null, children}) {
     const infoSupplementaire_DATA = carte.infoSupplementaire && carte?.data?.filter(c => !c.checked)?.length || 0;
 
     return (
@@ -23,42 +23,81 @@ export default function Carte ({carte,recherche, setRecherche,filtres, selected,
                 }
                 {
                     carte.boutonAjouter &&
-                    <TouchableOpacity>
-                        <View style={[styles.boutonAjouter,{backgroundColor : carte.couleur}]}>
-                            <Text style={styles.boutonAjouterText}>Ajouter</Text>
-                        </View>
-                    </TouchableOpacity>
-                }
-                <View style={styles.barreDeRecherche}>
-                    <Ionicons name="search" size={18} color="#777" />
-                    <TextInput
-                        placeholder="Rechercher"
-                        placeholderTextColor="#777"
-                        style={styles.rechercheInput}
-                        value={recherche}
-                        onChangeText={setRecherche}
-                    />
-                </View>
-            </View>
-            <Br/>
-            <View style={styles.carteFiltreSection}>
-                <Text> Filtre(s) :</Text>
+                        !ajouter &&
+                            <TouchableOpacity onPress={() => setAjouter(true)}>
+                                <View style={[styles.boutonAjouter,{backgroundColor : carte.couleur}]}>
+                                    <Text style={styles.boutonAjouterText}>Ajouter</Text>
+                                </View>
+                            </TouchableOpacity>
 
-                <Filtres
-                    filtres={filtres}
-                    values={selected}
-                    onChange={setSelected}
-                />
+
+                }
+                {
+                    !ajouter &&
+                        <View style={styles.barreDeRecherche}>
+                            <Ionicons name="search" size={18} color="#777"/>
+                            <TextInput
+                                placeholder="Rechercher"
+                                placeholderTextColor="#777"
+                                style={styles.rechercheInput}
+                                value={recherche}
+                                onChangeText={setRecherche}
+                            />
+                        </View>
+                }
             </View>
+
             <Br/>
-            <View style={styles.carteContenu}>
+
+            {!ajouter ?
+                <>
+                    <View style={styles.carteFiltreSection}>
+                        <Text> Filtre(s) :</Text>
+
+                        <Filtres
+                            filtres={filtres}
+                            values={selected}
+                            onChange={setSelected}
+                        />
+                    </View>
+                    <Br/>
+
+                    <View style={styles.carteContenu}>
+
+                        {header}
+
+                        <ScrollView
+                            showsVerticalScrollIndicator
+                            contentContainerStyle={[{
+                                paddingBottom: 20,
+                                paddingTop: 15,
+                                paddingHorizontal: 5
+                            }, styleScrollView]}
+                        >
+                            {children}
+                        </ScrollView>
+                    </View>
+                </>
+                :
                 <ScrollView
                     showsVerticalScrollIndicator
-                    contentContainerStyle={{ paddingBottom: 20, paddingTop: 15, paddingHorizontal : 5, gap : 10}}
+                    contentContainerStyle={[{
+                        paddingBottom: 20,
+                        paddingTop: 15,
+                        paddingHorizontal: 5
+                    }, styleScrollView]}
                 >
                     {children}
                 </ScrollView>
-            </View>
+
+            }
+            {
+                ajouter && footer &&
+                    <View style={styles.footerSection}>
+                        <Br/>
+                        {footer}
+                    </View>
+            }
         </View>
     )
 }
@@ -71,6 +110,7 @@ const styles = StyleSheet.create({
         borderRadius : 15,
     },
     cartePartieHaute : {
+        height : "15%",
         flexDirection : "row",
         padding : 15,
         alignItems : "center",
@@ -141,4 +181,9 @@ const styles = StyleSheet.create({
         flex: 1,
         outlineStyle: "none",
     },
+    footerSection : {
+        height : "15%",
+        width : "100%",
+    }
+
 })

@@ -4,7 +4,9 @@ import {Image, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import Carte from "../../_component/Carte";
 import Br from "../../_component/Br";
 import PopUp from "../../../../../components/PopUp";
-import {tempsEcoule, tempsRestant} from "../../../../../utils/temps";
+import {tempsEcoule} from "../../../../../utils/temps";
+import {banUser, invalidatePost} from "../../../../../services/admin.api";
+import Toast from "react-native-toast-message";
 
 const getTypeObjet = (post) => {
     if (post.object_id !== null) {
@@ -16,7 +18,6 @@ const getTypeObjet = (post) => {
     }
     return "Objet trouvé";
 };
-////
 
 const PostPreview = ({ report }) => {
     if (!report?.post) return null;
@@ -41,7 +42,7 @@ const PostPreview = ({ report }) => {
 
                             {!!post?.createdAt && (
                                 <Text style={styles.time}>
-                                    {" · il y a"}{(tempsEcoule(post.createdAt))}
+                                    {" · il y a"} {(tempsEcoule(post.createdAt))}
                                 </Text>
                             )}
                         </View>
@@ -67,7 +68,6 @@ const PostPreview = ({ report }) => {
     );
 }
 
-////
 
 export default function Signalements ({carte}) {
     const [postToPreview, setPostToPreview] = useState(null);
@@ -118,8 +118,46 @@ export default function Signalements ({carte}) {
         setSelected(valeurDefaut)
     }
 
+    const handleBannir = (user) => {
+        if (!user.banned){
+            banUser(user.id).then(() => {
+                    carte.reloadData("utilisateurs")
+                    Toast.show({
+                        type: "success",
+                        text1: "Confirmation de ban",
+                        text2: `@${user.name} a été ban avec succès!`
+                    })
+                }
+            )
+        }else{
+            Toast.show({
+                type: "info",
+                text1: "Utilisateur déjà banni",
+                text2: `@${user.name} est déjà banni(e).`
+            });
+        }
+    }
+
+    const handleInvalider = (post) => {
+        if (!post.validated){ // TODO c'est un boolean changer ça
+            Toast.show({
+                type: "info",
+                text1: "Post déjà invalide",
+                text2: `Le post est déjà invalide.`
+            });
+        }else{
+            // TODO then invalidatePost(post.id);
+            Toast.show({
+                type: "success",
+                text1: "Confirmation d'invalidation de post",
+                text2: `Le post à été invalider avec succès!`
+            })
+        }
+
+    }
+
     return (
-        <Carte carte={carte} recherche={recherche} setRecherche={setRecherche} filtres={filtres} selected={selected} setSelected={setSelected}>
+        <Carte carte={carte} recherche={recherche} setRecherche={setRecherche} filtres={filtres} selected={selected} setSelected={setSelected} styleScrollView={{gap : 10}}>
             <PopUp visible={postToPreview} setVisible={() => setPostToPreview(null)}>
                 <PostPreview report={postToPreview} />
             </PopUp>
@@ -153,13 +191,13 @@ export default function Signalements ({carte}) {
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={[styles.signalementBouton, styles.invaliderBouton]}
-                                // TODO
+                                onPress={() => handleInvalider(c.post)}
                             >
                                 <Text style={styles.signalementBoutonText}>Invalider</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={[styles.signalementBouton, styles.banBouton]}
-                                // TODO
+                                onPress={() => handleBannir(c.user)}
                             >
                                 <Text style={[styles.signalementBoutonText, styles.banBoutonText]}>Bannir l&#39;utilisateur</Text>
                             </TouchableOpacity>
@@ -172,11 +210,12 @@ export default function Signalements ({carte}) {
                     <Text>Aucun signalement</Text>
                     :
                     dataFiltree.length === 0 &&
-                    <Text>Aucun résultat, <Text style={styles.resetText} onPress={() => resetFiltres()}>Réinitialiser les filtres?</Text></Text>
+                    <Text>Aucun résultat, <Text style={styles.resetText} onPress={() => resetFiltres()}>Réinitialiser les filtres.</Text></Text>
             }
         </Carte>
     )
 }
+
 
 const styles = StyleSheet.create({
     signalementItem : {
@@ -248,7 +287,6 @@ const styles = StyleSheet.create({
         borderWidth : 1,
         borderColor : "#F2F2F2",
         backgroundColor : "#f8f8f8",
-        color : "#909090",
     },
     invaliderBouton : {
         borderWidth : 1,
