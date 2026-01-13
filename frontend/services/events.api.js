@@ -21,6 +21,12 @@ export async function fetchLatestEvent() {
     return event;
 }
 
+export async function fetchAllEvents() {
+    const res = await fetch(`${API_URL}/event/all`);
+    const events = await res.json();
+    return events;
+}
+
 /**
  * Response example:
  * ```js

@@ -23,6 +23,12 @@ export async function fetchLatestCompetition() {
     return competition;
 }
 
+export async function fetchAllCompetitions() {
+    const res = await fetch(`${API_URL}/competition/all`);
+    const competitions = await res.json();
+    return competitions;
+}
+
 export async function fetchSuccess() {
     // [
     //   {
