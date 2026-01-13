@@ -8,6 +8,7 @@ import SectionProduits from "../../../../components/boutique/sectionProduits/sec
 import HeaderBoutique from "../../../../components/boutique/headerBoutique/headerBoutique";
 
 import styles from "./styles/styles";
+import {loadUser} from "../../../../services/RegisterStorage";
 
 export default function Boutique() {
     const [recherche, setRecherche] = useState("");
@@ -18,6 +19,8 @@ export default function Boutique() {
 
     const [filtreActif, setFiltreActif] = useState(null);
 
+    const [user, setUser] = useState(null);
+
     useEffect(() => {
         console.log("Recherche :", recherche);
         console.log("Filtres :", filtres);
@@ -26,6 +29,10 @@ export default function Boutique() {
     useEffect(() => {
         setRecherche("");
     }, [filtreActif]);
+
+    useEffect(() => {
+        loadUser().then(setUser)
+    }, []);
 
     const isWeb = Platform.OS === "web";
 
@@ -44,6 +51,7 @@ export default function Boutique() {
                     boutonNotification={true}
                     userDetails={true}
                     userProfil={true}
+                    user={user}
                 />
 
                 <HeaderBoutique
