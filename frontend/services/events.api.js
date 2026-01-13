@@ -1,37 +1,73 @@
-import { apiFetch } from "./api";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-/* ===========================
-   LATEST EVENT
-=========================== */
+import { API_URL } from "../constants/API_URL";
+/**
+ * Response example:
+ * ```js
+ * {
+ *   "id": 1,
+ *   "name": "Décembre 2025",
+ *   "deadline": "2025-12-30T17:59:59.000+00:00",
+ *   "goalPoints": 10000,
+ *   "inscriptionCost": 1000
+ * }
+ * ```
+*/
 export async function fetchLatestEvent() {
-    return apiFetch("/event/latest");
+    const res = await fetch(`${API_URL}/event/latest`);
+    const text = await res.text();
+    if (!text) return null;
+    const event = JSON.parse(text);
+    return event;
 }
 
-/* ===========================
-   FOLLOWING EVENTS
-=========================== */
+/**
+ * Response example:
+ * ```js
+ * [
+ *   {
+ *     "id": 1,
+ *     "name": "Décembre 2025",
+ *     "deadline": "2025-12-30T17:59:59.000+00:00",
+ *     "goalPoints": 10000,
+ *     "inscriptionCost": 1000
+ *   }
+ * ]
+ * ```
+*/
 export async function fetchFollowingEvents() {
-    return apiFetch("/event/following");
+    const token = await AsyncStorage.getItem('@auth_token');
+    const res = await fetch(`${API_URL}/event/following`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    const events = await res.json();
+    return events;
 }
 
-/* ===========================
-   PARTICIPANTS COUNT
-=========================== */
-export async function fetchCountOfParticipantsForEvent(eventId) {
-    const count = await apiFetch(
-        `/event/${eventId}/participantsCount`
-    );
+export async function fetchCountOfParticipantsForEvent(event_id) {
+    const res = await fetch(`${API_URL}/event/${event_id}/participantsCount`);
+    const text = await res.text();
 
-    return Number.isFinite(count) ? count : null;
+    if (!text) {
+        return null;
+    }
+
+    const count = parseInt(text, 10);
+
+    return Number.isNaN(count) ? null : count;
 }
 
-/* ===========================
-   QUALIFIED PARTICIPANTS COUNT
-=========================== */
-export async function fetchCountOfQualifiedParticipantsForEvent(eventId) {
-    const count = await apiFetch(
-        `/event/${eventId}/qualifiedParticipantsCount`
-    );
+export async function fetchCountOfQualifiedParticipantsForEvent(event_id) {
+    const res = await fetch(`${API_URL}/event/${event_id}/qualifiedParticipantsCount`);
+    const text = await res.text();
 
-    return Number.isFinite(count) ? count : null;
+    if (!text) {
+        return null;
+    }
+
+    const count = parseInt(text, 10);
+
+    return Number.isNaN(count) ? null : count;
 }
