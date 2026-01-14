@@ -3,6 +3,8 @@
 Équipe Green Nation <br>
 Amsan Bohdan Rayan Shihong Souleymane (Groupe 301)
 
+![Poster d'ÉcoCeption](rendus/Poster_Ecoception_MERI_SUTHARSAN_WANG_RAIEVSKYI_HADJMESSAOUD_301.3.png)
+
 ## Configuration et Lancement du projet
 
 > **Pour les commandes ci-dessous, veuillez utiliser un terminal.**
