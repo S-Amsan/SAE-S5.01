@@ -1,9 +1,9 @@
 import React from "react";
 import {isWeb} from "../../../../../utils/platform";
-import AccountInfoWeb from "./accountinfoweb";
-import AccountInfoMobile from "./accountinfomobile";
+import Twofaweb from "./2faweb";
+import Twofamobile from "./2famobile";
 
 export default function Index() {
-    return isWeb ? <AccountInfoWeb /> : <AccountInfoMobile />;
+    return isWeb ? <Twofaweb /> : <Twofamobile />;
 }
 
