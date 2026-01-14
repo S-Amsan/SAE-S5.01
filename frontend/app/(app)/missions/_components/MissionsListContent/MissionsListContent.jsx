@@ -200,11 +200,11 @@ export default function MissionsPage({ onPostObjet, onSeeObjet }) {
                 {/* 👉 INFO CARDS WEB */}
                 <View style={styles.rightPanel}>
                     <InfoCard
-                        title="Scanner un QR code et poster"
+                        title="Scanner un Code Barre et poster"
                         description="Scanner le QR code d’un partenaire puis prenez le produit en photo."
                         button="Commencer"
                         image={require("../../../../../assets/missions/scan.png")}
-                        onPress={() => router.push("//app//codebar")}
+                        onPress={() => router.push("/(app)/codebar")}
                     />
 
                     <InfoCard
@@ -230,11 +230,11 @@ export default function MissionsPage({ onPostObjet, onSeeObjet }) {
                 {/* 👉 INFO CARDS MOBILE */}
                 <View style={styles.infoBox}>
                     <InfoCard
-                        title="Scanner un QR code et poster"
-                        description="Scanner le QR code d’un partenaire puis prenez le produit en photo."
+                        title="Scanner un Code Barres et poster"
+                        description="Scanner le Code Barres d’un partenaire puis prenez le produit en photo."
                         button="Commencer"
                         image={require("../../../../../assets/missions/scan.png")}
-                        onPress={() => router.push("//app//codebar")}
+                        onPress={() => router.push("/(app)/codebar")}
                     />
 
                     <InfoCard
@@ -282,7 +282,7 @@ export default function MissionsPage({ onPostObjet, onSeeObjet }) {
                 }}
             >
                 <ScanActionButton
-                    onPress={() => router.push("//app//codebar")}
+                    onPress={() => router.push("/(app)/codebar")}
                 />
             </Animated.View>
         </View>

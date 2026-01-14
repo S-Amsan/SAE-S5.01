@@ -177,7 +177,7 @@ export default function AccueilMobile() {
                 }}
             >
                 <ScanActionButton
-                    onPress={() => router.push("codebar")}
+                    onPress={() => router.push("/(app)/codebar")}
                 />
             </Animated.View>
 

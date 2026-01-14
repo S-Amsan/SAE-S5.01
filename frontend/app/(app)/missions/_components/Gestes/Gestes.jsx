@@ -299,7 +299,7 @@ export default function Gestes({ onAssociate }) {
                 }}
             >
                 <ScanActionButton
-                    onPress={() => router.push("//app//codebar")}
+                    onPress={() => router.push("/app/codebar")}
                 />
             </Animated.View>
         </View>
